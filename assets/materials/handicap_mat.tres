@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/handicap_symbol.png" id="1_myxma"]
+
+[resource]
+transparency = 1
+albedo_texture = ExtResource("1_myxma")
+roughness = 0.5

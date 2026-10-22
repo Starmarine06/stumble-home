@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/building_windows.png" id="1_58b18"]
+
+[resource]
+albedo_texture = ExtResource("1_58b18")
+emission_enabled = true
+emission_energy_multiplier = 1.6
+emission_texture = ExtResource("1_58b18")
