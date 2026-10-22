@@ -125,9 +125,13 @@ More nights come after launch. Levels are built to be replayed for faster clears
 ## Multiplayer
 
 - 4 players, online, joined by a **room code**.
-- One player hosts; the others join with the code. No accounts required for v1.
+- Powered by **Epic Online Services (EOS)**:
+  - **Lobbies** hold the room code and the player list.
+  - **P2P networking** carries gameplay traffic, with Epic's relay servers as the fallback so nobody has to port-forward.
+  - **Anonymous device-ID login** means players don't need an Epic account to play.
+- One player hosts; the others join with the code.
+- Godot talks to EOS through a third-party plugin (such as EOSG) plugged into Godot's high-level multiplayer API.
 - Co-op only, no PvP, so lag and desync don't ruin a rival's night.
-- Built on Godot's high-level multiplayer API. A relay is planned so players don't need to port-forward.
 
 ---
 
@@ -151,11 +155,12 @@ More nights come after launch. Levels are built to be replayed for faster clears
 
 ## Building
 
-Requires **Godot 4.x**.
+Requires **Godot 4.x** and an EOS plugin (see Multiplayer).
 
 1. Clone this repo.
-2. Open the project folder in Godot.
-3. Run the main scene.
+2. Create a product in the Epic Developer Portal and add your product ID, sandbox ID, deployment ID and client credentials to the project's EOS config (never commit secrets).
+3. Open the project folder in Godot.
+4. Run the main scene.
 
 (Project files land here once the vertical slice starts.)
 
