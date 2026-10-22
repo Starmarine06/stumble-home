@@ -35,11 +35,31 @@ var is_inside_van: bool = false
 var boost_timer: float = 0.0
 var fx_elapsed_time: float = 0.0
 
-# Active animation state
-enum AnimState { NONE, SMOKING, DRINKING, SOBER_CAN }
+# Active drink animation state
+enum AnimState { NONE, DRINKING, SOBER_CAN }
 var current_anim: AnimState = AnimState.NONE
 var anim_timer: float = 0.0
 var anim_duration: float = 0.0
+
+# ----------------- REALISTIC SMOKING SYSTEM -----------------
+enum SmokingSeqState {
+	IDLE,               # No cigarette held
+	TAKING_PACK,        # Pack swings up into view
+	PULLING_CIG,        # Pack lid flips open, cigarette slides up out of pack
+	LIGHTING_LIGHTER,   # Lighter rises into view, snaps open
+	IGNITING_TIP,       # Flame sparks, touches tip, ember ignites
+	PUTTING_AWAY,       # Pack & lighter lower away, lit cigarette settles in hand
+	READY,              # Lit cigarette held in hand, waiting for mouse scroll wheel
+	PUFFING,            # Inhaling drag at mouth via scroll wheel, paper burns down
+	EXHALING,           # Lowering back to hand, billowing smoke cloud exhaled
+	BURNT_OUT           # Completely burnt down to filter stub, flicked away
+}
+var smoking_seq_state: SmokingSeqState = SmokingSeqState.IDLE
+var seq_timer: float = 0.0
+var cig_burn_factor: float = 0.0 # 1.0 (fresh full length) down to 0.0 (burnt out)
+var cig_is_lit: bool = false
+var puff_timer: float = 0.0
+var is_inhaling: bool = false
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 
@@ -49,11 +69,31 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9
 
 # Viewmodel references
 @onready var viewmodel_root: Node3D = $Head/Camera3D/ViewModels
-@onready var cigarette: Node3D = $Head/Camera3D/ViewModels/Cigarette
-@onready var cig_tip: MeshInstance3D = $Head/Camera3D/ViewModels/Cigarette/EmberTip
-@onready var smoke_particles: CPUParticles3D = $Head/Camera3D/ViewModels/Cigarette/SmokeParticles
-@onready var bottle: Node3D = $Head/Camera3D/ViewModels/Bottle
-@onready var energy_can: Node3D = $Head/Camera3D/ViewModels/EnergyCan
+
+# 1. Cigarette Pack
+@onready var cig_pack: Node3D = get_node_or_null("Head/Camera3D/ViewModels/CigarettePack")
+@onready var pack_lid: Node3D = get_node_or_null("Head/Camera3D/ViewModels/CigarettePack/PackLid")
+@onready var ext_cig: Node3D = get_node_or_null("Head/Camera3D/ViewModels/CigarettePack/ExtractedCig")
+
+# 2. Lighter
+@onready var lighter: Node3D = get_node_or_null("Head/Camera3D/ViewModels/Lighter")
+@onready var lighter_lid: Node3D = get_node_or_null("Head/Camera3D/ViewModels/Lighter/LighterLid")
+@onready var lighter_flame: MeshInstance3D = get_node_or_null("Head/Camera3D/ViewModels/Lighter/LighterFlame")
+@onready var lighter_light: OmniLight3D = get_node_or_null("Head/Camera3D/ViewModels/Lighter/LighterLight")
+
+# 3. Active Cigarette
+@onready var cigarette: Node3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette")
+@onready var cig_paper: MeshInstance3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/PaperMesh")
+@onready var tip_assembly: Node3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/TipAssembly")
+@onready var cig_tip: MeshInstance3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/TipAssembly/EmberTip")
+@onready var ash_tip: MeshInstance3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/TipAssembly/AshTip")
+@onready var ember_light: OmniLight3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/TipAssembly/EmberLight")
+@onready var smoke_particles: CPUParticles3D = get_node_or_null("Head/Camera3D/ViewModels/Cigarette/TipAssembly/SmokeParticles")
+@onready var exhale_smoke: CPUParticles3D = get_node_or_null("Head/Camera3D/ExhaleSmoke")
+
+# 4. Consumables
+@onready var bottle: Node3D = get_node_or_null("Head/Camera3D/ViewModels/Bottle")
+@onready var energy_can: Node3D = get_node_or_null("Head/Camera3D/ViewModels/EnergyCan")
 
 # Screen FX & UI
 @onready var screen_fx_rect: ColorRect = $HUD/ScreenFX
@@ -70,6 +110,8 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9
 @onready var drunk_label: Label = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer/DrunkLabel")
 @onready var smoke_bar: ProgressBar = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer/SmokeBar")
 @onready var smoke_label: Label = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer/SmokeLabel")
+@onready var cig_bar: ProgressBar = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer/CigBar")
+@onready var cig_label: Label = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer/CigLabel")
 
 # Coma Overlay UI
 @onready var coma_ui: Control = get_node_or_null("HUD/ComaUI")
@@ -79,11 +121,25 @@ var current_talking_npc: Node = null
 var dialogue_timer: float = 0.0
 var van_node: Node3D = null
 
-# Default rest positions for viewmodels
-const CIG_REST_POS = Vector3(0.24, -0.38, -0.38)
-const CIG_REST_ROT = Vector3(0.2, 0.4, 0.0)
-const CIG_UP_POS = Vector3(0.09, -0.13, -0.26)
-const CIG_UP_ROT = Vector3(0.5, 0.2, 0.1)
+# Default positions & transforms for viewmodels
+const PACK_REST_POS = Vector3(-0.32, -0.55, -0.35)
+const PACK_REST_ROT = Vector3(0.26, 0.44, -0.14)
+const PACK_UP_POS = Vector3(-0.16, -0.22, -0.30)
+const PACK_UP_ROT = Vector3(0.20, 0.35, -0.10)
+
+const LIGHTER_REST_POS = Vector3(0.32, -0.55, -0.30)
+const LIGHTER_REST_ROT = Vector3(0.17, -0.35, 0.09)
+const LIGHTER_UP_POS = Vector3(0.13, -0.16, -0.28)
+const LIGHTER_UP_ROT = Vector3(0.15, -0.25, 0.08)
+
+const CIG_REST_POS = Vector3(0.20, -0.55, -0.35)
+const CIG_REST_ROT = Vector3(0.3, 0.15, -0.1)
+const CIG_HOLD_POS = Vector3(0.19, -0.24, -0.32)
+const CIG_HOLD_ROT = Vector3(0.32, 0.18, -0.10)
+const CIG_MOUTH_POS = Vector3(0.04, -0.09, -0.22)
+const CIG_MOUTH_ROT = Vector3(0.65, 0.12, 0.04)
+const CIG_BURNT_POS = Vector3(0.18, -0.65, -0.28)
+const CIG_BURNT_ROT = Vector3(1.6, 0.6, 1.4)
 
 # Bottle: Nozzle (+Y axis) tilts towards player face (+Z) with positive rotation around X!
 const BOTTLE_REST_POS = Vector3(0.24, -0.42, -0.38)
@@ -129,6 +185,42 @@ func _ready() -> void:
 		smoke_bar = find_child("SmokeBar", true, false)
 	if not smoke_label:
 		smoke_label = find_child("SmokeLabel", true, false)
+	if not cig_bar:
+		cig_bar = find_child("CigBar", true, false)
+	if not cig_label:
+		cig_label = find_child("CigLabel", true, false)
+
+	# Fetch viewmodel references with fallback if needed
+	if not cig_pack:
+		cig_pack = find_child("CigarettePack", true, false)
+	if not pack_lid:
+		pack_lid = find_child("PackLid", true, false)
+	if not ext_cig:
+		ext_cig = find_child("ExtractedCig", true, false)
+	if not lighter:
+		lighter = find_child("Lighter", true, false)
+	if not lighter_lid:
+		lighter_lid = find_child("LighterLid", true, false)
+	if not lighter_flame:
+		lighter_flame = find_child("LighterFlame", true, false)
+	if not lighter_light:
+		lighter_light = find_child("LighterLight", true, false)
+	if not cigarette:
+		cigarette = find_child("Cigarette", true, false)
+	if not cig_paper:
+		cig_paper = find_child("PaperMesh", true, false)
+	if not tip_assembly:
+		tip_assembly = find_child("TipAssembly", true, false)
+	if not cig_tip:
+		cig_tip = find_child("EmberTip", true, false)
+	if not ash_tip:
+		ash_tip = find_child("AshTip", true, false)
+	if not ember_light:
+		ember_light = find_child("EmberLight", true, false)
+	if not smoke_particles:
+		smoke_particles = find_child("SmokeParticles", true, false)
+	if not exhale_smoke:
+		exhale_smoke = find_child("ExhaleSmoke", true, false)
 
 	if head:
 		default_head_y = head.position.y
@@ -149,6 +241,26 @@ func _ready() -> void:
 		coma_ui.visible = false
 
 func reset_viewmodels() -> void:
+	ensure_smoking_references()
+	if cig_pack:
+		cig_pack.position = PACK_REST_POS
+		cig_pack.rotation = PACK_REST_ROT
+		cig_pack.visible = false
+	if pack_lid:
+		pack_lid.rotation.x = 0.0
+	if ext_cig:
+		ext_cig.position = Vector3(0, 0.035, 0)
+		ext_cig.visible = false
+	if lighter:
+		lighter.position = LIGHTER_REST_POS
+		lighter.rotation = LIGHTER_REST_ROT
+		lighter.visible = false
+	if lighter_lid:
+		lighter_lid.rotation.z = 0.0
+	if lighter_flame:
+		lighter_flame.visible = false
+	if lighter_light:
+		lighter_light.visible = false
 	if cigarette:
 		cigarette.position = CIG_REST_POS
 		cigarette.rotation = CIG_REST_ROT
@@ -187,11 +299,16 @@ func _input(event: InputEvent) -> void:
 				head.rotate_x(-event.relative.y * mouse_sensitivity * mouse_invert)
 				head.rotation.x = clamp(head.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 
-	# Mouse Click to re-capture
+	# Mouse Click to re-capture & Mouse Scroll Wheel to Smoke
 	if event is InputEventMouseButton and event.pressed:
 		if is_mouse_unlocked:
 			is_mouse_unlocked = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		
+		# --- MOUSE SCROLL WHEEL SMOKING CONTROL ---
+		# Wheel up or down takes a drag / puff or lights new one if finished!
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			handle_mouse_wheel_smoke()
 
 	# Keyboard shortcuts
 	if event is InputEventKey and event.pressed:
@@ -215,9 +332,9 @@ func _input(event: InputEvent) -> void:
 				print("Saved screenshot to /tmp/stumble_home_screenshot.png")
 		
 		# --- NUMBER ACTIONS 1-3 ---
-		# 1: Smoking -> Replenishes buzz stamina (+35), increases smoke weirdness!
+		# 1: Cigarette Action (Pull from pack & light fresh one / puff if held)
 		elif event.keycode == KEY_1 or event.keycode == KEY_KP_1:
-			start_smoking_animation()
+			handle_key_1_smoke()
 
 		# 2: Drinking -> Replenishes buzz stamina (+35), increases drunkenness!
 		elif event.keycode == KEY_2 or event.keycode == KEY_KP_2:
@@ -231,17 +348,324 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_E and not event.echo:
 			handle_interaction()
 
-# ----------------- ANIMATION TRIGGERS -----------------
+# ----------------- REALISTIC SMOKING ACTIONS & SEQUENCES -----------------
 
-func start_smoking_animation() -> void:
-	if current_anim != AnimState.NONE or is_in_coma:
+func handle_key_1_smoke() -> void:
+	if is_in_coma:
 		return
-	current_anim = AnimState.SMOKING
-	anim_timer = 0.0
-	anim_duration = 3.6
+	if smoking_seq_state == SmokingSeqState.READY or smoking_seq_state == SmokingSeqState.PUFFING or smoking_seq_state == SmokingSeqState.EXHALING:
+		# Already holding lit cigarette: puff it!
+		puff_cigarette()
+	elif smoking_seq_state == SmokingSeqState.IDLE or smoking_seq_state == SmokingSeqState.BURNT_OUT:
+		# Empty / burnt out: pull fresh one from pack & light it!
+		start_take_and_light_cigarette()
+
+func handle_mouse_wheel_smoke() -> void:
+	if is_in_coma:
+		return
+	if smoking_seq_state == SmokingSeqState.READY or smoking_seq_state == SmokingSeqState.PUFFING or smoking_seq_state == SmokingSeqState.EXHALING:
+		# Active smoker drags on cigarette using scroll wheel!
+		puff_cigarette()
+	elif smoking_seq_state == SmokingSeqState.IDLE or smoking_seq_state == SmokingSeqState.BURNT_OUT:
+		# When burnt out / over, scrolling lights a brand new one!
+		start_take_and_light_cigarette()
+
+func ensure_smoking_references() -> void:
+	if not cig_pack:
+		cig_pack = find_child("CigarettePack", true, false)
+	if not pack_lid and cig_pack:
+		pack_lid = cig_pack.find_child("PackLid", true, false)
+	if not ext_cig and cig_pack:
+		ext_cig = cig_pack.find_child("ExtractedCig", true, false)
+	if not lighter:
+		lighter = find_child("Lighter", true, false)
+	if not lighter_lid and lighter:
+		lighter_lid = lighter.find_child("LighterLid", true, false)
+	if not lighter_flame and lighter:
+		lighter_flame = lighter.find_child("LighterFlame", true, false)
+	if not lighter_light and lighter:
+		lighter_light = lighter.find_child("LighterLight", true, false)
+	if not cigarette:
+		cigarette = find_child("Cigarette", true, false)
+	if not cig_paper and cigarette:
+		cig_paper = cigarette.find_child("PaperMesh", true, false)
+	if not tip_assembly and cigarette:
+		tip_assembly = cigarette.find_child("TipAssembly", true, false)
+	if not cig_tip and cigarette:
+		cig_tip = cigarette.find_child("EmberTip", true, false)
+	if not ash_tip and cigarette:
+		ash_tip = cigarette.find_child("AshTip", true, false)
+	if not ember_light and cigarette:
+		ember_light = cigarette.find_child("EmberLight", true, false)
+	if not smoke_particles and cigarette:
+		smoke_particles = cigarette.find_child("SmokeParticles", true, false)
+	if not exhale_smoke:
+		exhale_smoke = find_child("ExhaleSmoke", true, false)
+	if not cig_bar:
+		cig_bar = find_child("CigBar", true, false)
+	if not cig_label:
+		cig_label = find_child("CigLabel", true, false)
+
+func start_take_and_light_cigarette() -> void:
+	ensure_smoking_references()
+	if is_in_coma or current_anim != AnimState.NONE:
+		return
+	if smoking_seq_state == SmokingSeqState.TAKING_PACK or smoking_seq_state == SmokingSeqState.PULLING_CIG or smoking_seq_state == SmokingSeqState.LIGHTING_LIGHTER or smoking_seq_state == SmokingSeqState.IGNITING_TIP or smoking_seq_state == SmokingSeqState.PUTTING_AWAY:
+		return # Already in progress
+	
+	smoking_seq_state = SmokingSeqState.TAKING_PACK
+	seq_timer = 0.0
+	cig_burn_factor = 1.0
+	cig_is_lit = false
+	is_inhaling = false
+	puff_timer = 0.0
+	
 	reset_viewmodels()
-	if cigarette:
-		cigarette.visible = true
+	update_cigarette_mesh()
+	
+	if cig_pack:
+		cig_pack.position = PACK_REST_POS
+		cig_pack.rotation = PACK_REST_ROT
+		cig_pack.visible = true
+	if pack_lid:
+		pack_lid.rotation.x = 0.0
+	if ext_cig:
+		ext_cig.position = Vector3(0, 0.035, 0)
+		ext_cig.visible = true
+	if lighter:
+		lighter.position = LIGHTER_REST_POS
+		lighter.rotation = LIGHTER_REST_ROT
+		lighter.visible = false
+	if lighter_lid:
+		lighter_lid.rotation.z = 0.0
+	if lighter_flame:
+		lighter_flame.visible = false
+	if lighter_light:
+		lighter_light.visible = false
+	if ash_tip:
+		ash_tip.visible = false
+	if cig_tip:
+		var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+		if ember_mat:
+			ember_mat.emission_energy_multiplier = 0.0
+	if ember_light:
+		ember_light.light_energy = 0.0
+	
+	print("🚬 Taking cigarette pack out to extract and light a fresh cigarette...")
+
+func puff_cigarette() -> void:
+	if not cig_is_lit or smoking_seq_state == SmokingSeqState.BURNT_OUT or is_in_coma or current_anim != AnimState.NONE:
+		return
+	
+	smoking_seq_state = SmokingSeqState.PUFFING
+	is_inhaling = true
+	puff_timer = 0.85 # Hold at mouth during inhale
+	
+	# Burn down cigarette by ~5.5% per scroll click (16-18 satisfying drags)
+	cig_burn_factor = max(0.0, cig_burn_factor - 0.055)
+	
+	# Inhaling drag boosts buzz stamina (+11.5%) and builds smoke cloud highness (+9.5%)
+	buzz_meter = min(100.0, buzz_meter + 11.5)
+	smoke_meter = min(100.0, smoke_meter + 9.5)
+	
+	# Ember flares with intense glowing heat
+	if cig_tip:
+		var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+		if ember_mat:
+			ember_mat.emission_energy_multiplier = 22.0
+	if ember_light:
+		ember_light.light_energy = 7.0
+	if smoke_particles:
+		smoke_particles.emitting = true
+		smoke_particles.amount = 32
+	
+	# Visually shorten paper and move burning ember back towards filter
+	update_cigarette_mesh()
+	
+	print("💨 Dragged cigarette with scroll wheel! Remaining: %.0f%% | Buzz: %.1f%% | Smoke: %.1f%%" % [cig_burn_factor * 100.0, buzz_meter, smoke_meter])
+	
+	# Check if cigarette burnt down completely
+	if cig_burn_factor <= 0.05:
+		trigger_burnt_out()
+
+func trigger_burnt_out() -> void:
+	smoking_seq_state = SmokingSeqState.BURNT_OUT
+	cig_is_lit = false
+	cig_burn_factor = 0.0
+	is_inhaling = false
+	puff_timer = 0.0
+	update_cigarette_mesh()
+	
+	# Ember turns to dark grey ash stub
+	if cig_tip:
+		var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+		if ember_mat:
+			ember_mat.emission_energy_multiplier = 0.0
+	if ember_light:
+		ember_light.light_energy = 0.0
+	if smoke_particles:
+		smoke_particles.emitting = false
+	if ash_tip:
+		ash_tip.visible = true
+	
+	print("🚬 Cigarette burnt out! Use mouse scroll wheel or press [1] to light a new one.")
+
+func update_cigarette_mesh() -> void:
+	ensure_smoking_references()
+	# Paper tube max length is 0.065m.
+	# Scale along local Y shrinks the paper as cig_burn_factor decreases.
+	if cig_paper:
+		var scale_y = max(0.03, cig_burn_factor)
+		cig_paper.scale.y = scale_y
+		var curr_paper_len = 0.065 * scale_y
+		cig_paper.position.z = -0.012 - (curr_paper_len / 2.0)
+	
+	if tip_assembly:
+		var scale_y = max(0.03, cig_burn_factor)
+		var curr_paper_len = 0.065 * scale_y
+		tip_assembly.position.z = -0.012 - curr_paper_len
+
+func update_smoking_sequence(delta: float) -> void:
+	ensure_smoking_references()
+	match smoking_seq_state:
+		SmokingSeqState.TAKING_PACK:
+			seq_timer += delta
+			var t = clamp(seq_timer / 0.35, 0.0, 1.0)
+			if cig_pack:
+				cig_pack.position = PACK_REST_POS.lerp(PACK_UP_POS, ease(t, -2.0))
+				cig_pack.rotation = PACK_REST_ROT.lerp(PACK_UP_ROT, t)
+			if seq_timer >= 0.35:
+				smoking_seq_state = SmokingSeqState.PULLING_CIG
+				seq_timer = 0.0
+
+		SmokingSeqState.PULLING_CIG:
+			seq_timer += delta
+			var t = clamp(seq_timer / 0.45, 0.0, 1.0)
+			if pack_lid:
+				pack_lid.rotation.x = lerp(0.0, deg_to_rad(-115.0), ease(t, -2.0))
+			if ext_cig:
+				ext_cig.position.y = lerp(0.035, 0.115, ease(t, -2.0))
+			if seq_timer >= 0.45:
+				if cigarette:
+					cigarette.position = CIG_HOLD_POS
+					cigarette.rotation = CIG_HOLD_ROT
+					cigarette.visible = true
+				if ext_cig:
+					ext_cig.visible = false
+				if lighter:
+					lighter.visible = true
+					lighter.position = LIGHTER_REST_POS
+					lighter.rotation = LIGHTER_REST_ROT
+				smoking_seq_state = SmokingSeqState.LIGHTING_LIGHTER
+				seq_timer = 0.0
+
+		SmokingSeqState.LIGHTING_LIGHTER:
+			seq_timer += delta
+			var t = clamp(seq_timer / 0.40, 0.0, 1.0)
+			if cig_pack:
+				pack_lid.rotation.x = lerp(deg_to_rad(-115.0), 0.0, t)
+				cig_pack.position = PACK_UP_POS.lerp(PACK_REST_POS, t)
+			if lighter:
+				lighter.visible = true
+				lighter.position = LIGHTER_REST_POS.lerp(LIGHTER_UP_POS, ease(t, -2.0))
+				lighter.rotation = LIGHTER_REST_ROT.lerp(LIGHTER_UP_ROT, t)
+			if lighter_lid and t >= 0.55:
+				lighter_lid.rotation.z = lerp(0.0, deg_to_rad(105.0), (t - 0.55) / 0.45)
+			if seq_timer >= 0.40:
+				if cig_pack:
+					cig_pack.visible = false
+				if lighter_flame:
+					lighter_flame.visible = true
+				if lighter_light:
+					lighter_light.visible = true
+				smoking_seq_state = SmokingSeqState.IGNITING_TIP
+				seq_timer = 0.0
+
+		SmokingSeqState.IGNITING_TIP:
+			seq_timer += delta
+			var t = clamp(seq_timer / 0.50, 0.0, 1.0)
+			if cig_tip:
+				var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+				if ember_mat:
+					ember_mat.emission_energy_multiplier = lerp(2.0, 18.0, t)
+			if ember_light:
+				ember_light.light_energy = lerp(0.5, 4.0, t)
+			if smoke_particles and not smoke_particles.emitting:
+				smoke_particles.emitting = true
+			if seq_timer >= 0.50:
+				if lighter_flame:
+					lighter_flame.visible = false
+				if lighter_light:
+					lighter_light.visible = false
+				smoking_seq_state = SmokingSeqState.PUTTING_AWAY
+				seq_timer = 0.0
+
+		SmokingSeqState.PUTTING_AWAY:
+			seq_timer += delta
+			var t = clamp(seq_timer / 0.35, 0.0, 1.0)
+			if lighter_lid:
+				lighter_lid.rotation.z = lerp(deg_to_rad(105.0), 0.0, t)
+			if lighter:
+				lighter.position = LIGHTER_UP_POS.lerp(LIGHTER_REST_POS, t)
+			if cig_tip:
+				var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+				if ember_mat:
+					ember_mat.emission_energy_multiplier = 2.0
+			if ember_light:
+				ember_light.light_energy = 0.8
+			if seq_timer >= 0.35:
+				if lighter:
+					lighter.visible = false
+				cig_is_lit = true
+				smoking_seq_state = SmokingSeqState.READY
+				seq_timer = 0.0
+				print("Cigarette lit! Use mouse scroll wheel to puff/smoke.")
+
+		SmokingSeqState.PUFFING:
+			if cigarette:
+				cigarette.position = cigarette.position.lerp(CIG_MOUTH_POS, delta * 12.0)
+				cigarette.rotation = cigarette.rotation.lerp(CIG_MOUTH_ROT, delta * 12.0)
+			puff_timer -= delta
+			if puff_timer <= 0.0:
+				is_inhaling = false
+				smoking_seq_state = SmokingSeqState.EXHALING
+				seq_timer = 0.65
+				if exhale_smoke:
+					exhale_smoke.restart()
+				if cig_tip:
+					var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+					if ember_mat:
+						ember_mat.emission_energy_multiplier = 2.0
+				if ember_light:
+					ember_light.light_energy = 0.8
+				if smoke_particles:
+					smoke_particles.amount = 18
+
+		SmokingSeqState.EXHALING:
+			if cigarette:
+				cigarette.position = cigarette.position.lerp(CIG_HOLD_POS, delta * 7.0)
+				cigarette.rotation = cigarette.rotation.lerp(CIG_HOLD_ROT, delta * 7.0)
+			seq_timer -= delta
+			if seq_timer <= 0.0:
+				smoking_seq_state = SmokingSeqState.READY
+
+		SmokingSeqState.READY:
+			if cigarette and current_anim == AnimState.NONE:
+				cigarette.visible = true
+				var sway = sin(fx_elapsed_time * 2.2) * 0.004
+				cigarette.position = CIG_HOLD_POS + Vector3(0, sway, sway * 0.5)
+				cigarette.rotation = CIG_HOLD_ROT
+				if cig_tip:
+					var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
+					if ember_mat:
+						ember_mat.emission_energy_multiplier = 2.0 + sin(fx_elapsed_time * 3.0) * 0.5
+
+		SmokingSeqState.BURNT_OUT:
+			if cigarette:
+				cigarette.position = cigarette.position.lerp(CIG_BURNT_POS, delta * 6.0)
+				cigarette.rotation = cigarette.rotation.lerp(CIG_BURNT_ROT, delta * 6.0)
+				if cigarette.position.y <= -0.55:
+					cigarette.visible = false
 
 func start_drinking_animation() -> void:
 	if current_anim != AnimState.NONE or is_in_coma:
@@ -249,8 +673,11 @@ func start_drinking_animation() -> void:
 	current_anim = AnimState.DRINKING
 	anim_timer = 0.0
 	anim_duration = 3.8
-	reset_viewmodels()
+	if cigarette and cig_is_lit:
+		cigarette.visible = false
 	if bottle:
+		bottle.position = BOTTLE_REST_POS
+		bottle.rotation = BOTTLE_REST_ROT
 		bottle.visible = true
 
 func start_sober_can_animation() -> void:
@@ -259,8 +686,11 @@ func start_sober_can_animation() -> void:
 	current_anim = AnimState.SOBER_CAN
 	anim_timer = 0.0
 	anim_duration = 3.2
-	reset_viewmodels()
+	if cigarette and cig_is_lit:
+		cigarette.visible = false
 	if energy_can:
+		energy_can.position = CAN_REST_POS
+		energy_can.rotation = CAN_REST_ROT
 		energy_can.visible = true
 
 # ----------------- VEHICLE & NPC INTERACTION -----------------
@@ -408,6 +838,9 @@ func _process(delta: float) -> void:
 		if anim_timer >= anim_duration:
 			finish_viewmodel_animation()
 
+	# Update realistic smoking sequence & scroll-wheel puffing
+	update_smoking_sequence(delta)
+
 	# --- METER DRAINS & DECAYS ---
 	# 1. Buzz / Addiction Meter: Constantly drains unless smoking or drinking!
 	buzz_meter = max(0.0, buzz_meter - BUZZ_DRAIN_RATE * delta)
@@ -510,34 +943,6 @@ func update_interaction_prompt() -> void:
 
 func update_viewmodel_animation(delta: float) -> void:
 	match current_anim:
-		AnimState.SMOKING:
-			if cigarette:
-				var progress = anim_timer / anim_duration
-				if progress < 0.25:
-					# Raising cigarette to mouth
-					var t = progress / 0.25
-					cigarette.position = CIG_REST_POS.lerp(CIG_UP_POS, ease(t, -2.0))
-					cigarette.rotation = CIG_REST_ROT.lerp(CIG_UP_ROT, t)
-				elif progress < 0.70:
-					# Holding at mouth, drag (ember glows brighter, smoke starts)
-					cigarette.position = CIG_UP_POS
-					cigarette.rotation = CIG_UP_ROT
-					if cig_tip:
-						var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
-						if ember_mat:
-							ember_mat.emission_energy_multiplier = 14.0
-					if smoke_particles and not smoke_particles.emitting:
-						smoke_particles.emitting = true
-				else:
-					# Lowering cigarette
-					var t = (progress - 0.70) / 0.30
-					cigarette.position = CIG_UP_POS.lerp(CIG_REST_POS, ease(t, 2.0))
-					cigarette.rotation = CIG_UP_ROT.lerp(CIG_REST_ROT, t)
-					if cig_tip:
-						var ember_mat = cig_tip.get_surface_override_material(0) as StandardMaterial3D
-						if ember_mat:
-							ember_mat.emission_energy_multiplier = 4.0
-
 		AnimState.DRINKING:
 			if bottle:
 				var progress = anim_timer / anim_duration
@@ -575,15 +980,8 @@ func update_viewmodel_animation(delta: float) -> void:
 
 func finish_viewmodel_animation() -> void:
 	match current_anim:
-		AnimState.SMOKING:
-			# Replenish Buzz stamina (+35%) to prevent falling asleep!
-			buzz_meter = min(100.0, buzz_meter + 38.0)
-			# Add to smoke meter (makes screen weird, clouded & hard to see!)
-			smoke_meter = min(100.0, smoke_meter + 35.0)
-			print("Smoked! Buzz: %.1f%% | Smoke Density: %.1f%%" % [buzz_meter, smoke_meter])
-
 		AnimState.DRINKING:
-			# Replenish Buzz stamina (+35%) to prevent falling asleep!
+			# Replenish Buzz stamina (+38%)
 			buzz_meter = min(100.0, buzz_meter + 38.0)
 			# Add to drunkenness meter
 			drunk_meter = min(100.0, drunk_meter + 34.0)
@@ -598,7 +996,17 @@ func finish_viewmodel_animation() -> void:
 			print("Energy Drink! Sobered up & stamina restored to 100%!")
 
 	current_anim = AnimState.NONE
-	reset_viewmodels()
+	if bottle:
+		bottle.visible = false
+	if energy_can:
+		energy_can.visible = false
+	# If player had a lit cigarette with life remaining, restore it to hand!
+	if cig_is_lit and cig_burn_factor > 0.05:
+		if cigarette:
+			cigarette.visible = true
+			cigarette.position = CIG_HOLD_POS
+			cigarette.rotation = CIG_HOLD_ROT
+		smoking_seq_state = SmokingSeqState.READY
 
 func update_meters_ui() -> void:
 	# Update Buzz / Awake Meter
@@ -637,13 +1045,44 @@ func update_meters_ui() -> void:
 			smoke_label.text = "SMOKE DENSITY: %.0f%%" % smoke_meter
 			smoke_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.85))
 
+	# Update Cigarette Meter & Prompt
+	if cig_bar:
+		cig_bar.value = cig_burn_factor * 100.0
+	if cig_label:
+		match smoking_seq_state:
+			SmokingSeqState.IDLE:
+				cig_label.text = "🚬 CIGARETTE: None (Press [1] or Scroll to pull out pack & light)"
+				cig_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.85))
+			SmokingSeqState.TAKING_PACK, SmokingSeqState.PULLING_CIG:
+				cig_label.text = "🚬 CIGARETTE: Pulling from pack..."
+				cig_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+			SmokingSeqState.LIGHTING_LIGHTER, SmokingSeqState.IGNITING_TIP, SmokingSeqState.PUTTING_AWAY:
+				cig_label.text = "🔥 CIGARETTE: Lighting with lighter..."
+				cig_label.add_theme_color_override("font_color", Color(1.0, 0.65, 0.2))
+			SmokingSeqState.READY:
+				cig_label.text = "🚬 CIGARETTE: %.0f%% | 🖱️ Scroll Mouse Wheel to Smoke" % [cig_burn_factor * 100.0]
+				cig_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
+			SmokingSeqState.PUFFING:
+				cig_label.text = "🔥 INHALING... (Drag: +Buzz, +Smoke) | Length: %.0f%%" % [cig_burn_factor * 100.0]
+				cig_label.add_theme_color_override("font_color", Color(1.0, 0.45, 0.15))
+			SmokingSeqState.EXHALING:
+				cig_label.text = "💨 EXHALING SMOKE... | Length: %.0f%%" % [cig_burn_factor * 100.0]
+				cig_label.add_theme_color_override("font_color", Color(0.85, 0.75, 1.0))
+			SmokingSeqState.BURNT_OUT:
+				cig_label.text = "🚬 CIGARETTE BURNT OUT! Press [1] or Scroll to Light New One"
+				cig_label.add_theme_color_override("font_color", Color(0.95, 0.3, 0.3))
+
 	# Update Status badge
 	if effect_badge:
 		var badges: Array[String] = []
 		if is_inside_van:
 			badges.append("🚐 Inside Van")
-		if current_anim == AnimState.SMOKING:
-			badges.append("🚬 Smoking...")
+		if smoking_seq_state == SmokingSeqState.PUFFING:
+			badges.append("🔥 INHALING CIGARETTE")
+		elif smoking_seq_state == SmokingSeqState.READY:
+			badges.append("🚬 CIGARETTE LIT")
+		elif smoking_seq_state == SmokingSeqState.BURNT_OUT:
+			badges.append("🚬 CIGARETTE BURNT OUT")
 		elif current_anim == AnimState.DRINKING:
 			badges.append("🍺 Drinking Beer...")
 		elif current_anim == AnimState.SOBER_CAN:
