@@ -130,7 +130,7 @@ More nights come after launch. Levels are built to be replayed for faster clears
   - **P2P networking** carries gameplay traffic, with Epic's relay servers as the fallback so nobody has to port-forward.
   - **Anonymous device-ID login** means players don't need an Epic account to play.
 - One player hosts; the others join with the code.
-- Godot talks to EOS through a third-party plugin (such as EOSG) plugged into Godot's high-level multiplayer API.
+- Godot talks to EOS through [EOSG](https://github.com/3ddelano/epic-online-services-godot) (MIT, Godot 4.2+), using its `EOSGMultiplayerPeer` so normal Godot RPCs and spawners work over EOS P2P.
 - Co-op only, no PvP, so lag and desync don't ruin a rival's night.
 
 ---
@@ -155,12 +155,13 @@ More nights come after launch. Levels are built to be replayed for faster clears
 
 ## Building
 
-Requires **Godot 4.x** and an EOS plugin (see Multiplayer).
+Requires **Godot 4.4+** (4.2 is the plugin minimum).
 
 1. Clone this repo.
-2. Create a product in the Epic Developer Portal and add your product ID, sandbox ID, deployment ID and client credentials to the project's EOS config (never commit secrets).
-3. Open the project folder in Godot.
-4. Run the main scene.
+2. Download the EOSG **2.3.1** Windows release from the [EOSG releases page](https://github.com/3ddelano/epic-online-services-godot/releases/tag/2.3.1) and copy its `addons/epic-online-services-godot/bin/` folder into this repo's `addons/epic-online-services-godot/`. The binaries include Epic's SDK, so they're git-ignored and not stored here.
+3. Create a product in the Epic Developer Portal and add your product ID, sandbox ID, deployment ID and client credentials to a local `eos_credentials` file (git-ignored; never commit secrets).
+4. Open the project folder in Godot.
+5. Run the main scene.
 
 (Project files land here once the vertical slice starts.)
 

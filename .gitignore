@@ -1,0 +1,11 @@
+# Godot
+.godot/
+*.translation
+export_presets.cfg
+
+# EOS SDK binaries (Epic licence forbids redistribution; download via README steps)
+addons/epic-online-services-godot/bin/
+
+# Secrets
+*.env
+eos_credentials.*

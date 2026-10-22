@@ -1,0 +1,10 @@
+config_version=5
+
+[application]
+
+config/name="Stumble Home"
+config/features=PackedStringArray("4.4")
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/epic-online-services-godot/plugin.cfg")
