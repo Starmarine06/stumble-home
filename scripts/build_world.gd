@@ -485,6 +485,44 @@ func create_materials() -> void:
 	can_alu.roughness = 0.15
 	ResourceSaver.save(can_alu, "res://assets/materials/can_alu_mat.tres")
 
+	# Cigarette Pack Materials
+	var pack_red = StandardMaterial3D.new()
+	pack_red.albedo_color = Color(0.85, 0.12, 0.12)
+	pack_red.roughness = 0.45
+	ResourceSaver.save(pack_red, "res://assets/materials/pack_red.tres")
+
+	var pack_white = StandardMaterial3D.new()
+	pack_white.albedo_color = Color(0.96, 0.95, 0.92)
+	pack_white.roughness = 0.55
+	ResourceSaver.save(pack_white, "res://assets/materials/pack_white.tres")
+
+	var pack_foil = StandardMaterial3D.new()
+	pack_foil.albedo_color = Color(0.92, 0.85, 0.65)
+	pack_foil.metallic = 0.85
+	pack_foil.roughness = 0.25
+	ResourceSaver.save(pack_foil, "res://assets/materials/pack_foil.tres")
+
+	# Lighter Materials
+	var lighter_metal = StandardMaterial3D.new()
+	lighter_metal.albedo_color = Color(0.88, 0.82, 0.60)
+	lighter_metal.metallic = 0.92
+	lighter_metal.roughness = 0.22
+	ResourceSaver.save(lighter_metal, "res://assets/materials/lighter_metal.tres")
+
+	var lighter_flame = StandardMaterial3D.new()
+	lighter_flame.albedo_color = Color(1.0, 0.72, 0.18)
+	lighter_flame.emission_enabled = true
+	lighter_flame.emission = Color(1.0, 0.65, 0.1)
+	lighter_flame.emission_energy_multiplier = 16.0
+	lighter_flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ResourceSaver.save(lighter_flame, "res://assets/materials/lighter_flame.tres")
+
+	# Ash Material
+	var cig_ash = StandardMaterial3D.new()
+	cig_ash.albedo_color = Color(0.28, 0.28, 0.28)
+	cig_ash.roughness = 0.95
+	ResourceSaver.save(cig_ash, "res://assets/materials/cig_ash.tres")
+
 func create_street_light_scene() -> void:
 	print("Creating Street Light scene...")
 	var root = StaticBody3D.new()
@@ -1897,30 +1935,200 @@ func create_player_scene() -> void:
 	vm_root.name = "ViewModels"
 	camera.add_child(vm_root)
 
-	# 1. Cigarette Viewmodel (Key 1)
-	var cig = Node3D.new()
-	cig.name = "Cigarette"
-	cig.position = Vector3(0.24, -0.38, -0.38)
-	cig.visible = false
-	vm_root.add_child(cig)
-
+	# Materials for Smoking viewmodels
 	var cig_paper_mat = load("res://assets/materials/cig_paper.tres")
 	var cig_filter_mat = load("res://assets/materials/cig_filter.tres")
 	var cig_ember_mat = load("res://assets/materials/cig_ember.tres")
 	var smoke_mat = load("res://assets/materials/smoke_mat.tres")
+	var pack_red_mat = load("res://assets/materials/pack_red.tres")
+	var pack_white_mat = load("res://assets/materials/pack_white.tres")
+	var pack_foil_mat = load("res://assets/materials/pack_foil.tres")
+	var lighter_metal_mat = load("res://assets/materials/lighter_metal.tres")
+	var lighter_flame_mat = load("res://assets/materials/lighter_flame.tres")
+	var cig_ash_mat = load("res://assets/materials/cig_ash.tres")
+	var gold_trim_mat = load("res://assets/materials/gold_trim_mat.tres")
 
-	var c_body = MeshInstance3D.new()
-	var cyl_cb = CylinderMesh.new()
-	cyl_cb.top_radius = 0.0065
-	cyl_cb.bottom_radius = 0.0065
-	cyl_cb.height = 0.065
-	cyl_cb.material = cig_paper_mat
-	c_body.mesh = cyl_cb
-	c_body.rotation.x = deg_to_rad(90.0)
-	c_body.position = Vector3(0, 0, -0.045)
-	cig.add_child(c_body)
+	# --- 1A. CIGARETTE PACK VIEWMODEL ---
+	var cig_pack = Node3D.new()
+	cig_pack.name = "CigarettePack"
+	cig_pack.position = Vector3(-0.30, -0.55, -0.35)
+	cig_pack.rotation = Vector3(deg_to_rad(15.0), deg_to_rad(25.0), deg_to_rad(-8.0))
+	cig_pack.visible = false
+	vm_root.add_child(cig_pack)
 
+	# Red Cardboard Box Base
+	var pack_base = MeshInstance3D.new()
+	var b_pbase = BoxMesh.new()
+	b_pbase.size = Vector3(0.056, 0.072, 0.024)
+	b_pbase.material = pack_red_mat
+	pack_base.mesh = b_pbase
+	pack_base.position = Vector3(0, -0.012, 0)
+	cig_pack.add_child(pack_base)
+
+	# White Label Chevron on Front
+	var pack_lbl = MeshInstance3D.new()
+	var b_plbl = BoxMesh.new()
+	b_plbl.size = Vector3(0.0562, 0.034, 0.001)
+	b_plbl.material = pack_white_mat
+	pack_lbl.mesh = b_plbl
+	pack_lbl.position = Vector3(0, -0.008, -0.0121)
+	cig_pack.add_child(pack_lbl)
+
+	# Gold Crest Stripe
+	var pack_stripe = MeshInstance3D.new()
+	var b_pstr = BoxMesh.new()
+	b_pstr.size = Vector3(0.0564, 0.006, 0.001)
+	b_pstr.material = gold_trim_mat
+	pack_stripe.mesh = b_pstr
+	pack_stripe.position = Vector3(0, 0.012, -0.0122)
+	cig_pack.add_child(pack_stripe)
+
+	# Gold Foil Inner Collar
+	var pack_foil_mesh = MeshInstance3D.new()
+	var b_pfoil = BoxMesh.new()
+	b_pfoil.size = Vector3(0.052, 0.014, 0.020)
+	b_pfoil.material = pack_foil_mat
+	pack_foil_mesh.mesh = b_pfoil
+	pack_foil_mesh.position = Vector3(0, 0.028, 0)
+	cig_pack.add_child(pack_foil_mesh)
+
+	# Stationary Filter Tips inside pack
+	for fx in [-0.015, 0.015]:
+		var filter_peek = MeshInstance3D.new()
+		var cyl_fp = CylinderMesh.new()
+		cyl_fp.top_radius = 0.0062
+		cyl_fp.bottom_radius = 0.0062
+		cyl_fp.height = 0.022
+		cyl_fp.material = cig_filter_mat
+		filter_peek.mesh = cyl_fp
+		filter_peek.rotation.x = deg_to_rad(90.0)
+		filter_peek.position = Vector3(fx, 0.036, 0)
+		cig_pack.add_child(filter_peek)
+
+	# Extracted Cigarette (Slides out when pack opens)
+	var ext_cig = Node3D.new()
+	ext_cig.name = "ExtractedCig"
+	ext_cig.position = Vector3(0, 0.035, 0)
+	cig_pack.add_child(ext_cig)
+
+	var ext_filter = MeshInstance3D.new()
+	var cyl_ef = CylinderMesh.new()
+	cyl_ef.top_radius = 0.0064
+	cyl_ef.bottom_radius = 0.0064
+	cyl_ef.height = 0.024
+	cyl_ef.material = cig_filter_mat
+	ext_filter.mesh = cyl_ef
+	ext_filter.rotation.x = deg_to_rad(90.0)
+	ext_cig.add_child(ext_filter)
+
+	var ext_paper = MeshInstance3D.new()
+	var cyl_ep = CylinderMesh.new()
+	cyl_ep.top_radius = 0.0063
+	cyl_ep.bottom_radius = 0.0063
+	cyl_ep.height = 0.065
+	cyl_ep.material = cig_paper_mat
+	ext_paper.mesh = cyl_ep
+	ext_paper.rotation.x = deg_to_rad(90.0)
+	ext_paper.position = Vector3(0, 0, -0.044)
+	ext_cig.add_child(ext_paper)
+
+	# Hinged Pack Lid
+	var pack_lid = Node3D.new()
+	pack_lid.name = "PackLid"
+	pack_lid.position = Vector3(0, 0.025, 0.012)
+	cig_pack.add_child(pack_lid)
+
+	var lid_mesh = MeshInstance3D.new()
+	var b_lid = BoxMesh.new()
+	b_lid.size = Vector3(0.0564, 0.026, 0.0244)
+	b_lid.material = pack_red_mat
+	lid_mesh.mesh = b_lid
+	lid_mesh.position = Vector3(0, 0.013, -0.012)
+	pack_lid.add_child(lid_mesh)
+
+	# --- 1B. LIGHTER VIEWMODEL ---
+	var lighter = Node3D.new()
+	lighter.name = "Lighter"
+	lighter.position = Vector3(0.32, -0.55, -0.30)
+	lighter.rotation = Vector3(deg_to_rad(10.0), deg_to_rad(-20.0), deg_to_rad(5.0))
+	lighter.visible = false
+	vm_root.add_child(lighter)
+
+	# Metallic Lower Casing
+	var l_body = MeshInstance3D.new()
+	var b_lbody = BoxMesh.new()
+	b_lbody.size = Vector3(0.036, 0.052, 0.015)
+	b_lbody.material = lighter_metal_mat
+	l_body.mesh = b_lbody
+	l_body.position = Vector3(0, -0.005, 0)
+	lighter.add_child(l_body)
+
+	# Chimney / Windguard
+	var l_chimney = MeshInstance3D.new()
+	var b_lchim = BoxMesh.new()
+	b_lchim.size = Vector3(0.022, 0.018, 0.012)
+	b_lchim.material = lighter_metal_mat
+	l_chimney.mesh = b_lchim
+	l_chimney.position = Vector3(0.003, 0.030, 0)
+	lighter.add_child(l_chimney)
+
+	# Spark Wheel
+	var l_wheel = MeshInstance3D.new()
+	var cyl_lw = CylinderMesh.new()
+	cyl_lw.top_radius = 0.005
+	cyl_lw.bottom_radius = 0.005
+	cyl_lw.height = 0.004
+	cyl_lw.material = lighter_metal_mat
+	l_wheel.mesh = cyl_lw
+	l_wheel.rotation.z = deg_to_rad(90.0)
+	l_wheel.position = Vector3(-0.009, 0.033, 0)
+	lighter.add_child(l_wheel)
+
+	# Hinged Lighter Lid
+	var lighter_lid = Node3D.new()
+	lighter_lid.name = "LighterLid"
+	lighter_lid.position = Vector3(-0.018, 0.021, 0)
+	lighter.add_child(lighter_lid)
+
+	var l_lid_mesh = MeshInstance3D.new()
+	var b_llid = BoxMesh.new()
+	b_llid.size = Vector3(0.037, 0.028, 0.016)
+	b_llid.material = lighter_metal_mat
+	l_lid_mesh.mesh = b_llid
+	l_lid_mesh.position = Vector3(0.018, 0.014, 0)
+	lighter_lid.add_child(l_lid_mesh)
+
+	# Flame & Light
+	var l_flame = MeshInstance3D.new()
+	l_flame.name = "LighterFlame"
+	var sph_flame = SphereMesh.new()
+	sph_flame.radius = 0.007
+	sph_flame.height = 0.022
+	sph_flame.material = lighter_flame_mat
+	l_flame.mesh = sph_flame
+	l_flame.position = Vector3(0.004, 0.048, 0)
+	l_flame.visible = false
+	lighter.add_child(l_flame)
+
+	var l_light = OmniLight3D.new()
+	l_light.name = "LighterLight"
+	l_light.light_color = Color(1.0, 0.72, 0.2)
+	l_light.light_energy = 4.5
+	l_light.omni_range = 2.5
+	l_light.position = Vector3(0.004, 0.052, 0)
+	l_light.visible = false
+	lighter.add_child(l_light)
+
+	# --- 1C. ACTIVE CIGARETTE VIEWMODEL (BURNS DOWN AS SMOKED) ---
+	var cig = Node3D.new()
+	cig.name = "Cigarette"
+	cig.position = Vector3(0.20, -0.28, -0.35)
+	cig.visible = false
+	vm_root.add_child(cig)
+
+	# Fixed Orange Filter at base
 	var c_filter = MeshInstance3D.new()
+	c_filter.name = "FilterMesh"
 	var cyl_cf = CylinderMesh.new()
 	cyl_cf.top_radius = 0.0066
 	cyl_cf.bottom_radius = 0.0066
@@ -1931,6 +2139,25 @@ func create_player_scene() -> void:
 	c_filter.position = Vector3(0, 0, 0.005)
 	cig.add_child(c_filter)
 
+	# Scalable White Paper Tube (shrinks as smoked)
+	var c_paper = MeshInstance3D.new()
+	c_paper.name = "PaperMesh"
+	var cyl_cb = CylinderMesh.new()
+	cyl_cb.top_radius = 0.0065
+	cyl_cb.bottom_radius = 0.0065
+	cyl_cb.height = 0.065
+	cyl_cb.material = cig_paper_mat
+	c_paper.mesh = cyl_cb
+	c_paper.rotation.x = deg_to_rad(90.0)
+	c_paper.position = Vector3(0, 0, -0.0445)
+	cig.add_child(c_paper)
+
+	# Burning Tip Assembly (Tracks the burning edge of paper)
+	var tip_assembly = Node3D.new()
+	tip_assembly.name = "TipAssembly"
+	tip_assembly.position = Vector3(0, 0, -0.077)
+	cig.add_child(tip_assembly)
+
 	var c_tip = MeshInstance3D.new()
 	c_tip.name = "EmberTip"
 	var cyl_ct = CylinderMesh.new()
@@ -1940,15 +2167,34 @@ func create_player_scene() -> void:
 	cyl_ct.material = cig_ember_mat
 	c_tip.mesh = cyl_ct
 	c_tip.rotation.x = deg_to_rad(90.0)
-	c_tip.position = Vector3(0, 0, -0.08)
 	c_tip.set_surface_override_material(0, cig_ember_mat)
-	cig.add_child(c_tip)
+	tip_assembly.add_child(c_tip)
+
+	var c_ash = MeshInstance3D.new()
+	c_ash.name = "AshTip"
+	var cyl_ash = CylinderMesh.new()
+	cyl_ash.top_radius = 0.0058
+	cyl_ash.bottom_radius = 0.0058
+	cyl_ash.height = 0.004
+	cyl_ash.material = cig_ash_mat
+	c_ash.mesh = cyl_ash
+	c_ash.rotation.x = deg_to_rad(90.0)
+	c_ash.position = Vector3(0, 0, -0.004)
+	tip_assembly.add_child(c_ash)
+
+	var ember_light = OmniLight3D.new()
+	ember_light.name = "EmberLight"
+	ember_light.light_color = Color(1.0, 0.35, 0.05)
+	ember_light.light_energy = 1.0
+	ember_light.omni_range = 1.5
+	ember_light.position = Vector3(0, 0, -0.005)
+	tip_assembly.add_child(ember_light)
 
 	var smoke = CPUParticles3D.new()
 	smoke.name = "SmokeParticles"
-	smoke.position = Vector3(0, 0.005, -0.082)
+	smoke.position = Vector3(0, 0.004, -0.006)
 	smoke.emitting = false
-	smoke.amount = 18
+	smoke.amount = 20
 	smoke.lifetime = 1.4
 	smoke.direction = Vector3(0, 1, 0)
 	smoke.spread = 24.0
@@ -1962,7 +2208,30 @@ func create_player_scene() -> void:
 	pmesh.height = 0.04
 	pmesh.material = smoke_mat
 	smoke.mesh = pmesh
-	cig.add_child(smoke)
+	tip_assembly.add_child(smoke)
+
+	# --- 1D. EXHALE SMOKE PARTICLES (AT MOUTH / CAMERA) ---
+	var exhale = CPUParticles3D.new()
+	exhale.name = "ExhaleSmoke"
+	exhale.position = Vector3(0, -0.07, -0.22)
+	exhale.emitting = false
+	exhale.one_shot = true
+	exhale.explosiveness = 0.75
+	exhale.amount = 24
+	exhale.lifetime = 1.6
+	exhale.direction = Vector3(0, 0.15, -1.0)
+	exhale.spread = 26.0
+	exhale.gravity = Vector3(0, 0.35, 0)
+	exhale.initial_velocity_min = 0.25
+	exhale.initial_velocity_max = 0.60
+	exhale.scale_amount_min = 0.03
+	exhale.scale_amount_max = 0.09
+	var epmesh = SphereMesh.new()
+	epmesh.radius = 0.025
+	epmesh.height = 0.05
+	epmesh.material = smoke_mat
+	exhale.mesh = epmesh
+	camera.add_child(exhale)
 
 	# 2. Beer Bottle Viewmodel (Key 2) - Open Nozzle pointing towards player
 	var bot = Node3D.new()
@@ -2188,10 +2457,33 @@ func create_player_scene() -> void:
 	s_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	smoke_box.add_child(s_bar)
 
+	# --- 4. CIGARETTE LIFE & SCROLL TO SMOKE INDICATOR ---
+	var cig_box = HBoxContainer.new()
+	cig_box.name = "CigContainer"
+	cig_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(cig_box)
+
+	var cig_hud_lbl = Label.new()
+	cig_hud_lbl.name = "CigLabel"
+	cig_hud_lbl.text = "🚬 CIGARETTE: None (Press [1] to pull out pack & light)"
+	cig_hud_lbl.add_theme_font_size_override("font_size", 12)
+	cig_hud_lbl.add_theme_color_override("font_color", Color(1.0, 0.82, 0.45))
+	cig_hud_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cig_box.add_child(cig_hud_lbl)
+
+	var cig_hud_bar = ProgressBar.new()
+	cig_hud_bar.name = "CigBar"
+	cig_hud_bar.min_value = 0.0
+	cig_hud_bar.max_value = 100.0
+	cig_hud_bar.value = 0.0
+	cig_hud_bar.custom_minimum_size = Vector2(200, 14)
+	cig_hud_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cig_box.add_child(cig_hud_bar)
+
 	# Action keys instructions
 	var action_lbl = Label.new()
 	action_lbl.name = "ActionKeys"
-	action_lbl.text = "[1] Smoke (+Buzz/Smoke)   [2] Drink (+Buzz/Drunk)   [3] Energy Drink (Sober Up)   [E] Enter/Exit Van / Talk"
+	action_lbl.text = "[1] Take/Light Cigarette (🖱️ Scroll Wheel to Smoke)   [2] Drink (+Buzz/Drunk)   [3] Energy Drink   [E] Van/Talk"
 	action_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
 	action_lbl.add_theme_font_size_override("font_size", 12)
 	action_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
