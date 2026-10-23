@@ -30,6 +30,7 @@ HP2P="*res://addons/epic-online-services-godot/heos/hp2p.gd"
 HSessions="*res://addons/epic-online-services-godot/heos/hsessions.gd"
 Net="*res://scripts/autoload/net.gd"
 Game="*res://scripts/autoload/game.gd"
+Audio="*res://scripts/autoload/audio.gd"
 
 [dotnet]
 
