@@ -10,6 +10,11 @@ static var trip_max := 14.0
 static var trip_level_base := 1.6
 static var trip_stun_base := 0.7
 static var trip_stun_per_level := 0.6
+# Stumble meter: builds at stumble_gain/s * speed01, drains at stumble_drain/s when slow.
+static var stumble_gain := 0.25
+static var stumble_drain := 0.5
+static var stumble_threshold := 1.0
+static var stumble_warn_time := 1.2
 
 # Hands (player.gd)
 static var grab_cooldown := 0.4
@@ -63,6 +68,8 @@ static func _table() -> Dictionary:
 	return {
 		"trip_min": 6.0, "trip_max": 14.0, "trip_level_base": 1.6,
 		"trip_stun_base": 0.7, "trip_stun_per_level": 0.6,
+		"stumble_gain": 0.25, "stumble_drain": 0.5,
+		"stumble_threshold": 1.0, "stumble_warn_time": 1.2,
 		"grab_cooldown": 0.4, "pickup_strain": 0.1,
 		"loose_min": 10.0, "loose_max": 22.0, "loose_q_base": 0.4,
 		"passout_secs": 25.0, "fatigue_carry_base": 0.01, "fatigue_carry_per_kg": 0.003,
@@ -108,6 +115,10 @@ static func set_value(key: String, v: float) -> void:
 		"trip_level_base": trip_level_base = v
 		"trip_stun_base": trip_stun_base = v
 		"trip_stun_per_level": trip_stun_per_level = v
+		"stumble_gain": stumble_gain = v
+		"stumble_drain": stumble_drain = v
+		"stumble_threshold": stumble_threshold = v
+		"stumble_warn_time": stumble_warn_time = v
 		"grab_cooldown": grab_cooldown = v
 		"pickup_strain": pickup_strain = v
 		"loose_min": loose_min = v
@@ -156,6 +167,10 @@ static func _read(key: String) -> float:
 		"trip_level_base": out = trip_level_base
 		"trip_stun_base": out = trip_stun_base
 		"trip_stun_per_level": out = trip_stun_per_level
+		"stumble_gain": out = stumble_gain
+		"stumble_drain": out = stumble_drain
+		"stumble_threshold": out = stumble_threshold
+		"stumble_warn_time": out = stumble_warn_time
 		"grab_cooldown": out = grab_cooldown
 		"pickup_strain": out = pickup_strain
 		"loose_min": out = loose_min
