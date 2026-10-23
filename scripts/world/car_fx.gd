@@ -7,6 +7,8 @@ var exhaust: Node3D
 var smoke: CPUParticles3D
 var sparks: CPUParticles3D
 var puff: CPUParticles3D
+var _shake_tw: Tween
+var _shake_base := {}
 
 
 func setup(c: Node3D) -> void:
@@ -63,6 +65,10 @@ func set_repair(t: float) -> void:
 		return
 	t = clampf(t, 0.0, 1.0)
 	smoke.emitting = t < 1.0
+	var dmg := 1.0 - t
+	smoke.amount = maxi(1, int(ceil(32.0 * dmg)))
+	smoke.scale_amount_min = 0.4 + 0.6 * dmg
+	smoke.scale_amount_max = 0.6 + 1.0 * dmg
 	smoke.color = Color(0.08 + 0.4 * t, 0.08 + 0.4 * t, 0.08 + 0.4 * t, 0.8 * (1.0 - t * 0.5))
 
 
@@ -79,6 +85,26 @@ func spark_burst(local_pos: Vector3) -> void:
 	sparks.emitting = true
 
 
+func _shake_nodes() -> Array:
+	var out: Array = []
+	if car == null:
+		return out
+	for c in car.get_children():
+		if c is Node3D and c != self and c != engine_bay and c != exhaust:
+			out.append(c)
+	return out
+
+
+func _restore_shake() -> void:
+	if _shake_tw and _shake_tw.is_valid():
+		_shake_tw.kill()
+	_shake_tw = null
+	for n in _shake_base:
+		if is_instance_valid(n):
+			n.position = _shake_base[n]
+	_shake_base.clear()
+
+
 func engine_start() -> void:
 	if puff:
 		if puff.is_inside_tree():
@@ -86,19 +112,41 @@ func engine_start() -> void:
 		puff.emitting = true
 	if car == null or not car.is_inside_tree():
 		return
-	var origin := car.position
-	var tw := car.create_tween()
+	_restore_shake()
+	var nodes := _shake_nodes()
+	if nodes.is_empty():
+		return
+	for n in nodes:
+		_shake_base[n] = n.position
+	_shake_tw = create_tween().set_parallel(false)
 	for i in 4:
-		tw.tween_property(car, "position", origin + Vector3(randf_range(-0.04, 0.04), randf_range(0.0, 0.03), randf_range(-0.04, 0.04)), 0.04)
-	tw.tween_property(car, "position", origin, 0.05)
+		var off := Vector3(randf_range(-0.04, 0.04), randf_range(0.0, 0.03), randf_range(-0.04, 0.04))
+		_shake_tw.tween_callback(_apply_shake.bind(off))
+		_shake_tw.tween_interval(0.04)
+	_shake_tw.tween_callback(_restore_shake)
+
+
+func _apply_shake(off: Vector3) -> void:
+	for n in _shake_base:
+		if is_instance_valid(n):
+			n.position = _shake_base[n] + off
 
 
 func flicker_lights(lights: Array) -> void:
 	for l in lights:
-		if l is Light3D and l.is_inside_tree():
-			var base: float = l.light_energy
-			var tw: Tween = l.create_tween()
-			tw.tween_property(l, "light_energy", 0.0, 0.05)
-			tw.tween_property(l, "light_energy", base, 0.05)
-			tw.tween_property(l, "light_energy", 0.0, 0.05)
-			tw.tween_property(l, "light_energy", base, 0.1)
+		if not (l is Light3D) or not l.is_inside_tree():
+			continue
+		if not l.has_meta("fx_base_energy"):
+			l.set_meta("fx_base_energy", l.light_energy)
+		var base: float = l.get_meta("fx_base_energy")
+		if l.has_meta("fx_tween"):
+			var old = l.get_meta("fx_tween")
+			if old is Tween and old.is_valid():
+				old.kill()
+		l.light_energy = base
+		var tw: Tween = l.create_tween()
+		l.set_meta("fx_tween", tw)
+		tw.tween_property(l, "light_energy", 0.0, 0.05)
+		tw.tween_property(l, "light_energy", base, 0.05)
+		tw.tween_property(l, "light_energy", 0.0, 0.05)
+		tw.tween_property(l, "light_energy", base, 0.1)
