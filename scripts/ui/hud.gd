@@ -25,6 +25,9 @@ var _cop_left := 0.0
 var _cop_side := ""
 var _nav_shown := 0
 var _nav_roll := 0.0
+var _voice_indicator: Control
+var _voice_hint: Label
+var _voice_speaking: Label
 
 
 func _ready() -> void:
@@ -81,6 +84,33 @@ func _ready() -> void:
 	_mg_holder.size = Vector2(520, 90)
 	root.add_child(_mg_holder)
 
+	_voice_indicator = Control.new()
+	_voice_indicator.name = "VoiceIndicator"
+	_voice_indicator.position = Vector2(16, 50)
+	add_child(_voice_indicator)
+
+	_voice_hint = Label.new()
+	_voice_hint.name = "VoiceHint"
+	_voice_hint.text = "[V] Push to talk  [M] Mute"
+	_voice_hint.add_theme_font_size_override("font_size", 14)
+	_voice_hint.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 0.8))
+	_voice_indicator.add_child(_voice_hint)
+
+	_voice_speaking = Label.new()
+	_voice_speaking.name = "VoiceSpeaking"
+	_voice_speaking.position = Vector2(0, 20)
+	_voice_speaking.add_theme_font_size_override("font_size", 14)
+	_voice_speaking.add_theme_color_override("font_color", Color(0.3, 0.9, 0.3))
+	_voice_indicator.add_child(_voice_speaking)
+
+	var net := get_node_or_null("/root/Net")
+	var voice = net.get_node_or_null("Voice") if net != null else null
+	if voice != null:
+		voice.speaking_changed.connect(_on_speaking_changed)
+		_voice_indicator.visible = voice.is_active()
+	else:
+		_voice_indicator.visible = false
+
 	var names := []
 	for r in Game.my_roles():
 		names.append("%s (%s)" % [Roles.role_name(r), Roles.INFO[r]["type"]])
@@ -95,6 +125,10 @@ func _exit_tree() -> void:
 		Game.toast_msg.disconnect(show_toast)
 	if Game.cop_warning.is_connected(_on_cop_warning):
 		Game.cop_warning.disconnect(_on_cop_warning)
+	var net := get_node_or_null("/root/Net")
+	var voice = net.get_node_or_null("Voice") if net != null else null
+	if voice != null and voice.speaking_changed.is_connected(_on_speaking_changed):
+		voice.speaking_changed.disconnect(_on_speaking_changed)
 
 
 func _label(parent: Control, pos: Vector2, font_size: int) -> Label:
@@ -143,6 +177,12 @@ func start_minigame(hits: int, misses: int, title: String, limit: float, done: C
 		minigame_active = false
 		done.call(ok))
 	_mg_holder.add_child(mg)
+
+
+func _on_speaking_changed(peer_name: String, speaking: bool) -> void:
+	if _voice_speaking == null:
+		return
+	_voice_speaking.text = ("%s is speaking..." % peer_name) if speaking else ""
 
 
 func _on_cop_warning(side: String, seconds: float) -> void:

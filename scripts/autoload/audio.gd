@@ -7,6 +7,7 @@ const PLACEHOLDER_HZ := {
 	&"clang": 180.0, &"part_fit_good": 660.0, &"part_fit_bad": 220.0, &"part_fell": 140.0,
 	&"rattle": 300.0, &"passout": 110.0, &"cop_siren": 880.0, &"engine_overheat": 400.0,
 	&"engine_cooled": 520.0, &"crash": 90.0, &"win": 784.0, &"lose": 130.0, &"ui_click": 1000.0,
+	&"dog_bark": 320.0, &"horn": 440.0, &"mugger": 160.0, &"kebab_open": 587.0, &"kebab_done": 784.0,
 }
 
 ## event -> stream path (files are optional; placeholder tone plays when absent)
@@ -24,6 +25,11 @@ var events := {
 	&"win": "res://audio/sfx/win.ogg",
 	&"lose": "res://audio/sfx/lose.ogg",
 	&"ui_click": "res://audio/sfx/ui_click.ogg",
+	&"dog_bark": "res://audio/sfx/dog_bark.ogg",
+	&"horn": "res://audio/sfx/horn.ogg",
+	&"mugger": "res://audio/sfx/mugger.ogg",
+	&"kebab_open": "res://audio/sfx/kebab_open.ogg",
+	&"kebab_done": "res://audio/sfx/kebab_done.ogg",
 }
 var played := {}
 var use_placeholders := true
@@ -55,6 +61,9 @@ func _ready() -> void:
 	game.phase_changed.connect(_on_phase_changed)
 	game.stats_changed.connect(_on_stats_changed)
 	game.toast_msg.connect(_on_toast)
+	game.hazard_hit.connect(_on_hazard_hit)
+	game.kebab_opened.connect(_on_kebab_opened)
+	game.kebab_reward.connect(_on_kebab_reward)
 
 
 func _setup_buses() -> void:
@@ -152,3 +161,22 @@ func _on_toast(text: String) -> void:
 		play(&"passout")
 	elif text.begins_with("Engine cooled"):
 		play(&"engine_cooled")
+
+
+func _on_hazard_hit(kind: String) -> void:
+	match kind:
+		"dog":
+			play(&"dog_bark")
+		"traffic":
+			play(&"horn")
+		"mugger":
+			play(&"mugger")
+
+
+func _on_kebab_opened(_order_seed: int, _reader_peer: int) -> void:
+	play(&"kebab_open")
+
+
+func _on_kebab_reward(_sober: float) -> void:
+	play(&"kebab_done")
+
