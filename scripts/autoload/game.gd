@@ -12,6 +12,10 @@ signal car_state(pos: Vector3, yaw: float, speed: float)
 signal spawn_players
 signal drive_started(drive_seed: int)
 signal hazard_hit(kind: String)
+signal kebab_opened(order_seed: int, reader_peer: int)
+signal kebab_state(items: Array, time_left: float)
+signal kebab_closed
+signal kebab_reward(sober: float)
 
 enum Phase { MENU, LOBBY, SCAVENGE, DRIVE, RESULT }
 enum PS { WORLD, CARRIED, INSTALLED }
@@ -29,6 +33,7 @@ var PASSOUT_SECS: float:
 	get:
 		return Tuning.passout_secs
 const WANTED_MAX := 100.0
+const KEBAB_PICK_GAP_MS := 60    # the host ignores kebab picks/undos closer together than this
 const HAZARD_KINDS := ["traffic", "dog", "mugger"]
 const HAZARD_MIN_GAP_MS := 400   # the host ignores hazard hits closer together than this
 const CAR_POS := Vector3.ZERO
@@ -49,6 +54,13 @@ var engine_hot := false
 var won := false
 var result_text := ""
 
+## Set by whoever starts the night (night 2 on); Drive builds the shop from it.
+var kebab_shop_enabled := false
+var kebab_is_open := false
+var _kebab: Kebab                 # host only: the authoritative order and kebab
+var _kebab_used := false          # host only: one shop visit per drive
+var _kebab_last_ms := -100000
+var _kebab_last_sync := 0.0
 var _hazard_last_ms := -100000
 var _fat_sync := 0.0
 var _ready_peers: Dictionary = {}
@@ -675,6 +687,8 @@ func s_arrived() -> void:
 
 
 func _finish(win: bool, text: String) -> void:
+	if kebab_is_open:
+		_bcast("c_kebab_close")
 	_bcast("c_result", [win, text])
 
 
@@ -721,6 +735,7 @@ func _start_drive() -> void:
 	_cop_timer = randf_range(Tuning.cop_first_min, Tuning.cop_first_max)
 	_cop_open = false
 	_hazard_last_ms = -100000
+	_kebab_reset()
 	_bcast("c_begin_drive", [randi()])
 
 
@@ -748,6 +763,14 @@ func _tick_drive(delta: float) -> void:
 			_cop_left = Tuning.cop_window
 			var side := "LEFT" if randf() < 0.5 else "RIGHT"
 			_bcast("c_cop_warning", [side, _cop_left])
+	if kebab_is_open and _kebab != null:
+		# Wanted keeps rising and the cops keep coming while the crew faffs with onions.
+		_kebab.tick(delta)
+		_kebab_last_sync += delta
+		if _kebab.is_over():
+			_kebab_finish("Time's up! The kebab man throws what you made at you.")
+		elif _kebab_last_sync >= 1.0:
+			_kebab_send_state()
 	if wanted >= WANTED_MAX:
 		_finish(false, "Arrested! The whole crew spends the night in a cell.")
 	elif car_hp <= 0.0:
@@ -757,3 +780,125 @@ func _tick_drive(delta: float) -> void:
 @rpc("authority", "call_remote", "reliable")
 func c_cop_warning(side: String, seconds: float) -> void:
 	cop_warning.emit(side, seconds)
+
+
+# --- Kebab shop -------------------------------------------------------------------------
+# Host is the referee. Only the Navigator reads the order (reader_peer); any peer may
+# pick ingredients, and each pick wobbles by the picker's own drunk level. Opening is
+# requested by the Driver's peer (who is the one stopped at the shop); once per drive.
+
+func _kebab_reset() -> void:
+	_kebab = null
+	_kebab_used = false
+	_kebab_last_sync = 0.0
+	_kebab_last_ms = -100000
+	if kebab_is_open:
+		kebab_is_open = false
+		kebab_closed.emit()
+
+
+func request_kebab_open() -> void:
+	_to_host("s_kebab_open")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_kebab_open() -> void:
+	if not is_host() or phase != Phase.DRIVE or not has_role_for(_sender(), Roles.Id.DRIVER):
+		return
+	if not kebab_shop_enabled or _kebab_used or kebab_is_open:
+		return
+	_kebab_used = true
+	_kebab = Kebab.new()
+	var order_seed := randi()
+	_kebab.new_order(order_seed)
+	_kebab_last_sync = 0.0
+	_toast_all("Kebab shop! The Navigator reads the order, everyone else does the chopping.")
+	_bcast("c_kebab_open", [order_seed, int(role_owner.get(Roles.Id.NAVIGATOR, 1))])
+	_kebab_send_state()
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_kebab_open(order_seed: int, reader_peer: int) -> void:
+	kebab_is_open = true
+	kebab_opened.emit(order_seed, reader_peer)
+
+
+func request_kebab_pick(ingredient: String) -> void:
+	_to_host("s_kebab_pick", [ingredient])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_kebab_pick(ingredient: String) -> void:
+	if not is_host() or phase != Phase.DRIVE or not kebab_is_open or _kebab == null:
+		return
+	if not Kebab.MENU.has(ingredient) or not _kebab_gap_ok():
+		return
+	_kebab.pick(ingredient, _drunk_of(_sender()))
+	_kebab_send_state()
+	if _kebab.is_complete():
+		_kebab_finish("Perfect kebab! Chef's kiss, you absolute legends.")
+
+
+func request_kebab_undo() -> void:
+	_to_host("s_kebab_undo")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_kebab_undo() -> void:
+	if not is_host() or phase != Phase.DRIVE or not kebab_is_open or _kebab == null:
+		return
+	if not _kebab_gap_ok():
+		return
+	_kebab.undo()
+	_kebab_send_state()
+
+
+func request_kebab_close() -> void:
+	_to_host("s_kebab_close")
+
+
+## Walking away takes whatever score you have so far.
+@rpc("any_peer", "call_remote", "reliable")
+func s_kebab_close() -> void:
+	if not is_host() or phase != Phase.DRIVE or not kebab_is_open or _kebab == null:
+		return
+	_kebab_finish("You walk out with whatever that is.")
+
+
+func _kebab_gap_ok() -> bool:
+	var now := Time.get_ticks_msec()
+	if now - _kebab_last_ms < KEBAB_PICK_GAP_MS:
+		return false
+	_kebab_last_ms = now
+	return true
+
+
+func _kebab_send_state() -> void:
+	_kebab_last_sync = 0.0
+	_bcast("c_kebab_state", [_kebab.items, _kebab.time_left()])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_kebab_state(items: Array, time_left: float) -> void:
+	kebab_state.emit(items, time_left)
+
+
+func _kebab_finish(line: String) -> void:
+	var r: Dictionary = _kebab.reward(_kebab.score())
+	_kebab = null
+	_add_wanted(-float(r.wanted_delta) * WANTED_MAX)
+	car_hp = minf(car_hp + float(r.hp), 100.0)
+	_toast_all(line)
+	_bcast("c_kebab_close")
+	_bcast("c_kebab_reward", [float(r.sober)])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_kebab_close() -> void:
+	kebab_is_open = false
+	kebab_closed.emit()
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_kebab_reward(sober: float) -> void:
+	kebab_reward.emit(sober)

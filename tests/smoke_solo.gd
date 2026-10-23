@@ -120,6 +120,49 @@ func _run() -> void:
 	game.s_hazard("dog")
 	game.phase = game.Phase.DRIVE
 	_check(game.car_hp == hp0, "hazard outside the drive changes nothing")
+	# Kebab shop
+	_check(d.shop == null, "night 1 drive builds no kebab shop")
+	var kd = load("res://scripts/world/drive.gd").new()
+	var kcar := Node3D.new()
+	kd.setup(d._seed, kcar, {"traffic_count": 0, "dog_count": 0, "mugger_count": 0}, true)
+	_check(kd.shop != null and kd.path_query(kd.shop.position).d > kd.ROAD_W * 0.5, "kebab flag builds a shop beside the road")
+	_check(kd.in_shop_zone(kd.shop.position) and not kd.in_shop_zone(kd.pts[0]), "shop zone is local to the shop")
+	kd.free()
+	kcar.free()
+	game.s_kebab_open()
+	_check(not game.kebab_is_open, "shop disabled: s_kebab_open refused")
+	game.kebab_shop_enabled = true
+	game.s_kebab_pick("Lamb")
+	_check(game._kebab == null, "s_kebab_pick before opening does nothing")
+	game.wanted = 50.0
+	game.car_hp = 60.0
+	game.s_kebab_open()
+	await _wait(0.1)
+	_check(game.kebab_is_open and game._kebab != null, "s_kebab_open enters the kebab state")
+	_check(world.get_node_or_null("KebabLayer/KebabPanel") != null, "kebab panel exists under World")
+	_check(world.kebab_panel.reader, "solo Navigator is the order reader")
+	var wanted_open: float = game.wanted
+	var guard_k := 0
+	while game.kebab_is_open and guard_k < 60:
+		var k = game._kebab
+		var n: int = k.items.size()
+		if n > 0 and k.items[n - 1] != k.order[n - 1]:
+			game.s_kebab_undo()
+		else:
+			game.s_kebab_pick(k.order[n])
+		await _wait(0.08)
+		guard_k += 1
+	_check(not game.kebab_is_open and game._kebab == null, "correct picks finish the order and close the shop (%d steps)" % guard_k)
+	_check(game.wanted < wanted_open and game.car_hp > 60.0, "kebab reward lowers wanted (%.1f -> %.1f) and raises car hp (%.1f)" % [wanted_open, game.wanted, game.car_hp])
+	_check(world.get_node_or_null("KebabLayer") == null, "kebab panel gone after the order")
+	game.s_kebab_open()
+	_check(not game.kebab_is_open, "second kebab visit in the same drive refused")
+	hp0 = game.car_hp
+	w0 = game.wanted
+	game.s_kebab_pick("Lamb")
+	game.s_kebab_undo()
+	_check(game._kebab == null and game.car_hp == hp0 and game.wanted == w0, "kebab picks outside the kebab state do nothing")
+	game.kebab_shop_enabled = false
 	# Drive along the route with the Driver's own simulation
 	for i in 200:
 		Input.action_press("forward")
