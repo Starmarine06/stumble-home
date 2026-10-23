@@ -22,10 +22,15 @@ var player_name := "Drunk%d" % (randi() % 900 + 100)
 var room_code := ""
 var lobby: HLobby
 
+var voice: Voice
+
 var _eos_ready := false
 
 
 func _ready() -> void:
+	voice = Voice.new()
+	voice.name = "Voice"
+	add_child(voice)
 	multiplayer.connected_to_server.connect(func(): joined.emit())
 	multiplayer.connection_failed.connect(func(): join_failed.emit("Could not reach the host."))
 
@@ -96,6 +101,7 @@ func host_eos() -> void:
 		host_failed.emit("Could not open the P2P socket (%s)." % err)
 		return
 	multiplayer.multiplayer_peer = peer
+	voice.room_joined(lobby.lobby_id, lobby.rtc_room_enabled)
 	hosted.emit(room_code)
 
 
@@ -119,6 +125,7 @@ func join_eos(code: String) -> void:
 		join_failed.emit("Could not connect to the host (%s)." % err)
 		return
 	multiplayer.multiplayer_peer = peer
+	voice.room_joined(lobby.lobby_id, lobby.rtc_room_enabled)
 	status_changed.emit("Connecting to host...")
 
 
@@ -147,6 +154,7 @@ func join_enet(ip: String) -> void:
 # --- Shared ------------------------------------------------------------------
 
 func leave() -> void:
+	voice.room_left()
 	if multiplayer.multiplayer_peer:
 		multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
