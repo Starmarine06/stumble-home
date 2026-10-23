@@ -23,7 +23,10 @@ const SLOT_SYMMETRIC := [false, true, true, true]  # round parts do not care whi
 const PART_MASS := [12.0, 5.0, 0.4, 9.0]            # kg: heavy things really are hard to hold
 const PLACE_R := 0.5         # let go this close to the slot and it seats; any further and it just drops
 const SOLID_Q := 0.75        # fitted at least this well and it will never come loose
-const PASSOUT_SECS := 25.0   # how long a worn-out hauler stays down
+## How long a worn-out hauler stays down (read-through to Tuning).
+var PASSOUT_SECS: float:
+	get:
+		return Tuning.passout_secs
 const WANTED_MAX := 100.0
 const CAR_POS := Vector3.ZERO
 
@@ -410,7 +413,7 @@ func s_place(q: float) -> void:
 	p.holder = 0
 	p.q = q
 	p.warned = false
-	p.loose_t = randf_range(10.0, 22.0) * (0.4 + q) if q < SOLID_Q else 0.0
+	p.loose_t = randf_range(Tuning.loose_min, Tuning.loose_max) * (Tuning.loose_q_base + q) if q < SOLID_Q else 0.0
 	var dmg := (1.0 - q) * 18.0
 	build_damage += dmg
 	_add_wanted((1.0 - q) * 10.0)
@@ -444,7 +447,7 @@ func _tire(who: int, amount: float) -> void:
 		return
 	fatigue[who] = fatigue_of(who) + amount
 	if fatigue[who] >= 1.0:
-		out_left[who] = PASSOUT_SECS
+		out_left[who] = Tuning.passout_secs
 		_toast_all("%s passed out from hauling parts. That is the Mechanic's job!" % names.get(who, "?"))
 		var i := carried_by(who)
 		if i != -1:
@@ -460,12 +463,12 @@ func _tick_fatigue(delta: float) -> void:
 		if is_out(who):
 			out_left[who] = maxf(0.0, out_left[who] - delta)
 			if out_left[who] <= 0.0:
-				fatigue[who] = 0.4
+				fatigue[who] = Tuning.fatigue_wake
 				_toast_all("%s woke up. Mouth tastes like a battery." % names.get(who, "?"))
 		elif carried_by(who) != -1:
-			_tire(who, (0.01 + 0.003 * PART_MASS[carried_by(who)]) * delta)
+			_tire(who, (Tuning.fatigue_carry_base + Tuning.fatigue_carry_per_kg * PART_MASS[carried_by(who)]) * delta)
 		else:
-			fatigue[who] = maxf(0.0, fatigue_of(who) - 0.03 * delta)
+			fatigue[who] = maxf(0.0, fatigue_of(who) - Tuning.fatigue_recover * delta)
 	_fat_sync -= delta
 	if _fat_sync <= 0.0:
 		_fat_sync = 0.25
@@ -600,10 +603,10 @@ func s_cool(ok: bool) -> void:
 		return
 	if ok:
 		engine_hot = false
-		_hot_timer = randf_range(25.0, 40.0)
+		_hot_timer = randf_range(Tuning.overheat_repeat_min, Tuning.overheat_repeat_max)
 		_toast_all("Engine cooled. Mechanic is a legend.")
 	else:
-		car_hp -= 5.0
+		car_hp -= Tuning.cool_fail_damage
 
 
 func request_cop_result(ok: bool) -> void:
@@ -617,12 +620,12 @@ func s_cop_result(ok: bool) -> void:
 	if not has_role_for(_sender(), Roles.Id.LOOKOUT):
 		return
 	_cop_open = false
-	_cop_timer = randf_range(20.0, 30.0)
+	_cop_timer = randf_range(Tuning.cop_repeat_min, Tuning.cop_repeat_max)
 	if ok:
-		_add_wanted(-8.0)
+		_add_wanted(Tuning.cop_success_wanted)
 		_toast_all("The Lookout got everyone ducked. Cops drive past.")
 	else:
-		_add_wanted(10.0)
+		_add_wanted(Tuning.cop_fail_wanted)
 		_toast_all("The Lookout wobbled. The cops noticed.")
 
 
@@ -655,7 +658,7 @@ func _process(delta: float) -> void:
 		return
 	match phase:
 		Phase.SCAVENGE:
-			wanted = maxf(0.0, wanted - 0.6 * delta)
+			wanted = maxf(0.0, wanted - Tuning.wanted_decay_scavenge * delta)
 			_tick_loose(delta)
 			_tick_fatigue(delta)
 			if _phase_timer > 0.0:
@@ -680,8 +683,8 @@ func _start_drive() -> void:
 	wanted = maxf(0.0, wanted * 0.5)
 	car_hp = maxf(40.0, 100.0 - build_damage)
 	engine_hot = false
-	_hot_timer = randf_range(18.0, 28.0)
-	_cop_timer = randf_range(14.0, 20.0)
+	_hot_timer = randf_range(Tuning.overheat_first_min, Tuning.overheat_first_max)
+	_cop_timer = randf_range(Tuning.cop_first_min, Tuning.cop_first_max)
 	_cop_open = false
 	_bcast("c_begin_drive", [randi()])
 
@@ -689,7 +692,7 @@ func _start_drive() -> void:
 func _tick_drive(delta: float) -> void:
 	_tick_loose(delta)
 	if engine_hot:
-		car_hp -= 1.5 * delta
+		car_hp -= Tuning.overheat_hp_drain * delta
 	else:
 		_hot_timer -= delta
 		if _hot_timer <= 0.0:
@@ -699,15 +702,15 @@ func _tick_drive(delta: float) -> void:
 		_cop_left -= delta
 		if _cop_left <= 0.0:
 			_cop_open = false
-			_cop_timer = randf_range(20.0, 30.0)
-			_add_wanted(25.0)
+			_cop_timer = randf_range(Tuning.cop_repeat_min, Tuning.cop_repeat_max)
+			_add_wanted(Tuning.cop_miss_wanted)
 			_toast_all("The cops clocked you!")
 	else:
-		wanted = maxf(0.0, wanted - 0.3 * delta)
+		wanted = maxf(0.0, wanted - Tuning.wanted_decay_drive * delta)
 		_cop_timer -= delta
 		if _cop_timer <= 0.0:
 			_cop_open = true
-			_cop_left = 7.0
+			_cop_left = Tuning.cop_window
 			var side := "LEFT" if randf() < 0.5 else "RIGHT"
 			_bcast("c_cop_warning", [side, _cop_left])
 	if wanted >= WANTED_MAX:

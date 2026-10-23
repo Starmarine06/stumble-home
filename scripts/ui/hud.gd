@@ -243,7 +243,7 @@ func _drive_hud(delta: float) -> void:
 		_nav_roll -= delta
 		if _nav_roll <= 0.0:
 			_nav_roll = 0.6
-			var wrong := randf() < 0.35 * drunk_level
+			var wrong := randf() < Tuning.nav_wrong_rate * drunk_level
 			_nav_shown = n.dir * (-1 if wrong else 1)
 		if n.final:
 			_nav_label.text = "HOME in %d m" % int(n.dist)

@@ -1,6 +1,7 @@
 class_name Roles
 extends RefCounted
 ## The four drunks. Everyone is very drunk; each one is drunk in a different way.
+## Per-role drunk levels live here; all other balance numbers are in tuning.gd (Tuning).
 
 enum Id { DRIVER, NAVIGATOR, MECHANIC, LOOKOUT }
 

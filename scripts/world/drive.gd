@@ -45,7 +45,7 @@ func setup(drive_seed: int, p_car: Node3D) -> void:
 	_target_pos = car.position
 	is_driver = Game.has_role(Roles.Id.DRIVER)
 	drunk = Drunk.new(Roles.role_drunk(Roles.Id.DRIVER))
-	_nod_in = randf_range(10.0, 16.0)
+	_nod_in = randf_range(Tuning.nod_first_min, Tuning.nod_first_max)
 	Game.car_state.connect(_on_car_state)
 	Game.cop_warning.connect(_on_cop_warning)
 
@@ -200,7 +200,7 @@ func _drive_step(delta: float) -> void:
 	_nod_in -= delta
 	if _nod_in <= 0.0 and _blackout_left <= 0.0:
 		_blackout_left = 0.9
-		_nod_in = randf_range(14.0, 22.0)
+		_nod_in = randf_range(Tuning.nod_repeat_min, Tuning.nod_repeat_max)
 	var steer_raw := Input.get_axis("left", "right")
 	var thr := Input.get_axis("back", "forward")
 	blackout = 0.0
@@ -210,7 +210,7 @@ func _drive_step(delta: float) -> void:
 		blackout = clampf(_blackout_left / 0.3, 0.0, 1.0) * clampf((0.9 - _blackout_left) / 0.2, 0.0, 1.0)
 	_hiccup_in -= delta
 	if _hiccup_in <= 0.0:
-		_hiccup_in = randf_range(5.0, 9.0)
+		_hiccup_in = randf_range(Tuning.hiccup_min, Tuning.hiccup_max)
 		_kick = randf_range(-1.0, 1.0) * 0.9 * drunk.level
 	_kick = move_toward(_kick, 0.0, 2.5 * delta)
 	var steer := clampf(drunk.steer1(steer_raw) + _kick, -1.0, 1.0)
