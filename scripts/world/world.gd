@@ -10,6 +10,7 @@ var car: Node3D
 var cam: Camera3D
 var hud: Hud
 var drive: Drive
+var kebab_panel: KebabPanel
 
 var _yard: Node3D
 var _part_nodes: Array = []
@@ -69,6 +70,10 @@ func _ready() -> void:
 
 	Game.spawn_players.connect(_spawn_all)
 	Game.drive_started.connect(_start_drive)
+	Game.kebab_opened.connect(_on_kebab_opened)
+	Game.kebab_state.connect(_on_kebab_state)
+	Game.kebab_closed.connect(_close_kebab)
+	Game.kebab_reward.connect(_on_kebab_reward)
 	Game.world_ready()
 
 
@@ -78,6 +83,9 @@ func _exit_tree() -> void:
 		Game.spawn_players.disconnect(_spawn_all)
 	if Game.drive_started.is_connected(_start_drive):
 		Game.drive_started.disconnect(_start_drive)
+	for pair in [[Game.kebab_opened, _on_kebab_opened], [Game.kebab_state, _on_kebab_state], [Game.kebab_closed, _close_kebab], [Game.kebab_reward, _on_kebab_reward]]:
+		if pair[0].is_connected(pair[1]):
+			pair[0].disconnect(pair[1])
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -390,5 +398,55 @@ func _start_drive(drive_seed: int) -> void:
 	car.position = Vector3.ZERO
 	drive = Drive.new()
 	drive.name = "Drive"
-	drive.setup(drive_seed, car)
+	drive.setup(drive_seed, car, Drive.NO_HAZARDS, Game.kebab_shop_enabled)
 	add_child(drive)
+
+
+# --- Kebab shop ------------------------------------------------------------------------
+
+func _on_kebab_opened(order_seed: int, reader_peer: int) -> void:
+	_close_kebab()
+	kebab_panel = KebabPanel.new()
+	kebab_panel.name = "KebabPanel"
+	var is_reader := Game.my_id() == reader_peer
+	kebab_panel.reader = is_reader
+	if is_reader:
+		var k := Kebab.new()
+		k.new_order(order_seed)
+		kebab_panel.order_text = k.describe(0, 0)
+	kebab_panel.picked.connect(Game.request_kebab_pick)
+	kebab_panel.undo_pressed.connect(Game.request_kebab_undo)
+	kebab_panel.closed.connect(Game.request_kebab_close)
+	var layer := CanvasLayer.new()
+	layer.name = "KebabLayer"
+	add_child(layer)
+	layer.add_child(kebab_panel)
+	var vp := get_viewport().get_visible_rect().size
+	kebab_panel.position = (vp - kebab_panel.size) * 0.5
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _on_kebab_state(items: Array, time_left: float) -> void:
+	if kebab_panel:
+		var typed: Array[String] = []
+		for it in items:
+			typed.append(str(it))
+		kebab_panel.set_state(typed, time_left)
+
+
+func _close_kebab() -> void:
+	if kebab_panel == null:
+		return
+	var layer := kebab_panel.get_parent()
+	kebab_panel = null
+	layer.free()
+	if drive:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func _on_kebab_reward(sober: float) -> void:
+	var me := local_player()
+	if me and me.drunk:
+		me.drunk.sober(sober)
+	if drive and drive.drunk:
+		drive.drunk.sober(sober)

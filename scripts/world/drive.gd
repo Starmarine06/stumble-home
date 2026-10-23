@@ -12,6 +12,8 @@ const NO_HAZARDS := {"traffic_count": 0, "dog_count": 0, "mugger_count": 0}   # 
 # The hazard clock is slaved to route progress (see _tick_hazards). This leads the car by a
 # beat so a dog is already mid-road when the car reaches it.
 const HAZARD_LEAD := 1.0
+const SHOP_ZONE := 16.0         # stop within this many metres of the shop to go in
+const SHOP_STOP_SPEED := 2.0
 
 var pts: Array[Vector3] = []
 var turns: Array[int] = []      # +1 right, -1 left; turns[i] is the corner at pts[i + 1]
@@ -38,9 +40,11 @@ var _send_t := 0.0
 var _arrived_sent := false
 var _cop: Node3D
 var _cop_time := 0.0
+var shop: Node3D                # the kebab shop, null when the night has none
+var _shop_asked := false
 
 
-func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS) -> void:
+func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS, kebab_shop := false) -> void:
 	_seed = drive_seed
 	car = p_car
 	_generate()
@@ -49,6 +53,8 @@ func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARD
 	hazards.name = "Hazards"
 	add_child(hazards)
 	hazards.build(Hazards.plan(_seed + 2, pts, hazard_params))
+	if kebab_shop:
+		_build_kebab_shop()
 	car.position = pts[0]
 	car.rotation = Vector3.ZERO
 	_target_pos = car.position
@@ -185,6 +191,50 @@ func _update_leg() -> void:
 			break
 
 
+# --- Kebab shop ---------------------------------------------------------------------------
+
+## A shack beside the middle leg, set back from the road so it never blocks it.
+func _build_kebab_shop() -> void:
+	var i := LEGS / 2
+	var a := pts[i]
+	var b := pts[i + 1]
+	var dir := (b - a).normalized()
+	var side := dir.cross(Vector3.UP)
+	shop = Node3D.new()
+	shop.name = "KebabShop"
+	add_child(shop)
+	shop.position = (a + b) * 0.5 + side * (ROAD_W * 0.5 + 5.0)
+	var body := _mesh_box(Vector3(8, 4, 6), Vector3(0, 2, 0), Color(0.9, 0.35, 0.15))
+	body.reparent(shop, false)
+	var glow := OmniLight3D.new()
+	glow.light_color = Color(1.0, 0.7, 0.3)
+	glow.light_energy = 4.0
+	glow.omni_range = 30.0
+	glow.position = Vector3(0, 5, 0)
+	shop.add_child(glow)
+	var sign := Label3D.new()
+	sign.text = "KEBABS\nopen very late"
+	sign.font_size = 120
+	sign.pixel_size = 0.02
+	sign.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sign.modulate = Color(1, 0.9, 0.4)
+	sign.position = Vector3(0, 7, 0)
+	shop.add_child(sign)
+
+
+func in_shop_zone(p: Vector3) -> bool:
+	return shop != null and Vector2(p.x - shop.position.x, p.z - shop.position.z).length() < SHOP_ZONE
+
+
+## The Driver's peer asks the host to open the shop once the car has stopped in the zone.
+func _tick_shop() -> void:
+	if shop == null or _shop_asked or not is_driver or Game.phase != Game.Phase.DRIVE:
+		return
+	if in_shop_zone(car.position) and absf(speed) < SHOP_STOP_SPEED:
+		_shop_asked = true
+		Game.request_kebab_open()
+
+
 # --- Hazards -----------------------------------------------------------------------------
 
 ## Distance travelled along the route (nearest segment), in metres.
@@ -233,6 +283,7 @@ func _physics_process(delta: float) -> void:
 		car.rotation.y = lerp_angle(car.rotation.y, _target_yaw, clampf(12.0 * delta, 0.0, 1.0))
 	_update_leg()
 	_tick_hazards()
+	_tick_shop()
 	if _cop:
 		_cop_time -= delta
 		_cop.visible = Game.has_role(Roles.Id.LOOKOUT)
