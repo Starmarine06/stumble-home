@@ -16,17 +16,19 @@ var is_mouse_unlocked: bool = false
 var default_fov: float = 75.0
 
 # ----------------- GAME MECHANIC METERS -----------------
-# 1. Buzz / Addiction Meter (Must keep smoking or drinking, or fall into Coma!)
-var buzz_meter: float = 100.0 # 100% full at start, drains over 40s
+# 1. Coma Lifeline Red Bar (Must keep smoking or drinking, or fall into Coma!)
+var buzz_meter: float = 100.0 # 100% full at start, drains over 40s if inactive
 const BUZZ_DRAIN_RATE: float = 2.5 # ~40 seconds from full to coma if inactive
 
 # 2. Drunkenness Meter (0-100%): Controls go opposite, at 60%+ MOUSE GOES OPPOSITE TOO!
 var drunk_meter: float = 0.0
 const DRUNK_DECAY_RATE: float = 1.2
 
-# 3. Smoke Density / Weird High Meter (0-100%): Makes screen wavy & heavily clouded
+# 3. Smoke Density / Dizziness Meter (0-100%):
+# Within 1 cigarette player NEVER feels dizzy (max ~25-30%); takes >1 cigarette to feel dizzy!
 var smoke_meter: float = 0.0
-const SMOKE_DECAY_RATE: float = 2.0
+const SMOKE_DECAY_RATE: float = 1.0
+const DIZZY_SMOKE_THRESHOLD: float = 38.0 # Dizziness & weird screen effects require smoking >1 cigarette!
 
 # 4. Status Flags
 var is_in_coma: bool = false
@@ -184,6 +186,29 @@ func _ready() -> void:
 	# Fetch meter UI references via fallback if needed
 	if not buzz_bar:
 		buzz_bar = find_child("BuzzBar", true, false)
+	if buzz_bar:
+		# Explicitly style the Coma Lifeline Bar in vibrant RED
+		var red_fill = StyleBoxFlat.new()
+		red_fill.bg_color = Color(0.95, 0.12, 0.18) # Vibrant crimson red
+		red_fill.corner_radius_top_left = 3
+		red_fill.corner_radius_top_right = 3
+		red_fill.corner_radius_bottom_left = 3
+		red_fill.corner_radius_bottom_right = 3
+		buzz_bar.add_theme_stylebox_override("fill", red_fill)
+
+		var red_bg = StyleBoxFlat.new()
+		red_bg.bg_color = Color(0.20, 0.04, 0.06, 0.90) # Dark maroon background
+		red_bg.border_width_left = 1
+		red_bg.border_width_top = 1
+		red_bg.border_width_right = 1
+		red_bg.border_width_bottom = 1
+		red_bg.border_color = Color(0.85, 0.20, 0.25, 0.70)
+		red_bg.corner_radius_top_left = 3
+		red_bg.corner_radius_top_right = 3
+		red_bg.corner_radius_bottom_left = 3
+		red_bg.corner_radius_bottom_right = 3
+		buzz_bar.add_theme_stylebox_override("background", red_bg)
+		buzz_bar.custom_minimum_size = Vector2(240, 16)
 	if not buzz_label:
 		buzz_label = find_child("BuzzLabel", true, false)
 	if not drunk_bar:
@@ -471,9 +496,12 @@ func puff_cigarette() -> void:
 	# Burn down cigarette by ~6.5% per scroll click (~15 drags to finish)
 	cig_burn_factor = max(0.0, cig_burn_factor - 0.065)
 	
-	# Inhaling drag boosts buzz stamina (+12.0%) and builds smoke cloud density (+10.0%)
-	buzz_meter = min(100.0, buzz_meter + 12.0)
-	smoke_meter = min(100.0, smoke_meter + 10.0)
+	# Inhaling drag refills the red coma bar (+12.5%) keeping player awake!
+	buzz_meter = min(100.0, buzz_meter + 12.5)
+	
+	# Pacing: 1 full cigarette (~15 drags) only builds ~25-30% smoke total (+2.0% per drag).
+	# This guarantees 1 cigarette does NOT feel dizzy! Takes chain-smoking >1 cigarette to feel dizzy!
+	smoke_meter = min(100.0, smoke_meter + 2.0)
 	
 	# Ember flares with intense glowing heat
 	if cig_tip:
@@ -489,7 +517,7 @@ func puff_cigarette() -> void:
 	# Visually shorten paper and move burning ember back towards filter
 	update_cigarette_mesh()
 	
-	print("💨 Dragged cigarette with scroll wheel down! Remaining: %.0f%% | Buzz: %.1f%% | Smoke: %.1f%%" % [cig_burn_factor * 100.0, buzz_meter, smoke_meter])
+	print("💨 Dragged cigarette with scroll wheel down! Remaining: %.0f%% | Red Bar (Buzz): %.1f%% | Smoke: %.1f%%" % [cig_burn_factor * 100.0, buzz_meter, smoke_meter])
 	
 	# Check if cigarette burnt down completely
 	if cig_burn_factor <= 0.04:
@@ -888,35 +916,49 @@ func _process(delta: float) -> void:
 	if screen_fx_rect and screen_fx_rect.material:
 		var mat = screen_fx_rect.material as ShaderMaterial
 		if mat:
-			var s_int = smoke_meter / 100.0
-			var d_int = drunk_meter / 100.0
-			# Drowsy blackout flash when buzz is critically low
-			var drowsy_pulse = 0.0
-			if buzz_meter < 25.0:
-				drowsy_pulse = (sin(fx_elapsed_time * 4.0) * 0.5 + 0.5) * (1.0 - buzz_meter / 25.0) * 0.65
+			# Dizziness & weird screen distortion only trigger when smoke_meter > DIZZY_SMOKE_THRESHOLD (38.0%).
+			# Within 1 cigarette (peak ~25%), dizzy_intensity is strictly 0.0 -> NO dizziness!
+			# Takes smoking >1 cigarette to feel dizzy!
+			var dizzy_int = 0.0
+			if smoke_meter > DIZZY_SMOKE_THRESHOLD:
+				dizzy_int = clamp((smoke_meter - DIZZY_SMOKE_THRESHOLD) / (100.0 - DIZZY_SMOKE_THRESHOLD), 0.0, 1.0)
 
-			mat.set_shader_parameter("smoke_intensity", s_int)
-			mat.set_shader_parameter("dizzy_intensity", s_int)
+			var smoke_cloud_int = 0.0
+			if smoke_meter > DIZZY_SMOKE_THRESHOLD:
+				smoke_cloud_int = dizzy_int
+			elif smoke_meter > 10.0:
+				smoke_cloud_int = (smoke_meter / DIZZY_SMOKE_THRESHOLD) * 0.04 # Subtle wisp only
+
+			var d_int = drunk_meter / 100.0
+			# Drowsy blackout flash when the red coma bar is critically low (< 30%)
+			var drowsy_pulse = 0.0
+			if buzz_meter < 30.0:
+				drowsy_pulse = (sin(fx_elapsed_time * 5.0) * 0.5 + 0.5) * (1.0 - buzz_meter / 30.0) * 0.75
+
+			mat.set_shader_parameter("smoke_intensity", smoke_cloud_int)
+			mat.set_shader_parameter("dizzy_intensity", dizzy_int)
 			mat.set_shader_parameter("drunk_intensity", d_int)
 			mat.set_shader_parameter("coma_fade", drowsy_pulse)
 			mat.set_shader_parameter("fx_time", fx_elapsed_time)
 
 	# Dynamic Camera Effects (Warping FOV & Sway)
 	if camera:
-		var s_int = smoke_meter / 100.0
+		var dizzy_int = 0.0
+		if smoke_meter > DIZZY_SMOKE_THRESHOLD:
+			dizzy_int = clamp((smoke_meter - DIZZY_SMOKE_THRESHOLD) / (100.0 - DIZZY_SMOKE_THRESHOLD), 0.0, 1.0)
 		var d_int = drunk_meter / 100.0
 		
-		# Smoking makes FOV breathe wildly
-		if s_int > 0.05:
-			var fov_pulse = sin(fx_elapsed_time * 3.5) * 14.0 * s_int
+		# Smoking makes FOV breathe wildly only when dizzy (>1 cigarette smoked!)
+		if dizzy_int > 0.05:
+			var fov_pulse = sin(fx_elapsed_time * 3.5) * 14.0 * dizzy_int
 			camera.fov = default_fov + fov_pulse
 		else:
 			camera.fov = lerp(camera.fov, default_fov, delta * 4.0)
 
 		# Camera rolling sway from highness and drunkenness
 		var roll = 0.0
-		if s_int > 0.05:
-			roll += sin(fx_elapsed_time * 2.0) * 0.08 * s_int
+		if dizzy_int > 0.05:
+			roll += sin(fx_elapsed_time * 2.0) * 0.08 * dizzy_int
 		if d_int > 0.05:
 			roll += sin(fx_elapsed_time * 2.8) * 0.16 * d_int
 		camera.rotation.z = lerp(camera.rotation.z, roll, delta * 8.0)
@@ -1035,16 +1077,20 @@ func finish_viewmodel_animation() -> void:
 		smoking_seq_state = SmokingSeqState.READY
 
 func update_meters_ui() -> void:
-	# Update Buzz / Awake Meter
+	# Update Red Coma Lifeline Bar (Buzz / Addiction Meter)
 	if buzz_bar:
 		buzz_bar.value = buzz_meter
 	if buzz_label:
-		if buzz_meter > 35.0:
-			buzz_label.text = "AWAKE / BUZZ STAMINA: %.0f%% (Keep smoking or drinking to avoid coma!)" % buzz_meter
-			buzz_label.add_theme_color_override("font_color", Color(0.4, 0.95, 0.5))
+		if buzz_meter > 50.0:
+			buzz_label.text = "🚨 COMA RED BAR: %.0f%% (Drain active! Keep smoking [1] or drinking [2] to prevent coma!)" % buzz_meter
+			buzz_label.add_theme_color_override("font_color", Color(1.0, 0.35, 0.35))
+		elif buzz_meter > 25.0:
+			buzz_label.text = "⚠️ WARNING (%.0f%%) - RED BAR DROPPING! Smoke or drink now to stay awake!" % buzz_meter
+			buzz_label.add_theme_color_override("font_color", Color(1.0, 0.70, 0.20))
 		else:
-			buzz_label.text = "🚨 DROWSY / CRITICAL (%.0f%%) - SMOKE [1] OR DRINK [2] NOW OR ENTER COMA!" % buzz_meter
-			buzz_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))
+			buzz_label.text = "🚨 CRITICAL (%.0f%%) - RED BAR EMPTYING! SMOKE OR DRINK RIGHT NOW OR GO TO COMA!" % buzz_meter
+			var flash_col = Color(1.0, 0.1, 0.1) if fmod(fx_elapsed_time * 6.0, 2.0) > 1.0 else Color(1.0, 0.9, 0.9)
+			buzz_label.add_theme_color_override("font_color", flash_col)
 
 	# Update Drunk Meter
 	if drunk_bar:
@@ -1060,16 +1106,19 @@ func update_meters_ui() -> void:
 			drunk_label.text = "DRUNKENNESS METER: %.0f%% (Sober / Mild Buzz)" % drunk_meter
 			drunk_label.add_theme_color_override("font_color", Color(0.7, 0.85, 0.95))
 
-	# Update Smoke Meter
+	# Update Smoke & Dizziness Meter
 	if smoke_bar:
 		smoke_bar.value = smoke_meter
 	if smoke_label:
-		if smoke_meter > 50.0:
-			smoke_label.text = "💨 SMOKE CLOUD DENSITY: %.0f%% (HEAVY SMOKE - HARD TO SEE!)" % smoke_meter
-			smoke_label.add_theme_color_override("font_color", Color(0.85, 0.45, 1.0))
+		if smoke_meter >= 75.0:
+			smoke_label.text = "🚨 EXTREME DIZZINESS (%.0f%%) - HEAVY CHAIN-SMOKING! HARD TO SEE!" % smoke_meter
+			smoke_label.add_theme_color_override("font_color", Color(0.9, 0.35, 1.0))
+		elif smoke_meter >= 38.0:
+			smoke_label.text = "😵 DIZZY SMOKE (%.0f%%) - Smoked >1 cigarette! Screen going weird..." % smoke_meter
+			smoke_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.25))
 		else:
-			smoke_label.text = "SMOKE DENSITY: %.0f%%" % smoke_meter
-			smoke_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.85))
+			smoke_label.text = "💨 SMOKE LEVEL: %.0f%% (1 Cigarette = Mild / Not Dizzy | Smoke >1 to get dizzy)" % smoke_meter
+			smoke_label.add_theme_color_override("font_color", Color(0.75, 0.85, 0.95))
 
 	# Update Cigarette Meter & Prompt
 	if cig_bar:
@@ -1089,7 +1138,7 @@ func update_meters_ui() -> void:
 				cig_label.text = "🚬 CIGARETTE: %.0f%% | 🖱️ Scroll Down to Drag & Smoke" % [cig_burn_factor * 100.0]
 				cig_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.45))
 			SmokingSeqState.PUFFING:
-				cig_label.text = "🔥 INHALING... (Scroll Drag: +Buzz, +Smoke) | Length: %.0f%%" % [cig_burn_factor * 100.0]
+				cig_label.text = "🔥 INHALING... (Scroll Drag: Refills Red Coma Bar!) | Length: %.0f%%" % [cig_burn_factor * 100.0]
 				cig_label.add_theme_color_override("font_color", Color(1.0, 0.45, 0.15))
 			SmokingSeqState.EXHALING:
 				cig_label.text = "💨 EXHALING SMOKE... | Length: %.0f%%" % [cig_burn_factor * 100.0]
@@ -1104,23 +1153,26 @@ func update_meters_ui() -> void:
 		if is_inside_van:
 			badges.append("🚐 Inside Van")
 		if smoking_seq_state == SmokingSeqState.PUFFING:
-			badges.append("🔥 INHALING CIGARETTE (Scroll Down)")
+			badges.append("🔥 INHALING CIGARETTE (Refilling Red Bar)")
 		elif smoking_seq_state == SmokingSeqState.READY:
 			badges.append("🚬 CIGARETTE LIT")
 		elif smoking_seq_state == SmokingSeqState.BURNT_OUT:
 			badges.append("🚬 CIGARETTE FINISHED")
 		elif current_anim == AnimState.DRINKING:
-			badges.append("🍺 Drinking Beer...")
+			badges.append("🍺 Drinking Beer (Refilling Red Bar)...")
 		elif current_anim == AnimState.SOBER_CAN:
 			badges.append("⚡ Energy Can...")
+
+		if buzz_meter < 25.0:
+			badges.append("🚨 RED BAR CRITICAL - COMA IMMINENT")
 
 		if drunk_meter >= 60.0:
 			badges.append("🚨 MOUSE & WASD INVERTED")
 		elif drunk_meter >= 30.0:
 			badges.append("⚠️ WASD INVERTED")
 
-		if smoke_meter > 50.0:
-			badges.append("💨 SCREEN WEIRD & CLOUDED")
+		if smoke_meter >= 38.0:
+			badges.append("💨 DIZZY SMOKE (SCREEN WEIRD)")
 
 		if badges.size() > 0:
 			effect_badge.text = " | ".join(badges)

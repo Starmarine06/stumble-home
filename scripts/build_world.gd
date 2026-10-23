@@ -2388,7 +2388,7 @@ func create_player_scene() -> void:
 	title_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(title_lbl)
 
-	# --- 1. BUZZ / AWAKE STAMINA METER (AVOID COMA) ---
+	# --- 1. COMA LIFELINE RED BAR (AVOID COMA: KEEP SMOKING OR DRINKING!) ---
 	var buzz_box = HBoxContainer.new()
 	buzz_box.name = "BuzzContainer"
 	buzz_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -2396,9 +2396,9 @@ func create_player_scene() -> void:
 
 	var b_lbl = Label.new()
 	b_lbl.name = "BuzzLabel"
-	b_lbl.text = "AWAKE / BUZZ STAMINA: 100% (Keep smoking or drinking to avoid coma!)"
+	b_lbl.text = "🚨 COMA RED BAR: 100% (Keep smoking or drinking to keep it up!)"
 	b_lbl.add_theme_font_size_override("font_size", 12)
-	b_lbl.add_theme_color_override("font_color", Color(0.4, 0.95, 0.5))
+	b_lbl.add_theme_color_override("font_color", Color(1.0, 0.35, 0.35))
 	b_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	buzz_box.add_child(b_lbl)
 
@@ -2407,8 +2407,31 @@ func create_player_scene() -> void:
 	b_bar.min_value = 0.0
 	b_bar.max_value = 100.0
 	b_bar.value = 100.0
-	b_bar.custom_minimum_size = Vector2(200, 14)
+	b_bar.custom_minimum_size = Vector2(240, 16)
 	b_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Prominent red fill and dark red background styleboxes
+	var red_fill = StyleBoxFlat.new()
+	red_fill.bg_color = Color(0.95, 0.12, 0.18) # Bright crimson red
+	red_fill.corner_radius_top_left = 3
+	red_fill.corner_radius_top_right = 3
+	red_fill.corner_radius_bottom_left = 3
+	red_fill.corner_radius_bottom_right = 3
+	b_bar.add_theme_stylebox_override("fill", red_fill)
+
+	var red_bg = StyleBoxFlat.new()
+	red_bg.bg_color = Color(0.20, 0.04, 0.06, 0.90) # Dark maroon background
+	red_bg.border_width_left = 1
+	red_bg.border_width_top = 1
+	red_bg.border_width_right = 1
+	red_bg.border_width_bottom = 1
+	red_bg.border_color = Color(0.85, 0.20, 0.25, 0.70)
+	red_bg.corner_radius_top_left = 3
+	red_bg.corner_radius_top_right = 3
+	red_bg.corner_radius_bottom_left = 3
+	red_bg.corner_radius_bottom_right = 3
+	b_bar.add_theme_stylebox_override("background", red_bg)
+
 	buzz_box.add_child(b_bar)
 
 	# --- 2. DRUNKENNESS METER (INVERTS WASD & MOUSE) ---
