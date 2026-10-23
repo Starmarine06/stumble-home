@@ -8,6 +8,10 @@ const ROAD_W := 10.0
 const MAX_SPEED := 24.0
 const HOT_SPEED := 8.0
 const LEGS := 7
+const NO_HAZARDS := {"traffic_count": 0, "dog_count": 0, "mugger_count": 0}   # night 1
+# The hazard clock is slaved to route progress (see _tick_hazards). This leads the car by a
+# beat so a dog is already mid-road when the car reaches it.
+const HAZARD_LEAD := 1.0
 
 var pts: Array[Vector3] = []
 var turns: Array[int] = []      # +1 right, -1 left; turns[i] is the corner at pts[i + 1]
@@ -17,6 +21,7 @@ var yaw := 0.0
 var leg := 0
 var is_driver := false
 var drunk: Drunk
+var hazards: Hazards
 var blackout := 0.0             # 0..1, only meaningful on the Driver's peer
 
 var _seed := 0
@@ -35,11 +40,15 @@ var _cop: Node3D
 var _cop_time := 0.0
 
 
-func setup(drive_seed: int, p_car: Node3D) -> void:
+func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS) -> void:
 	_seed = drive_seed
 	car = p_car
 	_generate()
 	_build_scenery()
+	hazards = Hazards.new()
+	hazards.name = "Hazards"
+	add_child(hazards)
+	hazards.build(Hazards.plan(_seed + 2, pts, hazard_params))
 	car.position = pts[0]
 	car.rotation = Vector3.ZERO
 	_target_pos = car.position
@@ -176,6 +185,42 @@ func _update_leg() -> void:
 			break
 
 
+# --- Hazards -----------------------------------------------------------------------------
+
+## Distance travelled along the route (nearest segment), in metres.
+func route_progress(p: Vector3) -> float:
+	var best_d := INF
+	var best := 0.0
+	var run := 0.0
+	for i in pts.size() - 1:
+		var seg := Vector2(pts[i + 1].x - pts[i].x, pts[i + 1].z - pts[i].z)
+		var q := _seg_query(p, pts[i], pts[i + 1])
+		if q.d < best_d:
+			best_d = q.d
+			best = run + Vector2(q.pt.x - pts[i].x, q.pt.z - pts[i].z).length()
+		run += seg.length()
+	return best
+
+
+## Hazards plan their timing from route distance, so the clock follows the car's
+## progress instead of wall time: a stalled car never finds the dog already gone, and
+## a fast one still gets the telegraph at the same spot on the road. Never rewinds.
+func _tick_hazards() -> void:
+	if hazards == null or hazards.events.is_empty() or Game.phase != Game.Phase.DRIVE:
+		return
+	var t := route_progress(car.position) / float(Hazards.DEFAULTS.avg_speed) + float(Hazards.DEFAULTS.start_delay) + HAZARD_LEAD
+	hazards.time = maxf(hazards.time, t)
+	for e in hazards.events:
+		if not e.get("warned", false) and hazards.time >= float(e.tele) and not e.used:
+			e.warned = true
+			if Game.has_role(Roles.Id.LOOKOUT) and e.kind != "traffic":
+				Game.toast_msg.emit("LOOKOUT: %s ahead!" % ("a dog about to bolt" if e.kind == "dog" else "a shifty mugger lurking"))
+	var hits := hazards.check(car.position, speed, 0.0)
+	if is_driver:
+		for h in hits:
+			Game.request_hazard(h.kind)
+
+
 # --- Simulation --------------------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:
@@ -187,6 +232,7 @@ func _physics_process(delta: float) -> void:
 		car.position = car.position.lerp(_target_pos, clampf(12.0 * delta, 0.0, 1.0))
 		car.rotation.y = lerp_angle(car.rotation.y, _target_yaw, clampf(12.0 * delta, 0.0, 1.0))
 	_update_leg()
+	_tick_hazards()
 	if _cop:
 		_cop_time -= delta
 		_cop.visible = Game.has_role(Roles.Id.LOOKOUT)
