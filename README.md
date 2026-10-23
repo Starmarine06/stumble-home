@@ -173,8 +173,8 @@ The initial 3D vertical slice prototype is integrated in this repository, featur
 - **Movement**: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> + 360° mouse look.
 - **Interactions**: <kbd>E</kbd> to talk to NPCs or enter/exit the van.
 - **Substances & Sobriety**:
-  - <kbd>1</kbd>: Smoke (restores buzz; heavy smoke clouds and distorts vision).
-  - <kbd>2</kbd>: Drink beer (restores buzz; tilts nozzle to mouth; inverts WASD at $\ge$30% drunk and mouse look at $\ge$60% drunk).
+  - <kbd>1</kbd> or **Mouse Scroll Wheel Down**: Realistic cigarette sequence — takes cigarette out to screen center-bottom, ignites tip with lighter in right hand, and uses mouse scroll wheel down to drag and smoke until it finishes.
+  - <kbd>2</kbd>: Drink beer (restores buzz; tilts nozzle straight to mouth; inverts WASD at $\ge$30% drunk and mouse look at $\ge$60% drunk).
   - <kbd>3</kbd>: Energy drink (sobers up, resets drunkenness/smoke, restores buzz).
 - **Coma / Pass-out**: Inactivity depletes your buzz meter; hitting 0% causes you to pass out and enter a coma (<kbd>R</kbd> or <kbd>Space</kbd> to wake up and restart).
 
