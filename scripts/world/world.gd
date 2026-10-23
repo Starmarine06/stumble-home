@@ -398,7 +398,8 @@ func _start_drive(drive_seed: int) -> void:
 	car.position = Vector3.ZERO
 	drive = Drive.new()
 	drive.name = "Drive"
-	drive.setup(drive_seed, car, Drive.NO_HAZARDS, Game.kebab_shop_enabled)
+	var nd := Nights.get_night(Game.night)
+	drive.setup(drive_seed, car, nd.hazards, Game.kebab_shop_enabled, int(nd.legs), nd.leg_len)
 	add_child(drive)
 
 

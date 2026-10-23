@@ -174,8 +174,60 @@ func _run() -> void:
 	await _wait(0.3)
 	_check(game.phase == game.Phase.RESULT and game.won, "arriving home wins")
 	await _wait(0.2)
+
+	# Campaign: night 1 won, roll into night 2
+	_check(game.night == 0 and game.has_next_night(), "won night 1, a next night is on offer")
+	var def_cop: float = Tuning.defaults().cop_first_min
+	game.next_night()
+	await _wait(0.5)
+	_check(game.phase == game.Phase.SCAVENGE and game.night == 1, "next night advances the night index")
+	_check(game.kebab_shop_enabled, "night 2 turns the kebab shop on")
+	_check(Tuning.cop_first_min == 11.0 and Tuning.cop_first_min != def_cop, "Tuning reflects the night 2 overrides")
+	world = root.get_node_or_null("Main/World")
+	_check(world != null, "fresh world for night 2")
+	await _wait(0.5)
+	_check(game.parts.size() == 4, "night 2 parts laid out")
+	for p in game.parts:
+		var r := Vector2(p.pos.x, p.pos.z).length()
+		_check(r >= 14.0 - 0.01 and r <= 40.0 + 0.01, "night 2 part within its radius (%.1f)" % r)
+	for i in game.parts.size():
+		var gd := 0
+		while game.parts[i].state != game.PS.CARRIED and gd < 60:
+			game.s_pickup(i)
+			gd += 1
+		game.s_place(1.0)
+	await _wait(3.6)
+	_check(game.phase == game.Phase.DRIVE, "night 2 drive phase starts")
+	await _wait(0.5)
+	d = world.drive
+	var n2: Dictionary = Nights.get_night(1)
+	_check(d.pts.size() == int(n2.legs) + 1, "night 2 route has %d points (legs %d)" % [d.pts.size(), int(n2.legs)])
+	var seg_ok := true
+	for i in d.pts.size() - 1:
+		var sl: float = d.pts[i].distance_to(d.pts[i + 1])
+		if sl < n2.leg_len[0] - 0.01 or sl > n2.leg_len[1] + 0.01:
+			seg_ok = false
+	_check(seg_ok, "night 2 legs honour the leg length range")
+	_check(d.hazards != null and not d.hazards.events.is_empty(), "night 2 drive has hazard events")
+	_check(d.shop != null, "night 2 drive has a kebab shop")
+
+	# Lose it and retry: same night
+	game.won = false
+	game._finish(false, "Busted.")
+	await _wait(0.2)
+	_check(game.phase == game.Phase.RESULT and not game.won and not game.has_next_night(), "lost night 2: no next night on offer")
+	game.retry_night()
+	await _wait(0.5)
+	_check(game.phase == game.Phase.SCAVENGE and game.night == 1, "retry after a loss keeps the night index")
+	_check(Tuning.cop_first_min == 11.0 and game.kebab_shop_enabled, "retry re-applies night 2 tuning and shop")
+
+	# Lobby and fresh start: back to night 1 with default tuning
 	game.return_to_lobby()
 	await _wait(0.3)
 	_check(game.phase == game.Phase.LOBBY, "back to lobby after result")
+	_check(game.night == 0 and not game.kebab_shop_enabled and Tuning.cop_first_min == def_cop, "lobby resets to night 1 and default Tuning")
+	game.start_game()
+	await _wait(0.5)
+	_check(game.night == 0 and not game.kebab_shop_enabled and Tuning.cop_first_min == def_cop, "fresh start is night 1 with default Tuning")
 	print("\nRESULT: %s (%d failures)" % ["OK" if _fails == 0 else "FAILED", _fails])
 	quit(1 if _fails else 0)

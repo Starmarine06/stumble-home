@@ -54,7 +54,9 @@ var engine_hot := false
 var won := false
 var result_text := ""
 
-## Set by whoever starts the night (night 2 on); Drive builds the shop from it.
+## Which night of the campaign is running (0-based index into Nights). Replicated in c_begin_scavenge.
+var night := 0
+## Derived from the night definition on every peer when the night begins; Drive builds the shop from it.
 var kebab_shop_enabled := false
 var kebab_is_open := false
 var _kebab: Kebab                 # host only: the authoritative order and kebab
@@ -183,12 +185,15 @@ func _layout(seed_value: int) -> void:
 	fatigue.clear()
 	out_left.clear()
 	build_damage = 0.0
+	var radius := Vector2(14.0, 34.0)
+	var pr: Array = Nights.get_night(night).part_radius
+	radius = Vector2(pr[0], pr[1])
 	var used: Array[Vector3] = []
 	for i in PART_NAMES.size():
 		var pos := Vector3.ZERO
 		for _try in 40:
 			var ang := rng.randf() * TAU
-			var rad := rng.randf_range(14.0, 34.0)
+			var rad := rng.randf_range(radius.x, radius.y)
 			pos = Vector3(cos(ang) * rad, 0.0, sin(ang) * rad)
 			var ok := true
 			for u in used:
@@ -210,6 +215,7 @@ func _layout(seed_value: int) -> void:
 func start_hosting() -> void:
 	names = {1: Net.player_name}
 	role_owner = {}
+	_reset_campaign()
 	_set_phase(Phase.LOBBY)
 	roster_changed.emit()
 
@@ -218,7 +224,15 @@ func on_joined() -> void:
 	_to_host("s_hello", [Net.player_name])
 
 
+## Back to night 1 with factory-fresh tuning (new lobby, new campaign).
+func _reset_campaign() -> void:
+	night = 0
+	kebab_shop_enabled = false
+	Nights.apply_tuning(0)
+
+
 func go_menu() -> void:
+	_reset_campaign()
 	names.clear()
 	role_owner.clear()
 	_set_phase(Phase.MENU)
@@ -288,9 +302,28 @@ func _on_server_disconnected() -> void:
 
 # --- Starting a night ---------------------------------------------------------
 
-func start_game() -> void:
+## Is there a night after this one, and did we just win this one?
+func has_next_night() -> bool:
+	return won and night + 1 < Nights.count()
+
+
+## Host only: roll straight into the next night with the same roles.
+func next_night() -> void:
+	if has_next_night():
+		start_game(night + 1)
+
+
+## Host only: go again. Keeps the night, so a loss means a retry of the same one.
+func retry_night() -> void:
+	start_game(night)
+
+
+func start_game(p_night := -1) -> void:
 	if not is_host() or names.is_empty():
 		return
+	if p_night < 0:
+		p_night = night
+	p_night = clampi(p_night, 0, Nights.count() - 1)
 	# Unclaimed roles go round-robin to whoever is here (lets you test solo).
 	var peers := names.keys()
 	peers.sort()
@@ -300,12 +333,15 @@ func start_game() -> void:
 			role_owner[r] = peers[k % peers.size()]
 			k += 1
 	_ready_peers.clear()
-	_bcast("c_begin_scavenge", [randi(), role_owner])
+	_bcast("c_begin_scavenge", [randi(), role_owner, p_night])
 
 
 @rpc("authority", "call_remote", "reliable")
-func c_begin_scavenge(seed_value: int, ro: Dictionary) -> void:
+func c_begin_scavenge(seed_value: int, ro: Dictionary, p_night := 0) -> void:
 	role_owner = ro
+	night = clampi(p_night, 0, Nights.count() - 1)
+	Nights.apply_tuning(night)
+	kebab_shop_enabled = bool(Nights.get_night(night).kebab_shop)
 	world_seed = seed_value
 	wanted = 0.0
 	car_hp = 100.0
@@ -339,6 +375,7 @@ func return_to_lobby() -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func c_lobby() -> void:
+	_reset_campaign()
 	_set_phase(Phase.LOBBY)
 	roster_changed.emit()
 
