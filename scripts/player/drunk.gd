@@ -3,6 +3,11 @@ extends RefCounted
 ## Per-player drunk model: laggy input, wandering steering, random trips.
 
 signal tripped
+signal stumble_warning(time_left: float)
+
+const SLOW_LIMIT := 0.5
+var _risk := 0.0
+var _warn := 0.0
 
 var base := 0.9
 var level := 0.9
@@ -35,17 +40,51 @@ func is_stunned() -> bool:
 
 
 ## Advance timers. Trips only happen when allow_trips is true (on foot).
-func tick(delta: float, allow_trips: bool = true) -> void:
+func tick(delta: float, allow_trips: bool = true, speed01: float = 0.0) -> void:
 	_t += delta
 	level = move_toward(level, base, 0.01 * delta)
 	if stun > 0.0:
 		stun = maxf(0.0, stun - delta)
-	elif allow_trips:
-		_trip_in -= delta
-		if _trip_in <= 0.0:
+		_risk = 0.0
+		_warn = 0.0
+		return
+	if not allow_trips:
+		_risk = maxf(0.0, _risk - Tuning.stumble_drain * delta)
+		_warn = 0.0
+		return
+	var fast := speed01 >= SLOW_LIMIT
+	if _warn > 0.0:
+		if not fast:
+			# slowed down in time: fall avoided
+			_warn = 0.0
+			_risk = 0.0
+			return
+		_warn -= delta
+		if _warn <= 0.0:
+			_warn = 0.0
+			_risk = 0.0
 			stun = Tuning.trip_stun_base + Tuning.trip_stun_per_level * level
-			_trip_in = _next_trip()
 			tripped.emit()
+		return
+	if fast:
+		_risk += Tuning.stumble_gain * speed01 * (0.5 + level) * delta
+	else:
+		_risk = maxf(0.0, _risk - Tuning.stumble_drain * delta)
+	if _risk >= Tuning.stumble_threshold:
+		_warn = Tuning.stumble_warn_time
+		stumble_warning.emit(_warn)
+
+
+func is_warning() -> bool:
+	return _warn > 0.0
+
+
+func warning_time() -> float:
+	return _warn
+
+
+func risk() -> float:
+	return clampf(_risk / maxf(0.001, Tuning.stumble_threshold), 0.0, 1.0)
 
 
 ## 2D walking input -> drunk walking input.
