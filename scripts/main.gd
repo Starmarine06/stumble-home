@@ -27,10 +27,16 @@ func _ready() -> void:
 
 
 func _run_auto_args() -> void:
+	var start_night := -1
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--night="):
+			start_night = clampi(int(arg.get_slice("=", 1)) - 1, 0, Nights.count() - 1)
 	for arg in OS.get_cmdline_user_args():
 		match arg:
 			"--auto=solo":
 				Game.start_hosting()
+				if start_night >= 0:
+					Game.start_game(start_night)
 			"--auto=host":
 				Net.host_enet()
 			"--auto=join":
@@ -65,16 +71,18 @@ func _on_phase() -> void:
 			_show_lobby()
 		Game.Phase.SCAVENGE:
 			_clear_screen()
-			if _world == null:
-				_world = World.new()
-				_world.name = "World"
-				add_child(_world)
+			# A new night (next or retry) always gets a fresh world.
+			_clear_world()
+			_world = World.new()
+			_world.name = "World"
+			add_child(_world)
 		Game.Phase.RESULT:
 			_show_result()
 
 
 func _clear_world() -> void:
 	if _world:
+		remove_child(_world)
 		_world.queue_free()
 		_world = null
 
@@ -186,11 +194,15 @@ func _apply_name() -> void:
 
 var _role_buttons := {}
 var _player_list: Label
+var _night_label: Label
 var _start_btn: Button
 
 
 func _show_lobby() -> void:
 	var box := _panel("ROOM  %s" % Net.room_code if Net.room_code != "" else "PRACTICE ROOM", 700)
+	_night_label = Label.new()
+	_night_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(_night_label)
 	var hint := Label.new()
 	hint.text = "Share the room code. Everyone claims a drunk. Unclaimed roles are handed out automatically (with fewer than 4 players, some of you play two)."
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD
@@ -229,6 +241,7 @@ func _refresh_lobby() -> void:
 		var b: Button = _role_buttons[r]
 		b.text = "%s - %s   [%s]\n%s" % [info["name"], info["type"], who, info["drive"]]
 		b.modulate = info["color"].lerp(Color.WHITE, 0.55)
+	_night_label.text = Nights.get_night(Game.night).title
 	_player_list.text = "Players (%d/%d): %s" % [Game.names.size(), Net.MAX_PLAYERS, ", ".join(Game.names.values())]
 	_start_btn.visible = Game.is_host()
 
@@ -237,13 +250,21 @@ func _refresh_lobby() -> void:
 
 func _show_result() -> void:
 	var box := _panel("YOU MADE IT HOME!" if Game.won else "NIGHT OVER", 560)
+	var nt := Label.new()
+	nt.text = Nights.get_night(Game.night).title
+	nt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(nt)
 	var l := Label.new()
 	l.text = Game.result_text
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(l)
 	if Game.is_host():
-		_button(box, "Play again", func(): Game.return_to_lobby())
+		if Game.has_next_night():
+			_button(box, "Next night", func(): Game.next_night())
+		else:
+			_button(box, "Retry night", func(): Game.retry_night())
+		_button(box, "Back to the lobby", func(): Game.return_to_lobby())
 	else:
 		var w := Label.new()
 		w.text = "Waiting for the host..."

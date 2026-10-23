@@ -7,7 +7,8 @@ extends Node3D
 const ROAD_W := 10.0
 const MAX_SPEED := 24.0
 const HOT_SPEED := 8.0
-const LEGS := 7
+const LEGS := 7                 # night 1; later nights pass their own legs to setup()
+const LEG_LEN := [70.0, 120.0]
 const NO_HAZARDS := {"traffic_count": 0, "dog_count": 0, "mugger_count": 0}   # night 1
 # The hazard clock is slaved to route progress (see _tick_hazards). This leads the car by a
 # beat so a dog is already mid-road when the car reaches it.
@@ -40,12 +41,16 @@ var _send_t := 0.0
 var _arrived_sent := false
 var _cop: Node3D
 var _cop_time := 0.0
+var legs := LEGS
+var leg_len: Array = LEG_LEN
 var shop: Node3D                # the kebab shop, null when the night has none
 var _shop_asked := false
 
 
-func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS, kebab_shop := false) -> void:
+func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS, kebab_shop := false, p_legs := LEGS, p_leg_len: Array = LEG_LEN) -> void:
 	_seed = drive_seed
+	legs = p_legs
+	leg_len = p_leg_len
 	car = p_car
 	_generate()
 	_build_scenery()
@@ -81,10 +86,10 @@ func _generate() -> void:
 	var dir := Vector3(0, 0, -1)
 	pts = [p]
 	turns = []
-	for i in LEGS:
-		p += dir * rng.randf_range(70.0, 120.0)
+	for i in legs:
+		p += dir * rng.randf_range(leg_len[0], leg_len[1])
 		pts.append(p)
-		if i < LEGS - 1:
+		if i < legs - 1:
 			var t := 1 if rng.randf() < 0.5 else -1
 			var n := turns.size()
 			if n >= 2 and turns[n - 1] == turns[n - 2]:
@@ -195,7 +200,7 @@ func _update_leg() -> void:
 
 ## A shack beside the middle leg, set back from the road so it never blocks it.
 func _build_kebab_shop() -> void:
-	var i := LEGS / 2
+	var i := legs / 2
 	var a := pts[i]
 	var b := pts[i + 1]
 	var dir := (b - a).normalized()
