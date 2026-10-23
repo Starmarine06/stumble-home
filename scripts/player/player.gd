@@ -288,7 +288,7 @@ func _hands(delta: float, busy: bool) -> void:
 			return
 		aim_part = _aimed_part()
 		if btn and _armed and aim_part != -1 and _grab_cd <= 0.0:
-			_grab_cd = 0.4
+			_grab_cd = Tuning.grab_cooldown
 			Game.request_pickup(aim_part)
 		return
 
@@ -301,7 +301,7 @@ func _hands(delta: float, busy: bool) -> void:
 		_hp = Game.parts[held].pos + Vector3(0, PART_HALF, 0)
 		_hv = Vector3.ZERO
 		_hrel = wrapf(Game.parts[held].yaw - rotation.y, -PI, PI)
-		strain = minf(1.0, strain + 0.1 * Game.PART_MASS[held] / 12.0)  # the heave off the floor
+		strain = minf(1.0, strain + Tuning.pickup_strain * Game.PART_MASS[held] / 12.0)  # the heave off the floor
 		return
 
 	if _free:

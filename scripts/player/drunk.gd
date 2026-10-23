@@ -43,7 +43,7 @@ func tick(delta: float, allow_trips: bool = true) -> void:
 	elif allow_trips:
 		_trip_in -= delta
 		if _trip_in <= 0.0:
-			stun = 0.7 + 0.6 * level
+			stun = Tuning.trip_stun_base + Tuning.trip_stun_per_level * level
 			_trip_in = _next_trip()
 			tripped.emit()
 
@@ -76,4 +76,4 @@ func _lagged(raw: Vector2) -> Vector2:
 
 
 func _next_trip() -> float:
-	return randf_range(6.0, 14.0) * (1.6 - level)
+	return randf_range(Tuning.trip_min, Tuning.trip_max) * (Tuning.trip_level_base - level)
