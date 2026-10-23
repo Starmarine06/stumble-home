@@ -31,6 +31,7 @@ const POSE_RATE := 0.05
 var peer_id := 1
 var stunned := false
 var drunk: Drunk
+var stumble_warn := false
 
 # Read by the HUD.
 var strain := 0.0                # 0 fresh .. 1 arms give out
@@ -195,7 +196,9 @@ func _physics_process(delta: float) -> void:
 
 	var hud := _hud()
 	var busy: bool = hud != null and hud.minigame_active
-	drunk.tick(delta)
+	var spd01 := clampf(Vector2(velocity.x, velocity.z).length() / SPRINT_SPEED, 0.0, 1.0)
+	drunk.tick(delta, true, spd01)
+	stumble_warn = drunk.is_warning()
 	stunned = drunk.is_stunned() or Game.is_out(peer_id)
 
 	_move(delta, busy)
@@ -246,6 +249,8 @@ func _update_view(delta: float, walking: bool, sprinting: bool) -> void:
 		y = 0.5
 	_head.position.y = lerpf(_head.position.y, y, 10.0 * delta)
 	var roll := sin(Time.get_ticks_msec() * 0.0028) * 0.1 * drunk.level
+	if stumble_warn:
+		roll += sin(Time.get_ticks_msec() * 0.016) * 0.12
 	if stunned:
 		roll = 0.5
 	_cam.rotation.z = lerpf(_cam.rotation.z, roll, 6.0 * delta)

@@ -42,7 +42,13 @@ Everything needed to pick this project up cold. Keep this file current.
 Parts are physical: hold left mouse to lift, release over the glowing slot to fit (quality = distance, angle, speed). Held part is a spring on a mass (`Player._hold`), arms tire (`strain`), non-Mechanics also tire and pass out (`Game._tire`). Loose fits fall off. The Mechanic alone sees the HUD compass. Checklist, compass, crosshair are drawn controls in `scripts/ui/part_*.gd`.
 
 ## Tuning and Nights Usage
-- `Tuning.defaults()` returns default dictionary of 38 balance parameters.
+- `Tuning.defaults()` returns default dictionary of 42 balance parameters.
+
+## Car, fx, props and the stumble rule
+- `scripts/world/car_model.gd` (`CarModel`): `build()` makes the low-poly car (EngineBay, HeadlightL/R, Exhaust markers, "Body" collider); `set_repair(car, t)` goes rust to paint.
+- `scripts/world/car_fx.gd` (`CarFx`): child of the car; smoke, sparks, exhaust puff, shake. World drives `set_repair`, `spark_burst` on each fitted part and `engine_start` when all are in.
+- `scripts/world/yard_props.gd` (`YardProps`): `build(yard_seed, keep_clear)` scatters fence and junk, avoiding the car, parts and coolers.
+- Stumble rule: tripping risk builds while moving fast. A warning shows for about 1.2 s (camera rolls, HUD says "WHOA... easy there"); slow down in that window to avoid the fall. `Player.stumble_warn` mirrors `Drunk.is_warning()`.
 - `Tuning.apply(overrides)` applies dictionary of tuning changes; `Tuning.reset()` restores defaults.
 - `Nights.get_night(i)` retrieves configuration for night index `i` (night 1 = 0, night 2 = 1).
 - `Nights.apply_tuning(i)` applies tuning overrides for that night across all connected peers.

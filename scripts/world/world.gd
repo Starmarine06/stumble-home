@@ -14,7 +14,10 @@ var kebab_panel: KebabPanel
 
 var _yard: Node3D
 var _part_nodes: Array = []
-var _car_mat := StandardMaterial3D.new()
+var car_fx: CarFx
+var _last_repair := -1.0
+var _was_installed := {}
+var _engine_started := false
 var _headlights: Array[SpotLight3D] = []
 var _ghost: MeshInstance3D
 var _ghost_part := -1
@@ -32,6 +35,16 @@ func _ready() -> void:
 	car = _make_car()
 	car.position = Game.CAR_POS
 	add_child(car)
+	car_fx = CarFx.new()
+	car_fx.name = "CarFx"
+	car.add_child(car_fx)
+	car_fx.setup(car)
+	var keep: Array = [Game.CAR_POS]
+	for p in Game.parts:
+		keep.append(p.pos)
+	for cp in Game.coolers:
+		keep.append(cp)
+	_yard.add_child(YardProps.build(Game.world_seed, keep))
 	for i in Game.parts.size():
 		var n := _make_part(i)
 		_part_nodes.append(n)
@@ -202,54 +215,15 @@ func _near_special(pos: Vector3) -> bool:
 
 
 func _make_car() -> Node3D:
-	var c := Node3D.new()
-	c.name = "Car"
-	_car_mat.albedo_color = Color(0.35, 0.2, 0.1)
-	var body := MeshInstance3D.new()
-	var bm := BoxMesh.new()
-	bm.size = Vector3(2.2, 0.8, 4.4)
-	body.mesh = bm
-	body.material_override = _car_mat
-	body.position.y = 0.8
-	c.add_child(body)
-	var cabin := MeshInstance3D.new()
-	var cm := BoxMesh.new()
-	cm.size = Vector3(1.9, 0.7, 2.0)
-	cabin.mesh = cm
-	cabin.material_override = _car_mat
-	cabin.position = Vector3(0, 1.5, 0.3)
-	c.add_child(cabin)
-	var tyre_mat := StandardMaterial3D.new()
-	tyre_mat.albedo_color = Color(0.05, 0.05, 0.05)
-	for x in [-1.15, 1.15]:
-		for z in [-1.4, 1.4]:
-			var w := MeshInstance3D.new()
-			var cyl := CylinderMesh.new()
-			cyl.top_radius = 0.45
-			cyl.bottom_radius = 0.45
-			cyl.height = 0.35
-			w.mesh = cyl
-			w.material_override = tyre_mat
-			w.rotation_degrees.z = 90
-			w.position = Vector3(x, 0.45, z)
-			c.add_child(w)
-	for x in [-0.7, 0.7]:
+	var c := CarModel.build()
+	for nm in ["HeadlightL", "HeadlightR"]:
 		var s := SpotLight3D.new()
-		s.position = Vector3(x, 0.9, -2.2)
 		s.spot_range = 40.0
 		s.spot_angle = 35.0
 		s.light_energy = 3.0
 		s.visible = false
-		c.add_child(s)
+		c.get_node(nm).add_child(s)
 		_headlights.append(s)
-	var body_static := StaticBody3D.new()
-	var cs := CollisionShape3D.new()
-	var bs := BoxShape3D.new()
-	bs.size = Vector3(2.2, 1.6, 4.4)
-	cs.shape = bs
-	cs.position.y = 0.8
-	body_static.add_child(cs)
-	c.add_child(body_static)
 	return c
 
 
@@ -308,9 +282,21 @@ func _process(delta: float) -> void:
 		if p.state == Game.PS.INSTALLED:
 			installed += 1
 	var t := float(installed) / maxf(Game.parts.size(), 1.0)
-	_car_mat.albedo_color = Color(0.35, 0.2, 0.1).lerp(Color(0.85, 0.12, 0.12), t)
+	if not is_equal_approx(t, _last_repair):
+		_last_repair = t
+		CarModel.set_repair(car, t)
+		car_fx.set_repair(t)
+	for i in Game.parts.size():
+		var inst: bool = Game.parts[i].state == Game.PS.INSTALLED
+		if inst and not _was_installed.get(i, false):
+			car_fx.spark_burst(Vector3(0, 1.2, -1.5))
+		_was_installed[i] = inst
+	var all_in := installed == Game.parts.size()
+	if all_in and not _engine_started:
+		car_fx.engine_start()
+	_engine_started = all_in
 	for s in _headlights:
-		s.visible = installed == Game.parts.size()
+		s.visible = all_in
 	_update_camera(delta)
 
 

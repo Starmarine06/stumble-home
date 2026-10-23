@@ -18,6 +18,7 @@ var _hp_bar: ProgressBar
 var _prompt: Label
 var _toast: Label
 var _toast_t := 0.0
+var _warn: Label
 var _nav_label: Label
 var _alert_label: Label
 var _mg_holder: Control
@@ -73,6 +74,12 @@ func _ready() -> void:
 	_toast.size = Vector2(1280, 30)
 	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_toast.add_theme_color_override("font_color", Color(1, 0.8, 0.4))
+	_warn = _label(root, Vector2(0, 300), 40)
+	_warn.size = Vector2(1280, 60)
+	_warn.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_warn.add_theme_color_override("font_color", Color(1, 0.5, 0.35))
+	_warn.text = "WHOA... easy there"
+	_warn.visible = false
 	_nav_label = _label(root, Vector2(0, 220), 34)
 	_nav_label.size = Vector2(1280, 120)
 	_nav_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -192,6 +199,11 @@ func _on_cop_warning(side: String, seconds: float) -> void:
 
 func _process(delta: float) -> void:
 	_fx.drunk = drunk_level
+	var lp: Player = world.local_player() if world else null
+	var warn: bool = lp != null and lp.stumble_warn
+	_warn.visible = warn
+	if warn:
+		_warn.modulate.a = 0.55 + 0.45 * sin(Time.get_ticks_msec() * 0.02)
 	_toast_t -= delta
 	if _toast_t <= 0.0:
 		_toast.text = ""
