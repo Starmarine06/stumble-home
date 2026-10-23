@@ -175,139 +175,139 @@ shader_parameter/smoke_intensity = 0.0
 shader_parameter/coma_fade = 0.0
 shader_parameter/fx_time = 0.0
 
-[node name="Player" type="CharacterBody3D" unique_id=1539826019]
+[node name="Player" type="CharacterBody3D" unique_id=1372130957]
 script = ExtResource("1_qfm1y")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=332443123]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1839756331]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_md1ol")
 
-[node name="Head" type="Node3D" parent="." unique_id=46775315]
+[node name="Head" type="Node3D" parent="." unique_id=996918143]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Head" unique_id=2023239821]
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=608597294]
 current = true
 
-[node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D" unique_id=410945089]
+[node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D" unique_id=1721583063]
 light_color = Color(1, 0.98, 0.92, 1)
 light_energy = 3.5
 shadow_enabled = true
 spot_range = 28.0
 spot_angle = 38.0
 
-[node name="ViewModels" type="Node3D" parent="Head/Camera3D" unique_id=1527934481]
+[node name="ViewModels" type="Node3D" parent="Head/Camera3D" unique_id=261141366]
 
-[node name="CigarettePack" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=1824532141]
+[node name="CigarettePack" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=1925602242]
 transform = Transform3D(0.8822647, 0.23445082, 0.4082179, -0.1344309, 0.95652544, -0.25881904, -0.45115116, 0.17346981, 0.87542605, -0.3, -0.55, -0.35)
 visible = false
 
-[node name="@MeshInstance3D@331" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1609461304]
+[node name="@MeshInstance3D@331" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=669325280]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.012, 0)
 mesh = SubResource("BoxMesh_bj30b")
 
-[node name="@MeshInstance3D@332" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1347497113]
+[node name="@MeshInstance3D@332" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=359321589]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.008, -0.0121)
 mesh = SubResource("BoxMesh_jc3p3")
 
-[node name="@MeshInstance3D@333" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=273181339]
+[node name="@MeshInstance3D@333" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1638908172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, -0.0122)
 mesh = SubResource("BoxMesh_hax0n")
 
-[node name="@MeshInstance3D@334" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1867020188]
+[node name="@MeshInstance3D@334" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=108907584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.028, 0)
 mesh = SubResource("BoxMesh_t4otl")
 
-[node name="@MeshInstance3D@335" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1157226876]
+[node name="@MeshInstance3D@335" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=2057089937]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.015, 0.036, 0)
 mesh = SubResource("CylinderMesh_j2b1d")
 
-[node name="@MeshInstance3D@336" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=219551708]
+[node name="@MeshInstance3D@336" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1785748471]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.015, 0.036, 0)
 mesh = SubResource("CylinderMesh_cs1tg")
 
-[node name="ExtractedCig" type="Node3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=768508313]
+[node name="ExtractedCig" type="Node3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=994893359]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
 
-[node name="@MeshInstance3D@337" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=428798815]
+[node name="@MeshInstance3D@337" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=323673933]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 mesh = SubResource("CylinderMesh_2dvfe")
 
-[node name="@MeshInstance3D@338" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=212041553]
+[node name="@MeshInstance3D@338" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=1735810805]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.044)
 mesh = SubResource("CylinderMesh_giy8y")
 
-[node name="PackLid" type="Node3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1209618425]
+[node name="PackLid" type="Node3D" parent="Head/Camera3D/ViewModels/CigarettePack" unique_id=1192196273]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0.012)
 
-[node name="@MeshInstance3D@339" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/PackLid" unique_id=1458590246]
+[node name="@MeshInstance3D@339" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/CigarettePack/PackLid" unique_id=1475287631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.013, -0.012)
 mesh = SubResource("BoxMesh_fdfoy")
 
-[node name="Lighter" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=431547510]
+[node name="Lighter" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=423180858]
 transform = Transform3D(0.9309405, -0.14106478, -0.33682406, 0.08583164, 0.98106027, -0.17364818, 0.35494038, 0.13274597, 0.9254165, 0.32, -0.55, -0.3)
 visible = false
 
-[node name="@MeshInstance3D@340" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1859824435]
+[node name="@MeshInstance3D@340" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1482563906]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.005, 0)
 mesh = SubResource("BoxMesh_hhpqf")
 
-[node name="@MeshInstance3D@341" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1261511082]
+[node name="@MeshInstance3D@341" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1090044403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003, 0.03, 0)
 mesh = SubResource("BoxMesh_g5jhy")
 
-[node name="@MeshInstance3D@342" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1234341084]
+[node name="@MeshInstance3D@342" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1535793008]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.009, 0.033, 0)
 mesh = SubResource("CylinderMesh_holxr")
 
-[node name="LighterLid" type="Node3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=53512627]
+[node name="LighterLid" type="Node3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1771925079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018, 0.021, 0)
 
-[node name="@MeshInstance3D@343" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter/LighterLid" unique_id=662377365]
+[node name="@MeshInstance3D@343" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter/LighterLid" unique_id=2072185947]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, 0.014, 0)
 mesh = SubResource("BoxMesh_mx1m4")
 
-[node name="LighterFlame" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=874811257]
+[node name="LighterFlame" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=1564205155]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004, 0.048, 0)
 visible = false
 mesh = SubResource("SphereMesh_4gjji")
 
-[node name="LighterLight" type="OmniLight3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=827325748]
+[node name="LighterLight" type="OmniLight3D" parent="Head/Camera3D/ViewModels/Lighter" unique_id=773944789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004, 0.052, 0)
 visible = false
 light_color = Color(1, 0.72, 0.2, 1)
 light_energy = 4.5
 omni_range = 2.5
 
-[node name="Cigarette" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=1828345897]
+[node name="Cigarette" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=18260622]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.28, -0.35)
 visible = false
 
-[node name="FilterMesh" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=586728914]
+[node name="FilterMesh" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=1386479080]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.005)
 mesh = SubResource("CylinderMesh_u2ulf")
 
-[node name="PaperMesh" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=281275926]
+[node name="PaperMesh" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=2004785746]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.0445)
 mesh = SubResource("CylinderMesh_6e8lb")
 
-[node name="TipAssembly" type="Node3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=1158929343]
+[node name="TipAssembly" type="Node3D" parent="Head/Camera3D/ViewModels/Cigarette" unique_id=87646924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.077)
 
-[node name="EmberTip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=1854173759]
+[node name="EmberTip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=136934237]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 mesh = SubResource("CylinderMesh_2gdjj")
 surface_material_override/0 = ExtResource("10_ujl30")
 
-[node name="AshTip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=591152749]
+[node name="AshTip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=394331265]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.004)
 mesh = SubResource("CylinderMesh_sc3ue")
 
-[node name="EmberLight" type="OmniLight3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=1565669248]
+[node name="EmberLight" type="OmniLight3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=995241897]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
 light_color = Color(1, 0.35, 0.05, 1)
 omni_range = 1.5
 
-[node name="SmokeParticles" type="CPUParticles3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=495737435]
+[node name="SmokeParticles" type="CPUParticles3D" parent="Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=504563902]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.004, -0.006)
 emitting = false
 amount = 20
@@ -321,44 +321,44 @@ initial_velocity_max = 0.22
 scale_amount_min = 0.015
 scale_amount_max = 0.045
 
-[node name="Bottle" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=1702388347]
+[node name="Bottle" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=383279726]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, -0.42, -0.38)
 visible = false
 
-[node name="@MeshInstance3D@344" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1876137260]
+[node name="@MeshInstance3D@344" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1478849941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
 mesh = SubResource("CylinderMesh_ha2mi")
 
-[node name="@MeshInstance3D@345" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=418528641]
+[node name="@MeshInstance3D@345" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=888940876]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
 mesh = SubResource("CylinderMesh_apa73")
 
-[node name="NozzleLip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1465023745]
+[node name="NozzleLip" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1813454467]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
 mesh = SubResource("CylinderMesh_74r1k")
 
-[node name="@MeshInstance3D@346" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1400752199]
+[node name="@MeshInstance3D@346" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1185418156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.231, 0)
 material_override = SubResource("StandardMaterial3D_8svfe")
 mesh = SubResource("CylinderMesh_2a3c5")
 
-[node name="@MeshInstance3D@347" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1650839480]
+[node name="@MeshInstance3D@347" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/Bottle" unique_id=1669990724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
 mesh = SubResource("CylinderMesh_42b1b")
 
-[node name="EnergyCan" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=529945363]
+[node name="EnergyCan" type="Node3D" parent="Head/Camera3D/ViewModels" unique_id=2058810432]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, -0.42, -0.4)
 visible = false
 
-[node name="@MeshInstance3D@348" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/EnergyCan" unique_id=1010771658]
+[node name="@MeshInstance3D@348" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/EnergyCan" unique_id=1039424130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
 mesh = SubResource("CylinderMesh_h7ic4")
 
-[node name="@MeshInstance3D@349" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/EnergyCan" unique_id=552504390]
+[node name="@MeshInstance3D@349" type="MeshInstance3D" parent="Head/Camera3D/ViewModels/EnergyCan" unique_id=811512285]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.142, 0)
 mesh = SubResource("CylinderMesh_au7lq")
 
-[node name="ExhaleSmoke" type="CPUParticles3D" parent="Head/Camera3D" unique_id=926951671]
+[node name="ExhaleSmoke" type="CPUParticles3D" parent="Head/Camera3D" unique_id=1101622875]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -0.22)
 emitting = false
 amount = 24
@@ -374,28 +374,28 @@ initial_velocity_max = 0.6
 scale_amount_min = 0.03
 scale_amount_max = 0.09
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1546633016]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1091208695]
 
-[node name="ScreenFX" type="ColorRect" parent="HUD" unique_id=1829318680]
+[node name="ScreenFX" type="ColorRect" parent="HUD" unique_id=933643350]
 material = SubResource("ShaderMaterial_ua5cf")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Crosshair" type="CenterContainer" parent="HUD" unique_id=1066636085]
+[node name="Crosshair" type="CenterContainer" parent="HUD" unique_id=1343845193]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Dot" type="ColorRect" parent="HUD/Crosshair" unique_id=816272147]
+[node name="Dot" type="ColorRect" parent="HUD/Crosshair" unique_id=1314078894]
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 0.8)
 
-[node name="ControlsUI" type="MarginContainer" parent="HUD" unique_id=1579932260]
+[node name="ControlsUI" type="MarginContainer" parent="HUD" unique_id=1304837128]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
@@ -404,100 +404,100 @@ mouse_filter = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_bottom = 15
 
-[node name="PanelContainer" type="PanelContainer" parent="HUD/ControlsUI" unique_id=1820403125]
+[node name="PanelContainer" type="PanelContainer" parent="HUD/ControlsUI" unique_id=943195230]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HUD/ControlsUI/PanelContainer" unique_id=171259705]
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/ControlsUI/PanelContainer" unique_id=902933424]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 3
 
-[node name="@Label@350" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=880525235]
+[node name="@Label@350" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=156188567]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "HIGH  •  ceaser"
 
-[node name="BuzzContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=688460516]
+[node name="BuzzContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1966865151]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="BuzzLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1297460948]
+[node name="BuzzLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1848150419]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 1)
 text = "AWAKE / BUZZ STAMINA: 100% (Keep smoking or drinking to avoid coma!)"
 
-[node name="BuzzBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=812221431]
+[node name="BuzzBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1553679883]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 value = 100.0
 
-[node name="DrunkContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1149452536]
+[node name="DrunkContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1161245908]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="DrunkLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=158720785]
+[node name="DrunkLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=1213749109]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.85, 0.95, 1)
 text = "DRUNKENNESS METER: 0% (Sober / Normal)"
 
-[node name="DrunkBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=2070550962]
+[node name="DrunkBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=1450914007]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SmokeContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=824619413]
+[node name="SmokeContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=612527324]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SmokeLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=815352925]
+[node name="SmokeLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=1664389664]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.75, 0.75, 0.85, 1)
 text = "SMOKE DENSITY: 0%"
 
-[node name="SmokeBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=327567698]
+[node name="SmokeBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=2083947421]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="CigContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1559208216]
+[node name="CigContainer" type="HBoxContainer" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1319285622]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="CigLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=376041721]
+[node name="CigLabel" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=1878023173]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(1, 0.82, 0.45, 1)
 text = "🚬 CIGARETTE: None (Press [1] to pull out pack & light)"
 
-[node name="CigBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=1181931940]
+[node name="CigBar" type="ProgressBar" parent="HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=370054038]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ActionKeys" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=930925693]
+[node name="ActionKeys" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1378010959]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
 text = "[1] Take/Light Cigarette (🖱️ Scroll Wheel to Smoke)   [2] Drink (+Buzz/Drunk)   [3] Energy Drink   [E] Van/Talk"
 
-[node name="@Label@351" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=2130429329]
+[node name="@Label@351" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=260540657]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
 text = "[W/A/S/D] Move 360° (Inverts when drunk!)   [Mouse] 360° Look (Inverts when 60%+ drunk!)   [Shift] Sprint   [F] Light"
 
-[node name="EffectBadge" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1725426948]
+[node name="EffectBadge" type="Label" parent="HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1044244737]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 1)
 text = "Status: Awake • Normal"
 
-[node name="InteractPrompt" type="Label" parent="HUD" unique_id=10688110]
+[node name="InteractPrompt" type="Label" parent="HUD" unique_id=1699551701]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -512,7 +512,7 @@ theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 0.95, 0.35, 1)
 text = "[E] Interact"
 
-[node name="DialogueUI" type="PanelContainer" parent="HUD" unique_id=1115307954]
+[node name="DialogueUI" type="PanelContainer" parent="HUD" unique_id=1117118533]
 visible = false
 anchors_preset = 12
 anchor_top = 1.0
@@ -524,7 +524,7 @@ offset_right = -280.0
 offset_bottom = -135.0
 mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="HUD/DialogueUI" unique_id=67580004]
+[node name="Margin" type="MarginContainer" parent="HUD/DialogueUI" unique_id=1261122677]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -532,53 +532,53 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="HUD/DialogueUI/Margin" unique_id=1133573025]
+[node name="VBox" type="VBoxContainer" parent="HUD/DialogueUI/Margin" unique_id=2084822669]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SpeakerName" type="Label" parent="HUD/DialogueUI/Margin/VBox" unique_id=784032773]
+[node name="SpeakerName" type="Label" parent="HUD/DialogueUI/Margin/VBox" unique_id=2087584685]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
 text = "Character Name"
 
-[node name="DialogueText" type="Label" parent="HUD/DialogueUI/Margin/VBox" unique_id=1492808975]
+[node name="DialogueText" type="Label" parent="HUD/DialogueUI/Margin/VBox" unique_id=564050532]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "\"Welcome to ceaser!\""
 autowrap_mode = 3
 
-[node name="ComaUI" type="PanelContainer" parent="HUD" unique_id=666707574]
+[node name="ComaUI" type="PanelContainer" parent="HUD" unique_id=1435751253]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="@CenterContainer@352" type="CenterContainer" parent="HUD/ComaUI" unique_id=139458889]
+[node name="@CenterContainer@352" type="CenterContainer" parent="HUD/ComaUI" unique_id=550981767]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="@VBoxContainer@353" type="VBoxContainer" parent="HUD/ComaUI/@CenterContainer@352" unique_id=122804419]
+[node name="@VBoxContainer@353" type="VBoxContainer" parent="HUD/ComaUI/@CenterContainer@352" unique_id=101290845]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="@Label@354" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=2130130318]
+[node name="@Label@354" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=1372917538]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
 theme_override_colors/font_color = Color(1, 0.15, 0.2, 1)
 text = "YOU FELL ASLEEP & SLIPPED INTO A COMA"
 horizontal_alignment = 1
 
-[node name="@Label@355" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=2102766388]
+[node name="@Label@355" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=1910550721]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 text = "You stopped smoking and drinking for too long..."
 horizontal_alignment = 1
 
-[node name="@Label@356" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=113653633]
+[node name="@Label@356" type="Label" parent="HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=431476609]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
