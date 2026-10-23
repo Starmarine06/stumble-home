@@ -83,9 +83,9 @@ static func _spot(rng: RandomNumberGenerator, keep: Array, extra: float = 0.0) -
 	return Vector3.INF
 
 
-static func build(seed: int, keep_clear: Array) -> Node3D:
+static func build(yard_seed: int, keep_clear: Array) -> Node3D:
 	var rng := RandomNumberGenerator.new()
-	rng.seed = seed
+	rng.seed = yard_seed
 	var root := Node3D.new()
 	root.name = "YardProps"
 
@@ -103,7 +103,7 @@ static func build(seed: int, keep_clear: Array) -> Node3D:
 	for i in segs:
 		var a := TAU * float(i) / segs
 		var p := Vector3(cos(a) * FENCE_R, 1.25, sin(a) * FENCE_R)
-		if not _ok(p, keep_clear):
+		if not _ok(p, keep_clear, seg_len * 0.5):
 			continue
 		_box(root, p, Vector3(seg_len, 2.5, 0.08), steel, -a + PI * 0.5, true)
 
@@ -114,11 +114,11 @@ static func build(seed: int, keep_clear: Array) -> Node3D:
 		if p == Vector3.INF:
 			continue
 		for j in n:
-			_cyl(root, p + Vector3(0, 0.15 + j * 0.3, 0), 0.45, 0.3, rubber, j == 0)
+			_cyl(root, p + Vector3(0, 0.15 + j * 0.3, 0), 0.45, 0.3, rubber)
 
 	# Wrecked car shells
 	for i in 7:
-		var p := _spot(rng, keep_clear, 3.0)
+		var p := _spot(rng, keep_clear, 2.6)
 		var yaw := rng.randf() * TAU
 		var m = rust[rng.randi() % rust.size()]
 		if p == Vector3.INF:
@@ -138,11 +138,11 @@ static func build(seed: int, keep_clear: Array) -> Node3D:
 		var m = barrel[rng.randi() % 2]
 		if p == Vector3.INF:
 			continue
-		_cyl(root, p + Vector3(0, 0.45, 0), 0.3, 0.9, m, true)
+		_cyl(root, p + Vector3(0, 0.45, 0), 0.3, 0.9, m)
 
 	# Scrap piles
 	for i in 10:
-		var p := _spot(rng, keep_clear, 2.0)
+		var p := _spot(rng, keep_clear, 3.2)
 		if p == Vector3.INF:
 			continue
 		for j in 5:
@@ -156,18 +156,18 @@ static func build(seed: int, keep_clear: Array) -> Node3D:
 		var yaw := rng.randf() * TAU
 		if p == Vector3.INF:
 			continue
-		_box(root, p + Vector3(0, 0.08, 0), Vector3(1.2, 0.16, 1.0), wood, yaw, true)
+		_box(root, p + Vector3(0, 0.08, 0), Vector3(1.2, 0.16, 1.0), wood, yaw)
 
 	# Lamp posts
 	for i in 5:
 		var p := _spot(rng, keep_clear, 1.0)
 		if p == Vector3.INF:
 			continue
-		_cyl(root, p + Vector3(0, 2.5, 0), 0.07, 5.0, steel)
+		_cyl(root, p + Vector3(0, 2.5, 0), 0.07, 5.0, steel, true)
 		_box(root, p + Vector3(0, 5.05, 0), Vector3(0.5, 0.15, 0.3), _mat(Color(1.0, 0.85, 0.5), 0.0, true))
 
 	# Portacabin office
-	var op := _spot(rng, keep_clear, 4.0)
+	var op := _spot(rng, keep_clear, 3.5)
 	if op != Vector3.INF:
 		var oy := rng.randf() * TAU
 		var cab := Node3D.new()
