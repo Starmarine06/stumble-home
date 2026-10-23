@@ -37,16 +37,40 @@ func _run() -> void:
 	await _wait(0.5)
 	_check(world.local_player() != null, "player spawned")
 
+	var g0 := 0
+	while game.parts[0].state != game.PS.CARRIED and g0 < 60:
+		game.s_pickup(0)
+		g0 += 1
+	game.s_place(0.1)
+	_check(game.parts[0].state == game.PS.INSTALLED and game.parts[0].loose_t > 0.0, "crooked fit is loose")
+	_check(game.build_damage > 10.0, "crooked fit damages the car")
+	game._tick_loose(100.0)
+	_check(game.parts[0].state == game.PS.WORLD, "loose part falls off the car")
+	game.s_pickup(0)
+	_check(game.parts[0].state == game.PS.CARRIED, "part lifted with the hands")
+	var wanted_pre_drop: float = game.wanted
+	game.s_drop(Vector3(5, 0, 6), 1.0, 7.0)
+	_check(game.parts[0].state == game.PS.WORLD and game.parts[0].pos.is_equal_approx(Vector3(5, 0, 6)), "dropped part rests where it landed")
+	_check(game.wanted > wanted_pre_drop, "a hard drop clangs and raises wanted")
+	_check(load("res://scripts/player/player.gd").quality_for(0.0, 0.0, 0.0) > 0.99, "perfect placement scores ~1")
+	_check(load("res://scripts/player/player.gd").quality_for(0.45, 0.5, 3.0) < 0.3, "sloppy placement scores low")
 	for i in game.parts.size():
 		var guard := 0
 		while game.parts[i].state != game.PS.CARRIED and guard < 60:
 			game.s_pickup(i)
 			guard += 1
 		_check(game.parts[i].state == game.PS.CARRIED, "picked up %s (%d tries)" % [game.parts[i].name, guard])
-		game.s_deliver()
-		_check(game.parts[i].state == game.PS.DELIVERED, "delivered %s" % game.parts[i].name)
-		game.s_install(i, true)
+		game.s_place(1.0)
 		_check(game.parts[i].state == game.PS.INSTALLED, "installed %s" % game.parts[i].name)
+	game.fatigue.clear()
+	game.names[99] = "Pal"
+	game._tire(99, 1.0)
+	_check(game.is_out(99), "non-mechanic hauler passes out")
+	game._tire(1, 5.0)
+	_check(not game.is_out(1), "mechanic never tires")
+	game._tick_fatigue(game.PASSOUT_SECS + 1.0)
+	_check(not game.is_out(99), "passed-out hauler wakes after a long while")
+	game.names.erase(99)
 	await _wait(3.6)
 	_check(game.phase == game.Phase.DRIVE, "drive phase starts after last part")
 	_check(world.drive != null, "drive built")
@@ -64,9 +88,9 @@ func _run() -> void:
 	# Cop event
 	game._cop_open = true
 	game._cop_left = 7.0
-	var w0: float = game.wanted
+	var wanted_before: float = game.wanted
 	game.s_cop_result(false)
-	_check(game.wanted > w0, "failed cop signal raises wanted")
+	_check(game.wanted > wanted_before, "failed cop signal raises wanted")
 	# Drive along the route with the Driver's own simulation
 	for i in 200:
 		Input.action_press("forward")

@@ -13,9 +13,17 @@ signal spawn_players
 signal drive_started(drive_seed: int)
 
 enum Phase { MENU, LOBBY, SCAVENGE, DRIVE, RESULT }
-enum PS { WORLD, CARRIED, DELIVERED, INSTALLED }
+enum PS { WORLD, CARRIED, INSTALLED }
 
 const PART_NAMES := ["Battery", "Fuel Pump", "Spark Plugs", "Spare Tyre"]
+## Where each part belongs, in car-local space (the car faces -Z).
+const SLOTS := [Vector3(0.5, 1.35, -1.7), Vector3(0, 0.6, 2.5), Vector3(-0.5, 1.35, -1.7), Vector3(1.5, 0.9, 0.0)]
+const SLOT_YAW := [PI * 0.5, 0.0, 0.0, 0.0]
+const SLOT_SYMMETRIC := [false, true, true, true]  # round parts do not care which way they face
+const PART_MASS := [12.0, 5.0, 0.4, 9.0]            # kg: heavy things really are hard to hold
+const PLACE_R := 0.5         # let go this close to the slot and it seats; any further and it just drops
+const SOLID_Q := 0.75        # fitted at least this well and it will never come loose
+const PASSOUT_SECS := 25.0   # how long a worn-out hauler stays down
 const WANTED_MAX := 100.0
 const CAR_POS := Vector3.ZERO
 
@@ -24,7 +32,10 @@ var names: Dictionary = {}        # peer_id -> display name
 var role_owner: Dictionary = {}   # Roles.Id -> peer_id
 var world_seed := 0
 var drive_seed := 0
-var parts: Array = []             # [{name, state, holder, pos}]
+var parts: Array = []             # [{name, state, holder, pos, yaw, q, loose_t, warned}]; pos is the part origin (ground level when resting)
+var fatigue: Dictionary = {}      # peer -> 0..1; only non-Mechanics tire from hauling parts
+var out_left: Dictionary = {}     # peer -> seconds left passed out
+var build_damage := 0.0           # car damage from sloppy fitting, carried into the drive
 var coolers: Array = []           # water cooler positions
 var wanted := 0.0
 var car_hp := 100.0
@@ -32,6 +43,7 @@ var engine_hot := false
 var won := false
 var result_text := ""
 
+var _fat_sync := 0.0
 var _ready_peers: Dictionary = {}
 var _stat_timer := 0.0
 var _phase_timer := 0.0
@@ -51,7 +63,8 @@ func _setup_input() -> void:
 	var map := {
 		"forward": [KEY_W, KEY_UP], "back": [KEY_S, KEY_DOWN],
 		"left": [KEY_A, KEY_LEFT], "right": [KEY_D, KEY_RIGHT],
-		"act": [KEY_E], "drop": [KEY_Q],
+		"act": [KEY_E], "turn_l": [KEY_Q], "turn_r": [KEY_E],
+		"jump": [KEY_SPACE], "sprint": [KEY_SHIFT], "flashlight": [KEY_F],
 	}
 	for action in map:
 		if not InputMap.has_action(action):
@@ -93,16 +106,17 @@ func has_role_for(peer: int, r: int) -> bool:
 	return role_owner.get(r, -1) == peer
 
 
+func is_out(peer: int) -> bool:
+	return out_left.get(peer, 0.0) > 0.0
+
+
+func fatigue_of(peer: int) -> float:
+	return fatigue.get(peer, 0.0)
+
+
 func carried_by(peer: int) -> int:
 	for i in parts.size():
 		if parts[i].state == PS.CARRIED and parts[i].holder == peer:
-			return i
-	return -1
-
-
-func delivered_part() -> int:
-	for i in parts.size():
-		if parts[i].state == PS.DELIVERED:
 			return i
 	return -1
 
@@ -147,6 +161,9 @@ func _layout(seed_value: int) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
 	parts.clear()
+	fatigue.clear()
+	out_left.clear()
+	build_damage = 0.0
 	var used: Array[Vector3] = []
 	for i in PART_NAMES.size():
 		var pos := Vector3.ZERO
@@ -161,7 +178,7 @@ func _layout(seed_value: int) -> void:
 			if ok:
 				break
 		used.append(pos)
-		parts.append({"name": PART_NAMES[i], "state": PS.WORLD, "holder": 0, "pos": pos})
+		parts.append({"name": PART_NAMES[i], "state": PS.WORLD, "holder": 0, "pos": pos, "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false})
 	coolers.clear()
 	for i in 3:
 		var ang2 := rng.randf() * TAU
@@ -318,26 +335,21 @@ func s_pickup(i: int) -> void:
 	if not is_host() or phase != Phase.SCAVENGE or i < 0 or i >= parts.size():
 		return
 	var who := _sender()
-	if parts[i].state != PS.WORLD or carried_by(who) != -1:
+	if parts[i].state != PS.WORLD or carried_by(who) != -1 or is_out(who):
 		return
-	var fumble := 0.25 + 0.5 * _drunk_of(who)
-	if has_role_for(who, Roles.Id.DRIVER):
-		fumble -= 0.2
-	if randf() < fumble:
-		_add_wanted(3.0)
-		_toast_all("%s fumbled the %s!" % [names.get(who, "?"), parts[i].name])
-		return
+	_tire(who, 0.1)
 	parts[i].state = PS.CARRIED
 	parts[i].holder = who
 	_send_parts()
 
 
-func request_drop() -> void:
-	_to_host("s_drop")
+## The holder let go and the part has landed at pos; impact is how hard it hit (m/s).
+func request_drop(pos: Vector3, yaw: float, impact: float) -> void:
+	_to_host("s_drop", [pos, yaw, impact])
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func s_drop() -> void:
+func s_drop(pos: Vector3, yaw: float, impact: float) -> void:
 	if not is_host():
 		return
 	var who := _sender()
@@ -346,54 +358,164 @@ func s_drop() -> void:
 		return
 	parts[i].state = PS.WORLD
 	parts[i].holder = 0
-	_add_wanted(6.0)
-	_toast_all("Clang! %s dropped the %s." % [names.get(who, "?"), parts[i].name])
+	parts[i].pos = Vector3(clampf(pos.x, -50.0, 50.0), 0.0, clampf(pos.z, -50.0, 50.0))
+	parts[i].yaw = yaw
+	if impact > 3.0:
+		_add_wanted((impact - 3.0) * 2.0)
+		_toast_all("Clang! %s dropped the %s." % [names.get(who, "?"), parts[i].name])
 	_send_parts()
 
 
-func request_deliver() -> void:
-	_to_host("s_deliver")
+## While held, the holder streams where the part is so everyone sees it move.
+func send_pose(i: int, pos: Vector3, yaw: float) -> void:
+	_to_host("s_pose", [i, pos, yaw])
+
+
+@rpc("any_peer", "call_remote", "unreliable")
+func s_pose(i: int, pos: Vector3, yaw: float) -> void:
+	if not is_host() or i < 0 or i >= parts.size():
+		return
+	if parts[i].state != PS.CARRIED or parts[i].holder != _sender():
+		return
+	parts[i].pos = pos
+	parts[i].yaw = yaw
+	if not multiplayer.get_peers().is_empty():
+		rpc("c_pose", i, pos, yaw)
+
+
+@rpc("authority", "call_remote", "unreliable")
+func c_pose(i: int, pos: Vector3, yaw: float) -> void:
+	if i >= 0 and i < parts.size() and parts[i].holder != my_id():
+		parts[i].pos = pos
+		parts[i].yaw = yaw
+
+
+## q is how well the held part lined up with its slot (0..1), judged by the placing client.
+func request_place(q: float) -> void:
+	_to_host("s_place", [q])
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func s_deliver() -> void:
+func s_place(q: float) -> void:
 	if not is_host() or phase != Phase.SCAVENGE:
 		return
 	var who := _sender()
 	var i := carried_by(who)
-	if i == -1:
+	if i == -1 or is_out(who):
 		return
-	parts[i].state = PS.DELIVERED
-	parts[i].holder = 0
+	_tire(who, 0.1)
+	q = clampf(q, 0.0, 1.0)
+	var p: Dictionary = parts[i]
+	p.state = PS.INSTALLED
+	p.holder = 0
+	p.q = q
+	p.warned = false
+	p.loose_t = randf_range(10.0, 22.0) * (0.4 + q) if q < SOLID_Q else 0.0
+	var dmg := (1.0 - q) * 18.0
+	build_damage += dmg
+	_add_wanted((1.0 - q) * 10.0)
+	if q >= 0.9:
+		_toast_all("%s fitted perfectly!" % p.name)
+	elif q >= SOLID_Q:
+		_toast_all("%s fitted. Good enough." % p.name)
+	else:
+		_toast_all("%s jammed in crooked. That will not hold." % p.name)
+	if all_installed():
+		_phase_timer = 3.0
 	_send_parts()
-	_toast_all("%s delivered the %s to the car." % [names.get(who, "?"), parts[i].name])
 
 
-func request_install(i: int, ok: bool) -> void:
-	_to_host("s_install", [i, ok])
+func request_rest() -> void:
+	_to_host("s_rest")
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func s_install(i: int, ok: bool) -> void:
-	if not is_host() or phase != Phase.SCAVENGE or i < 0 or i >= parts.size():
+func s_rest() -> void:
+	if not is_host():
 		return
-	if not has_role_for(_sender(), Roles.Id.MECHANIC) or parts[i].state != PS.DELIVERED:
+	var who := _sender()
+	if not is_out(who):
+		fatigue[who] = maxf(0.0, fatigue_of(who) - 0.4)
+
+
+## Hauling parts wears out everyone except the Mechanic.
+func _tire(who: int, amount: float) -> void:
+	if has_role_for(who, Roles.Id.MECHANIC) or is_out(who):
 		return
-	if ok:
-		parts[i].state = PS.INSTALLED
-		_toast_all("%s fitted!" % parts[i].name)
-		if all_installed():
-			_phase_timer = 3.0
+	fatigue[who] = fatigue_of(who) + amount
+	if fatigue[who] >= 1.0:
+		out_left[who] = PASSOUT_SECS
+		_toast_all("%s passed out from hauling parts. That is the Mechanic's job!" % names.get(who, "?"))
+		var i := carried_by(who)
+		if i != -1:
+			var ang := randf() * TAU
+			parts[i].pos = CAR_POS + Vector3(cos(ang) * 4.0, 0.0, sin(ang) * 4.0)
+			parts[i].state = PS.WORLD
+			parts[i].holder = 0
+			_send_parts()
+
+
+func _tick_fatigue(delta: float) -> void:
+	for who in names.keys():
+		if is_out(who):
+			out_left[who] = maxf(0.0, out_left[who] - delta)
+			if out_left[who] <= 0.0:
+				fatigue[who] = 0.4
+				_toast_all("%s woke up. Mouth tastes like a battery." % names.get(who, "?"))
+		elif carried_by(who) != -1:
+			_tire(who, (0.01 + 0.003 * PART_MASS[carried_by(who)]) * delta)
+		else:
+			fatigue[who] = maxf(0.0, fatigue_of(who) - 0.03 * delta)
+	_fat_sync -= delta
+	if _fat_sync <= 0.0:
+		_fat_sync = 0.25
+		_bcast("c_fatigue", [fatigue, out_left])
+
+
+@rpc("authority", "call_remote", "unreliable")
+func c_fatigue(f: Dictionary, o: Dictionary) -> void:
+	fatigue = f
+	out_left = o
+
+
+## Badly fitted parts rattle, then fall off.
+func _tick_loose(delta: float) -> void:
+	for i in parts.size():
+		var p: Dictionary = parts[i]
+		if p.state != PS.INSTALLED or p.loose_t <= 0.0:
+			continue
+		p.loose_t -= delta
+		if p.loose_t <= 3.0 and not p.warned:
+			p.warned = true
+			_toast_all("Something is rattling on the car...")
+			_send_parts()
+		if p.loose_t <= 0.0:
+			p.loose_t = 0.0
+			_part_falls_off(i)
+
+
+func _part_falls_off(i: int) -> void:
+	var p: Dictionary = parts[i]
+	_toast_all("The %s fell off the car!" % p.name)
+	if phase == Phase.SCAVENGE:
+		var ang := randf() * TAU
+		p.pos = CAR_POS + Vector3(cos(ang) * 4.0, 0.0, sin(ang) * 4.0)
+		p.state = PS.WORLD
+		p.q = 0.0
+		_add_wanted(4.0)
 	else:
+		# On the road there is no going back for it.
+		p.q = SOLID_Q
+		car_hp -= 12.0
 		_add_wanted(8.0)
-		_toast_all("The Mechanic fumbled the %s. Bang!" % parts[i].name)
+	p.warned = false
 	_send_parts()
 
 
 func _send_parts() -> void:
 	var states := []
 	for p in parts:
-		states.append([p.state, p.holder])
+		states.append([p.state, p.holder, p.q, p.warned, p.pos, p.yaw])
 	_bcast("c_parts", [states])
 
 
@@ -402,6 +524,10 @@ func c_parts(states: Array) -> void:
 	for i in mini(states.size(), parts.size()):
 		parts[i].state = states[i][0]
 		parts[i].holder = states[i][1]
+		parts[i].q = states[i][2]
+		parts[i].warned = states[i][3]
+		parts[i].pos = states[i][4]
+		parts[i].yaw = states[i][5]
 	parts_changed.emit()
 
 
@@ -530,6 +656,8 @@ func _process(delta: float) -> void:
 	match phase:
 		Phase.SCAVENGE:
 			wanted = maxf(0.0, wanted - 0.6 * delta)
+			_tick_loose(delta)
+			_tick_fatigue(delta)
 			if _phase_timer > 0.0:
 				_phase_timer -= delta
 				if _phase_timer <= 0.0 and all_installed():
@@ -550,7 +678,7 @@ func _process(delta: float) -> void:
 
 func _start_drive() -> void:
 	wanted = maxf(0.0, wanted * 0.5)
-	car_hp = 100.0
+	car_hp = maxf(40.0, 100.0 - build_damage)
 	engine_hot = false
 	_hot_timer = randf_range(18.0, 28.0)
 	_cop_timer = randf_range(14.0, 20.0)
@@ -559,6 +687,7 @@ func _start_drive() -> void:
 
 
 func _tick_drive(delta: float) -> void:
+	_tick_loose(delta)
 	if engine_hot:
 		car_hp -= 1.5 * delta
 	else:

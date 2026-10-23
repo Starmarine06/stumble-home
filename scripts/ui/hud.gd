@@ -10,7 +10,9 @@ var minigame_active := false
 var _fx: DrunkFx
 var _role_label: Label
 var _goal_label: Label
-var _parts_label: Label
+var _checklist: PartChecklist
+var _compass: PartCompass
+var _cross: PartCrosshair
 var _wanted_bar: ProgressBar
 var _hp_bar: ProgressBar
 var _prompt: Label
@@ -39,7 +41,14 @@ func _ready() -> void:
 	_role_label = _label(root, Vector2(16, 12), 18)
 	_goal_label = _label(root, Vector2(16, 120), 20)
 	_goal_label.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
-	_parts_label = _label(root, Vector2(16, 150), 16)
+	_checklist = PartChecklist.new()
+	_checklist.position = Vector2(16, 150)
+	root.add_child(_checklist)
+	_compass = PartCompass.new()
+	_compass.position = Vector2(1280 - 180, 110)
+	root.add_child(_compass)
+	_cross = PartCrosshair.new()
+	root.add_child(_cross)
 
 	var bars := VBoxContainer.new()
 	bars.position = Vector2(1280 - 260, 14)
@@ -159,45 +168,69 @@ func _process(delta: float) -> void:
 		_drive_hud(delta)
 
 
-func _scavenge_hud(delta: float) -> void:
-	_fx.blackout = 0.0
-	var installed := 0
-	var lines := []
-	for p in Game.parts:
-		var mark := "[ ]"
-		match p.state:
-			Game.PS.CARRIED: mark = "[carried]"
-			Game.PS.DELIVERED: mark = "[at car - needs fitting]"
-			Game.PS.INSTALLED:
-				mark = "[fitted]"
-				installed += 1
-		lines.append("%s %s" % [mark, p.name])
-	_goal_label.text = "Find the 4 car parts, bring them to the car, and have the Mechanic fit them."
-	_parts_label.text = "\n".join(lines)
+func _scavenge_hud(_delta: float) -> void:
+	var me_id := Game.my_id()
+	var tired := Game.fatigue_of(me_id)
+	var out := Game.is_out(me_id)
+	if out:
+		_fx.blackout = 1.0
+	else:
+		_fx.blackout = clampf((tired - 0.6) / 0.4, 0.0, 1.0) * (0.3 + 0.2 * sin(Time.get_ticks_msec() * 0.006))
+	_goal_label.text = ""
 	_role_label.text = _role_text("scavenge")
 
-	if Game.has_role(Roles.Id.NAVIGATOR):
-		var me := world.local_player() if world else null
-		if me:
-			var best := -1
-			var bd := INF
-			for i in Game.parts.size():
-				var p: Dictionary = Game.parts[i]
-				if p.state == Game.PS.WORLD:
-					var d := me.global_position.distance_to(p.pos)
-					if d < bd:
-						bd = d
-						best = i
-			if best != -1:
-				var to: Vector3 = Game.parts[best].pos - me.global_position
-				var wob := sin(Time.get_ticks_msec() * 0.003) * 0.5 * drunk_level
-				var ang := atan2(to.x, -to.z) + wob
-				_nav_label.text = "Compass: %s ~%dm  (%s)" % [_arrow(ang), int(bd + randf_range(-4, 4)), Game.parts[best].name]
+	var is_mech := Game.has_role(Roles.Id.MECHANIC)
+	_checklist.visible = true
+	_checklist.show_tired = not is_mech
+	_checklist.tired = tired
+	_checklist.out_frac = Game.out_left.get(me_id, 0.0) / Game.PASSOUT_SECS if out else 0.0
+
+	var me := world.local_player() if world else null
+	_cross.visible = me != null and not out
+	if me:
+		_cross.strain = me.strain
+		_cross.can_grab = me.aim_part != -1
+		_cross.holding = me.holding
+		_cross.fit_q = me.fit_q
+	_update_compass(me, is_mech and not out)
+
+
+## Mechanic only: points at the nearest loose part, or at the car while you carry one.
+func _update_compass(me: Player, allowed: bool) -> void:
+	_compass.lit = false
+	if not allowed or me == null:
+		return
+	var target := Vector3.ZERO
+	var part := -1
+	var held := Game.carried_by(Game.my_id())
+	if held != -1:
+		target = Game.CAR_POS
+	else:
+		var bd := INF
+		for i in Game.parts.size():
+			var p: Dictionary = Game.parts[i]
+			if p.state == Game.PS.WORLD:
+				var d := me.global_position.distance_to(p.pos)
+				if d < bd:
+					bd = d
+					part = i
+					target = p.pos
+		if part == -1:
+			return
+	var to := target - me.global_position
+	var fwd := Vector2(-sin(me.rotation.y), -cos(me.rotation.y))
+	var wobble := sin(Time.get_ticks_msec() * 0.003) * 0.35 * drunk_level
+	_compass.target_part = part
+	_compass.angle = fwd.angle_to(Vector2(to.x, to.z)) + wobble
+	_compass.closeness = 1.0 - clampf(Vector2(to.x, to.z).length() / 40.0, 0.0, 1.0)
+	_compass.lit = true
 
 
 func _drive_hud(delta: float) -> void:
 	_goal_label.text = "Get the crew home before the cops catch you. Don't wreck the car."
-	_parts_label.text = ""
+	_checklist.visible = false
+	_compass.lit = false
+	_cross.visible = false
 	_role_label.text = _role_text("drive")
 	var drive := world.drive if world else null
 	if drive == null:

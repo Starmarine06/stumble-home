@@ -57,11 +57,11 @@ func _host() -> void:
 	Input.action_release("right")
 	for i in _game.parts.size():
 		var guard := 0
+		_game.fatigue.clear()
 		while _game.parts[i].state != _game.PS.CARRIED and guard < 80:
 			_game.s_pickup(i)
 			guard += 1
-		_game.s_deliver()
-		_game.s_install(i, true)
+		_game.s_place(1.0)
 	_check(_game.all_installed(), "host installed all parts")
 	_check(await _until(func(): return _game.phase == _game.Phase.DRIVE, 8.0), "host enters drive phase")
 	await create_timer(1.0).timeout

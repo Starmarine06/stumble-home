@@ -15,6 +15,10 @@ var _yard: Node3D
 var _part_nodes: Array = []
 var _car_mat := StandardMaterial3D.new()
 var _headlights: Array[SpotLight3D] = []
+var _ghost: MeshInstance3D
+var _ghost_part := -1
+var _ghost_mat := StandardMaterial3D.new()
+var _look := Vector2.ZERO  # cab view: x = yaw, y = pitch
 
 
 func _ready() -> void:
@@ -46,7 +50,18 @@ func _ready() -> void:
 	add_child(cam)
 	cam.position = Vector3(0, 12, 12)
 	cam.look_at(Vector3.ZERO)
-	cam.current = true
+	cam.current = true  # overview until your own player spawns and takes over
+
+	_ghost = MeshInstance3D.new()
+	var gm := SphereMesh.new()
+	gm.radius = 0.3
+	gm.height = 0.6
+	_ghost.mesh = gm
+	_ghost_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_ghost_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_ghost.material_override = _ghost_mat
+	_ghost.visible = false
+	add_child(_ghost)
 
 	hud = Hud.new()
 	hud.world = self
@@ -58,10 +73,18 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if Game.spawn_players.is_connected(_spawn_all):
 		Game.spawn_players.disconnect(_spawn_all)
 	if Game.drive_started.is_connected(_start_drive):
 		Game.drive_started.disconnect(_start_drive)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# In the car you stay in your seat but can look around.
+	if drive and event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		_look.x = clampf(_look.x - event.relative.x * Player.MOUSE_SENS, -2.2, 2.2)
+		_look.y = clampf(_look.y - event.relative.y * Player.MOUSE_SENS, -0.8, 0.8)
 
 
 func local_player() -> Player:
@@ -271,7 +294,7 @@ func _make_part(i: int) -> Node3D:
 # --- Per-frame ---------------------------------------------------------------------
 
 func _process(delta: float) -> void:
-	_update_parts()
+	_update_parts(delta)
 	var installed := 0
 	for p in Game.parts:
 		if p.state == Game.PS.INSTALLED:
@@ -283,7 +306,7 @@ func _process(delta: float) -> void:
 	_update_camera(delta)
 
 
-func _update_parts() -> void:
+func _update_parts(delta: float) -> void:
 	var me := local_player()
 	var lookout := Game.has_role(Roles.Id.LOOKOUT)
 	for i in _part_nodes.size():
@@ -294,35 +317,65 @@ func _update_parts() -> void:
 		match p.state:
 			Game.PS.WORLD:
 				n.position = p.pos
+				n.rotation.y = p.yaw
+				n.rotation.z = 0.0
 				var d := me.global_position.distance_to(p.pos) if me else 999.0
 				glow.visible = d < (25.0 if lookout else 8.0)
 			Game.PS.CARRIED:
 				var holder := players.get_node_or_null(str(p.holder)) as Node3D
 				n.visible = holder != null
-				if holder:
-					n.position = holder.global_position + Vector3(0, 1.9, 0)
+				n.rotation.z = 0.0
+				# Your own hands are exact; everyone else's part is smoothed between pose updates.
+				if holder == me:
+					n.position = p.pos
+					n.rotation.y = p.yaw
+				else:
+					n.position = n.position.lerp(p.pos, clampf(15.0 * delta, 0.0, 1.0))
+					n.rotation.y = lerp_angle(n.rotation.y, p.yaw, clampf(15.0 * delta, 0.0, 1.0))
 				glow.visible = false
-			Game.PS.DELIVERED:
-				n.position = Game.CAR_POS + Vector3(3.0, 0.0, -1.5 + i * 1.0)
-				glow.visible = true
+			Game.PS.INSTALLED:
+				var slot: Vector3 = car.global_transform * Game.SLOTS[i]
+				n.position = slot - Vector3(0, Player.PART_HALF, 0)
+				n.rotation.y = Game.SLOT_YAW[i]
+				if p.q < Game.SOLID_Q:
+					# Crooked fit: sits askew, and rattles hard just before it drops.
+					var t := Time.get_ticks_msec() * 0.001
+					var amp := 0.12 if p.warned else 0.03
+					n.position += Vector3(sin(t * 31.0), 0.0, cos(t * 27.0)) * amp
+					n.rotation.z = 0.5 * (1.0 - p.q)
+				else:
+					n.rotation.z = 0.0
+				glow.visible = false
 			_:
 				n.visible = false
 	if Game.phase == Game.Phase.DRIVE:
 		for n in _part_nodes:
 			n.visible = false
+	_update_ghost(me)
+
+
+## The glowing target for whatever part you are holding; green when lined up.
+func _update_ghost(me: Player) -> void:
+	var held := Game.carried_by(Game.my_id())
+	_ghost.visible = me != null and held != -1 and me.holding and Game.phase == Game.Phase.SCAVENGE
+	if not _ghost.visible:
+		return
+	if _ghost_part != held:
+		_ghost_part = held
+		_ghost.mesh = (_part_nodes[held].get_child(0) as MeshInstance3D).mesh
+	_ghost.global_position = me.slot_pos(held)
+	_ghost.rotation.y = Game.SLOT_YAW[held]
+	var q := me.fit_q
+	var col := Color(0.9, 0.2, 0.2).lerp(Color(0.2, 0.95, 0.3), clampf((q - 0.3) / 0.6, 0.0, 1.0)) if q >= 0.0 else Color(1, 1, 1)
+	col.a = 0.55 if q >= 0.0 else 0.28
+	_ghost_mat.albedo_color = col
 
 
 func _update_camera(delta: float) -> void:
-	var target := Transform3D()
 	if drive:
-		target = drive.camera_transform()
-	else:
-		var me := local_player()
-		var focus := me.global_position if me else Game.CAR_POS
-		target.origin = focus + Vector3(0, 11, 10)
-		target = target.looking_at(focus, Vector3.UP)
-		target.origin = focus + Vector3(0, 11, 10)
-	cam.global_transform = cam.global_transform.interpolate_with(target, clampf(6.0 * delta, 0.0, 1.0))
+		# Cab view from the driver's side: every seat looks out the windscreen.
+		var rig := Transform3D(Basis.from_euler(Vector3(_look.y, _look.x, 0.0)), Vector3.ZERO)
+		cam.global_transform = drive.car.global_transform * Transform3D(Basis.IDENTITY, Vector3(-0.45, 1.55, 0.2)) * rig
 
 
 # --- Drive ---------------------------------------------------------------------------
@@ -330,6 +383,9 @@ func _update_camera(delta: float) -> void:
 func _start_drive(drive_seed: int) -> void:
 	players.process_mode = Node.PROCESS_MODE_DISABLED
 	players.visible = false
+	cam.fov = 75.0
+	cam.current = true
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_yard.queue_free()
 	car.position = Vector3.ZERO
 	drive = Drive.new()

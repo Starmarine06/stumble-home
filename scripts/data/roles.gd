@@ -10,7 +10,7 @@ const INFO := {
 		"type": "The Sloppy",
 		"color": Color(0.95, 0.35, 0.3),
 		"drunk": 0.92,
-		"scavenge": "Strongest arms: carries parts without slowing down.",
+		"scavenge": "Strong arms: carries parts more easily, but still tires.",
 		"drive": "Steer the car home. Steering wanders, lags, hiccups, and you nod off now and then.",
 	},
 	Id.NAVIGATOR: {
@@ -18,7 +18,7 @@ const INFO := {
 		"type": "The Blabber",
 		"color": Color(0.35, 0.65, 0.95),
 		"drunk": 0.88,
-		"scavenge": "Part compass: points at the nearest missing part (it wobbles).",
+		"scavenge": "Hauling parts wears you out. Call out where they are and keep the crew moving.",
 		"drive": "Only you see the route. The arrows flicker between true and wrong, so shout what you see and trust the majority.",
 	},
 	Id.MECHANIC: {
@@ -26,7 +26,7 @@ const INFO := {
 		"type": "The Shaky",
 		"color": Color(0.98, 0.78, 0.25),
 		"drunk": 0.9,
-		"scavenge": "Only you can fit parts, using a shaky-hands mini-game.",
+		"scavenge": "Strong, steady hands: you haul parts without tiring. Your compass points at the nearest missing part.",
 		"drive": "Keep the engine cool. When it overheats, hit the sweet spot with shaking hands.",
 	},
 	Id.LOOKOUT: {

@@ -176,14 +176,6 @@ func _update_leg() -> void:
 			break
 
 
-func camera_transform() -> Transform3D:
-	var fwd := Vector3(-sin(car.rotation.y), 0.0, -cos(car.rotation.y))
-	var origin := car.position - fwd * 10.0 + Vector3(0, 5.5, 0)
-	var t := Transform3D(Basis.IDENTITY, origin)
-	t = t.looking_at(car.position + fwd * 6.0 + Vector3(0, 1.0, 0), Vector3.UP)
-	return t
-
-
 # --- Simulation --------------------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:

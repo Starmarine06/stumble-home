@@ -37,6 +37,19 @@ func _run_auto_args() -> void:
 				Net.join_enet("127.0.0.1")
 
 
+## F11 flips between fullscreen and a window sized to the player's display.
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F11:
+		var w := get_window()
+		if w.mode == Window.MODE_FULLSCREEN:
+			w.mode = Window.MODE_WINDOWED
+			var screen := DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
+			w.size = Vector2i(screen.size * 0.85)
+			w.position = screen.position + (screen.size - w.size) / 2
+		else:
+			w.mode = Window.MODE_FULLSCREEN
+
+
 func _set_status(text: String) -> void:
 	if _status:
 		_status.text = text
