@@ -91,6 +91,35 @@ func _run() -> void:
 	var wanted_before: float = game.wanted
 	game.s_cop_result(false)
 	_check(game.wanted > wanted_before, "failed cop signal raises wanted")
+	# Hazards
+	_check(d.hazards != null and d.hazards.events.is_empty(), "night 1 drive has no hazard events")
+	var hz_hits: Array = []
+	game.hazard_hit.connect(func(k): hz_hits.append(k))
+	var hp0: float = game.car_hp
+	var w0: float = game.wanted
+	game.s_hazard("dog")
+	_check(game.car_hp < hp0 and game.wanted > w0, "dog hit lowers car hp and raises wanted")
+	_check(hz_hits == ["dog"], "hazard_hit signal fires")
+	await _wait(0.5)
+	hp0 = game.car_hp
+	w0 = game.wanted
+	game.s_hazard("unicorn")
+	_check(game.car_hp == hp0 and game.wanted == w0, "unknown hazard kind changes nothing")
+	game.s_hazard("mugger")
+	game.s_hazard("traffic")
+	_check(hz_hits == ["dog", "mugger"], "hazard hits are rate-limited")
+	await _wait(0.5)
+	var hd = load("res://scripts/world/drive.gd").new()
+	var fake_car := Node3D.new()
+	hd.setup(d._seed, fake_car, {"traffic_count": 3, "dog_count": 4, "mugger_count": 2})
+	_check(not hd.hazards.events.is_empty(), "hazard params build events")
+	hd.free()
+	fake_car.free()
+	game.phase = game.Phase.SCAVENGE
+	hp0 = game.car_hp
+	game.s_hazard("dog")
+	game.phase = game.Phase.DRIVE
+	_check(game.car_hp == hp0, "hazard outside the drive changes nothing")
 	# Drive along the route with the Driver's own simulation
 	for i in 200:
 		Input.action_press("forward")

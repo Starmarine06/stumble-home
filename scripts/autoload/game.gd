@@ -11,6 +11,7 @@ signal cop_warning(side: String, seconds: float)
 signal car_state(pos: Vector3, yaw: float, speed: float)
 signal spawn_players
 signal drive_started(drive_seed: int)
+signal hazard_hit(kind: String)
 
 enum Phase { MENU, LOBBY, SCAVENGE, DRIVE, RESULT }
 enum PS { WORLD, CARRIED, INSTALLED }
@@ -28,6 +29,8 @@ var PASSOUT_SECS: float:
 	get:
 		return Tuning.passout_secs
 const WANTED_MAX := 100.0
+const HAZARD_KINDS := ["traffic", "dog", "mugger"]
+const HAZARD_MIN_GAP_MS := 400   # the host ignores hazard hits closer together than this
 const CAR_POS := Vector3.ZERO
 
 var phase: int = Phase.MENU
@@ -46,6 +49,7 @@ var engine_hot := false
 var won := false
 var result_text := ""
 
+var _hazard_last_ms := -100000
 var _fat_sync := 0.0
 var _ready_peers: Dictionary = {}
 var _stat_timer := 0.0
@@ -591,6 +595,36 @@ func s_car_damage(dmg: float, wanted_add: float) -> void:
 	_add_wanted(clampf(wanted_add, 0.0, 30.0))
 
 
+func request_hazard(kind: String) -> void:
+	_to_host("s_hazard", [kind])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_hazard(kind: String) -> void:
+	if not is_host() or phase != Phase.DRIVE or not has_role_for(_sender(), Roles.Id.DRIVER):
+		return
+	if not HAZARD_KINDS.has(kind):
+		return
+	var now := Time.get_ticks_msec()
+	if now - _hazard_last_ms < HAZARD_MIN_GAP_MS:
+		return
+	_hazard_last_ms = now
+	car_hp -= float(Hazards.DEFAULTS[kind + "_dmg"])
+	_add_wanted(float(Hazards.DEFAULTS[kind + "_wanted"]))
+	var lines := {
+		"traffic": "HEAD-ON! Wrong lane, mate! The other driver has words.",
+		"dog": "DOG! Poor lad. He will be fine. Probably.",
+		"mugger": "MUGGED! They took the snacks and the dignity.",
+	}
+	_toast_all(lines[kind])
+	_bcast("c_hazard", [kind])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_hazard(kind: String) -> void:
+	hazard_hit.emit(kind)
+
+
 func request_cool(ok: bool) -> void:
 	_to_host("s_cool", [ok])
 
@@ -686,6 +720,7 @@ func _start_drive() -> void:
 	_hot_timer = randf_range(Tuning.overheat_first_min, Tuning.overheat_first_max)
 	_cop_timer = randf_range(Tuning.cop_first_min, Tuning.cop_first_max)
 	_cop_open = false
+	_hazard_last_ms = -100000
 	_bcast("c_begin_drive", [randi()])
 
 
