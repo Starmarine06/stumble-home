@@ -31,4 +31,26 @@ func _run() -> void:
 	game.won = true
 	game._set_phase(game.Phase.RESULT)
 	_check(audio.played.get(&"win", 0) == 1, "RESULT won -> win")
+
+	# Hazard and kebab audio hooks
+	game.hazard_hit.emit("dog")
+	_check(audio.played.get(&"dog_bark", 0) == 1, "Game.hazard_hit('dog') -> dog_bark")
+	game.hazard_hit.emit("traffic")
+	_check(audio.played.get(&"horn", 0) == 1, "Game.hazard_hit('traffic') -> horn")
+	game.hazard_hit.emit("mugger")
+	_check(audio.played.get(&"mugger", 0) == 1, "Game.hazard_hit('mugger') -> mugger")
+	game.kebab_opened.emit(123, 1)
+	_check(audio.played.get(&"kebab_open", 0) == 1, "kebab_opened -> kebab_open")
+	game.kebab_reward.emit(1.0)
+	_check(audio.played.get(&"kebab_done", 0) == 1, "kebab_reward -> kebab_done")
+
+	# HUD voice indicator check
+	var hud_cls = load("res://scripts/ui/hud.gd")
+	var hud = hud_cls.new()
+	root.add_child(hud)
+	var vi = hud.get_node_or_null("VoiceIndicator")
+	_check(vi != null, "HUD voice indicator node exists")
+	_check(vi != null and not vi.visible, "HUD voice indicator hidden when voice inactive")
+	hud.queue_free()
+
 	quit(1 if _fails > 0 else 0)

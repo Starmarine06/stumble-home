@@ -70,6 +70,19 @@ func _host() -> void:
 		await physics_frame
 	Input.action_release("forward")
 	await create_timer(1.0).timeout
+
+	# Trigger hazard and kebab open
+	_game.s_hazard("dog")
+	_check(_game.car_hp < 100.0, "host triggered hazard")
+	await create_timer(1.0).timeout
+
+	_game.kebab_shop_enabled = true
+	_game.s_kebab_open()
+	_check(_game.kebab_is_open, "host opened kebab shop")
+	await create_timer(1.0).timeout
+	_game.s_kebab_close()
+	await create_timer(1.0).timeout
+
 	var d = _world().drive
 	d.car.position = d.pts[-1]
 	_check(await _until(func(): return _game.phase == _game.Phase.RESULT, 5.0), "host sees result")
@@ -77,6 +90,11 @@ func _host() -> void:
 
 
 func _client() -> void:
+	var client_hazard := [""]
+	var client_kebab := [false]
+	_game.hazard_hit.connect(func(k: String): client_hazard[0] = k)
+	_game.kebab_opened.connect(func(_seed: int, _r: int): client_kebab[0] = true)
+
 	await create_timer(1.0).timeout
 	_net.join_enet("127.0.0.1")
 	_check(await _until(func(): return _game.phase == _game.Phase.LOBBY), "client reaches lobby")
@@ -95,5 +113,10 @@ func _client() -> void:
 	_check(await _until(func(): return d.car.position.distance_to(start) > 5.0, 10.0), "car state streams to client")
 	var nav = d.nav()
 	_check(nav.dist > 0.0, "navigator HUD data available (%dm)" % nav.dist)
+
+	# Confirm receipt of replicated hazard and kebab state
+	_check(await _until(func(): return client_hazard[0] == "dog", 10.0), "client receives c_hazard")
+	_check(await _until(func(): return client_kebab[0] or _game.kebab_is_open, 10.0), "client receives c_kebab_open")
+
 	_check(await _until(func(): return _game.phase == _game.Phase.RESULT, 10.0), "client sees result")
 	_check(_game.won, "client sees the win")
