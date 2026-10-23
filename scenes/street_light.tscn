@@ -31,29 +31,29 @@ size = Vector3(0.42, 0.08, 0.7)
 height = 7.5
 radius = 0.38
 
-[node name="StreetLight" type="StaticBody3D" unique_id=1567544393]
+[node name="StreetLight" type="StaticBody3D" unique_id=14463128]
 
-[node name="Base" type="MeshInstance3D" parent="." unique_id=2053241258]
+[node name="Base" type="MeshInstance3D" parent="." unique_id=688179789]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="." unique_id=1175978098]
+[node name="Pole" type="MeshInstance3D" parent="." unique_id=587807345]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="." unique_id=1867952186]
+[node name="Arm" type="MeshInstance3D" parent="." unique_id=814752734]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="." unique_id=1285842563]
+[node name="Fixture" type="MeshInstance3D" parent="." unique_id=1806987609]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="." unique_id=713850688]
+[node name="Lamp" type="MeshInstance3D" parent="." unique_id=50759087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="." unique_id=1960482485]
+[node name="SpotLight" type="SpotLight3D" parent="." unique_id=1057905178]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -62,12 +62,12 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="." unique_id=2005758743]
+[node name="FixtureGlow" type="OmniLight3D" parent="." unique_id=581555578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="." unique_id=1869098832]
+[node name="PoleCollision" type="CollisionShape3D" parent="." unique_id=215329587]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
