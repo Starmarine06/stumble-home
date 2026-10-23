@@ -1994,296 +1994,315 @@ shader_parameter/smoke_intensity = 0.0
 shader_parameter/coma_fade = 0.0
 shader_parameter/fx_time = 0.0
 
-[node name="Main" type="Node3D" unique_id=1054859257]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_51ujp"]
+bg_color = Color(0.2, 0.04, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.2, 0.25, 0.7)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=165963169]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tk41t"]
+bg_color = Color(0.95, 0.12, 0.18, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="Main" type="Node3D" unique_id=1283206568]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1974823257]
 environment = SubResource("Environment_1uevf")
 
-[node name="Moon" type="MeshInstance3D" parent="." unique_id=1030598951]
+[node name="Moon" type="MeshInstance3D" parent="." unique_id=1095445724]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 95, -90)
 mesh = SubResource("SphereMesh_tc087")
 
-[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=768797908]
+[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=1266900300]
 transform = Transform3D(0.92718387, 0.21486554, -0.30685976, 0, 0.81915206, 0.57357645, 0.3746066, -0.5318108, 0.75950456, 0, 0, 0)
 light_color = Color(0.68, 0.76, 0.95, 1)
 light_energy = 0.45
 shadow_enabled = true
 shadow_bias = 0.08
 
-[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=929810531 instance=ExtResource("2_bjg73")]
+[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=229807533 instance=ExtResource("2_bjg73")]
 
-[node name="@MeshInstance3D@261" type="MeshInstance3D" parent="ParkingLot" unique_id=1157938100]
+[node name="@MeshInstance3D@261" type="MeshInstance3D" parent="ParkingLot" unique_id=973908135]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 8)
 mesh = SubResource("BoxMesh_cpd32")
 
-[node name="@CollisionShape3D@262" type="CollisionShape3D" parent="ParkingLot" unique_id=606025564]
+[node name="@CollisionShape3D@262" type="CollisionShape3D" parent="ParkingLot" unique_id=859119034]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 8)
 shape = SubResource("BoxShape3D_3ducg")
 
-[node name="@MeshInstance3D@263" type="MeshInstance3D" parent="ParkingLot" unique_id=285476833]
+[node name="@MeshInstance3D@263" type="MeshInstance3D" parent="ParkingLot" unique_id=1764597289]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 0.175, 8)
 mesh = SubResource("BoxMesh_i064x")
 
-[node name="@CollisionShape3D@264" type="CollisionShape3D" parent="ParkingLot" unique_id=613763364]
+[node name="@CollisionShape3D@264" type="CollisionShape3D" parent="ParkingLot" unique_id=1534353955]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 0.175, 8)
 shape = SubResource("BoxShape3D_n6lxd")
 
-[node name="@MeshInstance3D@265" type="MeshInstance3D" parent="ParkingLot" unique_id=2076185629]
+[node name="@MeshInstance3D@265" type="MeshInstance3D" parent="ParkingLot" unique_id=1626655641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0.175, 8)
 mesh = SubResource("BoxMesh_maqex")
 
-[node name="@CollisionShape3D@266" type="CollisionShape3D" parent="ParkingLot" unique_id=1516532507]
+[node name="@CollisionShape3D@266" type="CollisionShape3D" parent="ParkingLot" unique_id=197898589]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0.175, 8)
 shape = SubResource("BoxShape3D_gli25")
 
-[node name="@MeshInstance3D@267" type="MeshInstance3D" parent="ParkingLot" unique_id=566064330]
+[node name="@MeshInstance3D@267" type="MeshInstance3D" parent="ParkingLot" unique_id=2069892677]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 35)
 mesh = SubResource("BoxMesh_vv832")
 
-[node name="@CollisionShape3D@268" type="CollisionShape3D" parent="ParkingLot" unique_id=1129991284]
+[node name="@CollisionShape3D@268" type="CollisionShape3D" parent="ParkingLot" unique_id=1811928005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 35)
 shape = SubResource("BoxShape3D_sr657")
 
-[node name="@MeshInstance3D@269" type="MeshInstance3D" parent="ParkingLot" unique_id=1675787973]
+[node name="@MeshInstance3D@269" type="MeshInstance3D" parent="ParkingLot" unique_id=2077887912]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, -10)
 mesh = SubResource("BoxMesh_gyxwb")
 
-[node name="@MeshInstance3D@270" type="MeshInstance3D" parent="ParkingLot" unique_id=752863150]
+[node name="@MeshInstance3D@270" type="MeshInstance3D" parent="ParkingLot" unique_id=1683000913]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, -10)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_gyxwb")
 
-[node name="@MeshInstance3D@271" type="MeshInstance3D" parent="ParkingLot" unique_id=605106995]
+[node name="@MeshInstance3D@271" type="MeshInstance3D" parent="ParkingLot" unique_id=1272065872]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -10)
 mesh = SubResource("BoxMesh_jdvcw")
 
-[node name="@CollisionShape3D@272" type="CollisionShape3D" parent="ParkingLot" unique_id=142332103]
+[node name="@CollisionShape3D@272" type="CollisionShape3D" parent="ParkingLot" unique_id=1135682440]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -10)
 shape = SubResource("BoxShape3D_alabq")
 
-[node name="@MeshInstance3D@273" type="MeshInstance3D" parent="ParkingLot" unique_id=597537093]
+[node name="@MeshInstance3D@273" type="MeshInstance3D" parent="ParkingLot" unique_id=1399301261]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -10)
 mesh = SubResource("BoxMesh_77t30")
 
-[node name="@CollisionShape3D@274" type="CollisionShape3D" parent="ParkingLot" unique_id=191517938]
+[node name="@CollisionShape3D@274" type="CollisionShape3D" parent="ParkingLot" unique_id=1864696887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -10)
 shape = SubResource("BoxShape3D_bydpb")
 
-[node name="@MeshInstance3D@275" type="MeshInstance3D" parent="ParkingLot" unique_id=500478022]
+[node name="@MeshInstance3D@275" type="MeshInstance3D" parent="ParkingLot" unique_id=1734781980]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, -6)
 mesh = SubResource("BoxMesh_1ha16")
 
-[node name="@MeshInstance3D@276" type="MeshInstance3D" parent="ParkingLot" unique_id=1016787451]
+[node name="@MeshInstance3D@276" type="MeshInstance3D" parent="ParkingLot" unique_id=1720177266]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, -6)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_1ha16")
 
-[node name="@MeshInstance3D@277" type="MeshInstance3D" parent="ParkingLot" unique_id=1213114393]
+[node name="@MeshInstance3D@277" type="MeshInstance3D" parent="ParkingLot" unique_id=889457505]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -6)
 mesh = SubResource("BoxMesh_b1o4o")
 
-[node name="@CollisionShape3D@278" type="CollisionShape3D" parent="ParkingLot" unique_id=346663511]
+[node name="@CollisionShape3D@278" type="CollisionShape3D" parent="ParkingLot" unique_id=2095281205]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -6)
 shape = SubResource("BoxShape3D_605ij")
 
-[node name="@MeshInstance3D@279" type="MeshInstance3D" parent="ParkingLot" unique_id=2041190417]
+[node name="@MeshInstance3D@279" type="MeshInstance3D" parent="ParkingLot" unique_id=1076609003]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -6)
 mesh = SubResource("BoxMesh_3yca5")
 
-[node name="@CollisionShape3D@280" type="CollisionShape3D" parent="ParkingLot" unique_id=639958340]
+[node name="@CollisionShape3D@280" type="CollisionShape3D" parent="ParkingLot" unique_id=156967188]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -6)
 shape = SubResource("BoxShape3D_c42km")
 
-[node name="@MeshInstance3D@281" type="MeshInstance3D" parent="ParkingLot" unique_id=181407012]
+[node name="@MeshInstance3D@281" type="MeshInstance3D" parent="ParkingLot" unique_id=1601352951]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, -2)
 mesh = SubResource("BoxMesh_3wtqp")
 
-[node name="@MeshInstance3D@282" type="MeshInstance3D" parent="ParkingLot" unique_id=1751514864]
+[node name="@MeshInstance3D@282" type="MeshInstance3D" parent="ParkingLot" unique_id=979401381]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, -2)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_3wtqp")
 
-[node name="@MeshInstance3D@283" type="MeshInstance3D" parent="ParkingLot" unique_id=1197085968]
+[node name="@MeshInstance3D@283" type="MeshInstance3D" parent="ParkingLot" unique_id=444237254]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -2)
 mesh = SubResource("BoxMesh_xeow5")
 
-[node name="@CollisionShape3D@284" type="CollisionShape3D" parent="ParkingLot" unique_id=1367358887]
+[node name="@CollisionShape3D@284" type="CollisionShape3D" parent="ParkingLot" unique_id=1397585160]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, -2)
 shape = SubResource("BoxShape3D_d5psl")
 
-[node name="@MeshInstance3D@285" type="MeshInstance3D" parent="ParkingLot" unique_id=478151706]
+[node name="@MeshInstance3D@285" type="MeshInstance3D" parent="ParkingLot" unique_id=1776202287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -2)
 mesh = SubResource("BoxMesh_q7qea")
 
-[node name="@CollisionShape3D@286" type="CollisionShape3D" parent="ParkingLot" unique_id=446644870]
+[node name="@CollisionShape3D@286" type="CollisionShape3D" parent="ParkingLot" unique_id=646110997]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, -2)
 shape = SubResource("BoxShape3D_mr1ay")
 
-[node name="@MeshInstance3D@287" type="MeshInstance3D" parent="ParkingLot" unique_id=1842587444]
+[node name="@MeshInstance3D@287" type="MeshInstance3D" parent="ParkingLot" unique_id=2053167898]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, 2)
 mesh = SubResource("BoxMesh_kr2s8")
 
-[node name="@MeshInstance3D@288" type="MeshInstance3D" parent="ParkingLot" unique_id=1861689258]
+[node name="@MeshInstance3D@288" type="MeshInstance3D" parent="ParkingLot" unique_id=160530436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, 2)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_kr2s8")
 
-[node name="@MeshInstance3D@289" type="MeshInstance3D" parent="ParkingLot" unique_id=669300463]
+[node name="@MeshInstance3D@289" type="MeshInstance3D" parent="ParkingLot" unique_id=278856603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 2)
 mesh = SubResource("BoxMesh_141be")
 
-[node name="@CollisionShape3D@290" type="CollisionShape3D" parent="ParkingLot" unique_id=1902909341]
+[node name="@CollisionShape3D@290" type="CollisionShape3D" parent="ParkingLot" unique_id=726519239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 2)
 shape = SubResource("BoxShape3D_qmi3c")
 
-[node name="@MeshInstance3D@291" type="MeshInstance3D" parent="ParkingLot" unique_id=1258261091]
+[node name="@MeshInstance3D@291" type="MeshInstance3D" parent="ParkingLot" unique_id=889046403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 2)
 mesh = SubResource("BoxMesh_vo153")
 
-[node name="@CollisionShape3D@292" type="CollisionShape3D" parent="ParkingLot" unique_id=1270541804]
+[node name="@CollisionShape3D@292" type="CollisionShape3D" parent="ParkingLot" unique_id=520564097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 2)
 shape = SubResource("BoxShape3D_a7xpi")
 
-[node name="@MeshInstance3D@293" type="MeshInstance3D" parent="ParkingLot" unique_id=1984756596]
+[node name="@MeshInstance3D@293" type="MeshInstance3D" parent="ParkingLot" unique_id=402118423]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, 6)
 mesh = SubResource("BoxMesh_vj3fu")
 
-[node name="@MeshInstance3D@294" type="MeshInstance3D" parent="ParkingLot" unique_id=1656683542]
+[node name="@MeshInstance3D@294" type="MeshInstance3D" parent="ParkingLot" unique_id=2086509055]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, 6)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_vj3fu")
 
-[node name="@MeshInstance3D@295" type="MeshInstance3D" parent="ParkingLot" unique_id=1961251089]
+[node name="@MeshInstance3D@295" type="MeshInstance3D" parent="ParkingLot" unique_id=234002175]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 6)
 mesh = SubResource("BoxMesh_0wlxb")
 
-[node name="@CollisionShape3D@296" type="CollisionShape3D" parent="ParkingLot" unique_id=1153266145]
+[node name="@CollisionShape3D@296" type="CollisionShape3D" parent="ParkingLot" unique_id=417913011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 6)
 shape = SubResource("BoxShape3D_yc6gu")
 
-[node name="@MeshInstance3D@297" type="MeshInstance3D" parent="ParkingLot" unique_id=1256668843]
+[node name="@MeshInstance3D@297" type="MeshInstance3D" parent="ParkingLot" unique_id=1588244029]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 6)
 mesh = SubResource("BoxMesh_luja5")
 
-[node name="@CollisionShape3D@298" type="CollisionShape3D" parent="ParkingLot" unique_id=1879318911]
+[node name="@CollisionShape3D@298" type="CollisionShape3D" parent="ParkingLot" unique_id=863051916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 6)
 shape = SubResource("BoxShape3D_k8yb4")
 
-[node name="@MeshInstance3D@299" type="MeshInstance3D" parent="ParkingLot" unique_id=2012242079]
+[node name="@MeshInstance3D@299" type="MeshInstance3D" parent="ParkingLot" unique_id=20702314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, 10)
 mesh = SubResource("BoxMesh_mtp44")
 
-[node name="@MeshInstance3D@300" type="MeshInstance3D" parent="ParkingLot" unique_id=419580622]
+[node name="@MeshInstance3D@300" type="MeshInstance3D" parent="ParkingLot" unique_id=1796389172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, 10)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_mtp44")
 
-[node name="@MeshInstance3D@301" type="MeshInstance3D" parent="ParkingLot" unique_id=2053254972]
+[node name="@MeshInstance3D@301" type="MeshInstance3D" parent="ParkingLot" unique_id=1146313720]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 10)
 mesh = SubResource("BoxMesh_aes4i")
 
-[node name="@CollisionShape3D@302" type="CollisionShape3D" parent="ParkingLot" unique_id=10440449]
+[node name="@CollisionShape3D@302" type="CollisionShape3D" parent="ParkingLot" unique_id=715438096]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 10)
 shape = SubResource("BoxShape3D_qahbe")
 
-[node name="@MeshInstance3D@303" type="MeshInstance3D" parent="ParkingLot" unique_id=1730675620]
+[node name="@MeshInstance3D@303" type="MeshInstance3D" parent="ParkingLot" unique_id=1687712256]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 10)
 mesh = SubResource("BoxMesh_0653o")
 
-[node name="@CollisionShape3D@304" type="CollisionShape3D" parent="ParkingLot" unique_id=590676309]
+[node name="@CollisionShape3D@304" type="CollisionShape3D" parent="ParkingLot" unique_id=1305510593]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 10)
 shape = SubResource("BoxShape3D_75u4m")
 
-[node name="@MeshInstance3D@305" type="MeshInstance3D" parent="ParkingLot" unique_id=280827997]
+[node name="@MeshInstance3D@305" type="MeshInstance3D" parent="ParkingLot" unique_id=1259389258]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.01, 14)
 mesh = SubResource("BoxMesh_r7h18")
 
-[node name="@MeshInstance3D@306" type="MeshInstance3D" parent="ParkingLot" unique_id=80457112]
+[node name="@MeshInstance3D@306" type="MeshInstance3D" parent="ParkingLot" unique_id=250933642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.01, 14)
 material_override = ExtResource("5_0loja")
 mesh = SubResource("BoxMesh_r7h18")
 
-[node name="@MeshInstance3D@307" type="MeshInstance3D" parent="ParkingLot" unique_id=933026313]
+[node name="@MeshInstance3D@307" type="MeshInstance3D" parent="ParkingLot" unique_id=2022649054]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 14)
 mesh = SubResource("BoxMesh_vt4cf")
 
-[node name="@CollisionShape3D@308" type="CollisionShape3D" parent="ParkingLot" unique_id=182794934]
+[node name="@CollisionShape3D@308" type="CollisionShape3D" parent="ParkingLot" unique_id=118941441]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0.08, 14)
 shape = SubResource("BoxShape3D_2crrr")
 
-[node name="@MeshInstance3D@309" type="MeshInstance3D" parent="ParkingLot" unique_id=18069176]
+[node name="@MeshInstance3D@309" type="MeshInstance3D" parent="ParkingLot" unique_id=1058054410]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 14)
 mesh = SubResource("BoxMesh_lky8n")
 
-[node name="@CollisionShape3D@310" type="CollisionShape3D" parent="ParkingLot" unique_id=523435092]
+[node name="@CollisionShape3D@310" type="CollisionShape3D" parent="ParkingLot" unique_id=1464201307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0.08, 14)
 shape = SubResource("BoxShape3D_fojwd")
 
-[node name="@MeshInstance3D@311" type="MeshInstance3D" parent="ParkingLot" unique_id=870243497]
+[node name="@MeshInstance3D@311" type="MeshInstance3D" parent="ParkingLot" unique_id=394560837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 8)
 mesh = SubResource("BoxMesh_erov6")
 
-[node name="@MeshInstance3D@312" type="MeshInstance3D" parent="ParkingLot" unique_id=1488689710]
+[node name="@MeshInstance3D@312" type="MeshInstance3D" parent="ParkingLot" unique_id=753833564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.015, -13)
 mesh = SubResource("BoxMesh_aupc3")
 
-[node name="@MeshInstance3D@313" type="MeshInstance3D" parent="ParkingLot" unique_id=1649072885]
+[node name="@MeshInstance3D@313" type="MeshInstance3D" parent="ParkingLot" unique_id=928693179]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.015, -13)
 mesh = SubResource("BoxMesh_1l0e5")
 
-[node name="@MeshInstance3D@314" type="MeshInstance3D" parent="ParkingLot" unique_id=2097868491]
+[node name="@MeshInstance3D@314" type="MeshInstance3D" parent="ParkingLot" unique_id=2030016998]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.015, -13)
 mesh = SubResource("BoxMesh_olpbi")
 
-[node name="@MeshInstance3D@315" type="MeshInstance3D" parent="ParkingLot" unique_id=1138871325]
+[node name="@MeshInstance3D@315" type="MeshInstance3D" parent="ParkingLot" unique_id=233411450]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.015, -13)
 mesh = SubResource("BoxMesh_rvt02")
 
-[node name="@MeshInstance3D@316" type="MeshInstance3D" parent="ParkingLot" unique_id=744126820]
+[node name="@MeshInstance3D@316" type="MeshInstance3D" parent="ParkingLot" unique_id=1032413144]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.015, -13)
 mesh = SubResource("BoxMesh_dxubl")
 
-[node name="@MeshInstance3D@317" type="MeshInstance3D" parent="ParkingLot" unique_id=532221395]
+[node name="@MeshInstance3D@317" type="MeshInstance3D" parent="ParkingLot" unique_id=15328666]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.015, -13)
 mesh = SubResource("BoxMesh_j2aji")
 
-[node name="@MeshInstance3D@318" type="MeshInstance3D" parent="ParkingLot" unique_id=1997722124]
+[node name="@MeshInstance3D@318" type="MeshInstance3D" parent="ParkingLot" unique_id=765871061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -13)
 mesh = SubResource("BoxMesh_3sx3x")
 
-[node name="@MeshInstance3D@319" type="MeshInstance3D" parent="ParkingLot" unique_id=999536119]
+[node name="@MeshInstance3D@319" type="MeshInstance3D" parent="ParkingLot" unique_id=328891696]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.015, -13)
 mesh = SubResource("BoxMesh_5qfub")
 
-[node name="@MeshInstance3D@320" type="MeshInstance3D" parent="ParkingLot" unique_id=1181901561]
+[node name="@MeshInstance3D@320" type="MeshInstance3D" parent="ParkingLot" unique_id=1773858605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.015, -13)
 mesh = SubResource("BoxMesh_5cuet")
 
-[node name="@MeshInstance3D@321" type="MeshInstance3D" parent="ParkingLot" unique_id=944299971]
+[node name="@MeshInstance3D@321" type="MeshInstance3D" parent="ParkingLot" unique_id=566328954]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.015, -13)
 mesh = SubResource("BoxMesh_mqdry")
 
-[node name="@MeshInstance3D@322" type="MeshInstance3D" parent="ParkingLot" unique_id=457491120]
+[node name="@MeshInstance3D@322" type="MeshInstance3D" parent="ParkingLot" unique_id=1318199971]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.015, -13)
 mesh = SubResource("BoxMesh_5r6o3")
 
-[node name="@MeshInstance3D@323" type="MeshInstance3D" parent="ParkingLot" unique_id=561390276]
+[node name="@MeshInstance3D@323" type="MeshInstance3D" parent="ParkingLot" unique_id=32367307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.015, -13)
 mesh = SubResource("BoxMesh_y3qa3")
 
-[node name="@MeshInstance3D@324" type="MeshInstance3D" parent="ParkingLot" unique_id=701130198]
+[node name="@MeshInstance3D@324" type="MeshInstance3D" parent="ParkingLot" unique_id=1741331741]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.015, -13)
 mesh = SubResource("BoxMesh_3chqa")
 
-[node name="@MeshInstance3D@325" type="MeshInstance3D" parent="ParkingLot" unique_id=1752134287]
+[node name="@MeshInstance3D@325" type="MeshInstance3D" parent="ParkingLot" unique_id=1011569032]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 1.4, 30)
 mesh = SubResource("CylinderMesh_cfo0p")
 
-[node name="@MeshInstance3D@326" type="MeshInstance3D" parent="ParkingLot/@MeshInstance3D@325" unique_id=1143234471]
+[node name="@MeshInstance3D@326" type="MeshInstance3D" parent="ParkingLot/@MeshInstance3D@325" unique_id=1702145257]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 mesh = SubResource("BoxMesh_xb3rt")
 
-[node name="@Label3D@327" type="Label3D" parent="ParkingLot/@MeshInstance3D@325" unique_id=2026413989]
+[node name="@Label3D@327" type="Label3D" parent="ParkingLot/@MeshInstance3D@325" unique_id=1862927797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0.04)
 modulate = Color(1, 0.95, 0.3, 1)
 text = "🅿️ ceaser
@@ -2291,15 +2310,15 @@ PARKING"
 font_size = 38
 outline_size = 8
 
-[node name="@MeshInstance3D@328" type="MeshInstance3D" parent="ParkingLot" unique_id=2136211174]
+[node name="@MeshInstance3D@328" type="MeshInstance3D" parent="ParkingLot" unique_id=1527821802]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 1.4, 30)
 mesh = SubResource("CylinderMesh_qmtt1")
 
-[node name="@MeshInstance3D@329" type="MeshInstance3D" parent="ParkingLot/@MeshInstance3D@328" unique_id=2105517612]
+[node name="@MeshInstance3D@329" type="MeshInstance3D" parent="ParkingLot/@MeshInstance3D@328" unique_id=1314213223]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 mesh = SubResource("BoxMesh_e6gne")
 
-[node name="@Label3D@330" type="Label3D" parent="ParkingLot/@MeshInstance3D@328" unique_id=1955730438]
+[node name="@Label3D@330" type="Label3D" parent="ParkingLot/@MeshInstance3D@328" unique_id=1434509012]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0.04)
 modulate = Color(1, 0.95, 0.3, 1)
 text = "🅿️ ceaser
@@ -2307,30 +2326,30 @@ PARKING"
 font_size = 38
 outline_size = 8
 
-[node name="StreetLight_0" type="StaticBody3D" parent="ParkingLot" unique_id=14463128 instance=ExtResource("9_augu2")]
+[node name="StreetLight_0" type="StaticBody3D" parent="ParkingLot" unique_id=23743260 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -24.5, 0.25, -5)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=688179789]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=521227039]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=587807345]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=221913026]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=814752734]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=274669584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=1806987609]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=22585919]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=50759087]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_0" unique_id=631599114]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_0" unique_id=1057905178]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_0" unique_id=87892153]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2339,40 +2358,40 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_0" unique_id=581555578]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_0" unique_id=690240358]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_0" unique_id=215329587]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_0" unique_id=1895957767]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="StreetLight_1" type="StaticBody3D" parent="ParkingLot" unique_id=2073303211 instance=ExtResource("9_augu2")]
+[node name="StreetLight_1" type="StaticBody3D" parent="ParkingLot" unique_id=889595635 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -24.5, 0.25, 8)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1769913420]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1053448152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=2043210768]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1089967344]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1681120623]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1297131917]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1684765534]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=1080719260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=82796383]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_1" unique_id=342560330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_1" unique_id=1857915864]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_1" unique_id=1596647809]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2381,40 +2400,40 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_1" unique_id=1171575648]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_1" unique_id=620889545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_1" unique_id=2129263568]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_1" unique_id=6024064]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="StreetLight_2" type="StaticBody3D" parent="ParkingLot" unique_id=222496023 instance=ExtResource("9_augu2")]
+[node name="StreetLight_2" type="StaticBody3D" parent="ParkingLot" unique_id=434699406 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -24.5, 0.25, 21)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=1867745315]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=1436741765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=121759076]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=18974551]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=805820553]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=1336015323]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=978518574]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=1838827567]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=318589496]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_2" unique_id=1206721244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_2" unique_id=983437396]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_2" unique_id=1955362630]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2423,40 +2442,40 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_2" unique_id=337088164]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_2" unique_id=1311203445]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_2" unique_id=1539143113]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_2" unique_id=1523849833]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="StreetLight_3" type="StaticBody3D" parent="ParkingLot" unique_id=116051311 instance=ExtResource("9_augu2")]
+[node name="StreetLight_3" type="StaticBody3D" parent="ParkingLot" unique_id=2007837833 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 24.5, 0.25, -5)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=1757720087]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=647809406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=334057732]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=2025498606]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=529197731]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=401090673]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=1210571919]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=658841343]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=580527402]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_3" unique_id=1642965808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_3" unique_id=910528236]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_3" unique_id=643795054]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2465,40 +2484,40 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_3" unique_id=361228651]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_3" unique_id=1060989490]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_3" unique_id=644160598]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_3" unique_id=2025444756]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="StreetLight_4" type="StaticBody3D" parent="ParkingLot" unique_id=1065226370 instance=ExtResource("9_augu2")]
+[node name="StreetLight_4" type="StaticBody3D" parent="ParkingLot" unique_id=1024334158 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 24.5, 0.25, 8)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=24161925]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=1994957203]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=157554083]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=1741671169]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=1698453402]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=473162619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=1564623108]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=684670067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=967296436]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_4" unique_id=2014409765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_4" unique_id=1604750673]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_4" unique_id=1310714285]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2507,40 +2526,40 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_4" unique_id=1456259396]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_4" unique_id=1253099503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_4" unique_id=1770080088]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_4" unique_id=62436377]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="StreetLight_5" type="StaticBody3D" parent="ParkingLot" unique_id=2064031949 instance=ExtResource("9_augu2")]
+[node name="StreetLight_5" type="StaticBody3D" parent="ParkingLot" unique_id=177648161 instance=ExtResource("9_augu2")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 24.5, 0.25, 21)
 
-[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=411917755]
+[node name="Base" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=1594909435]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 mesh = SubResource("CylinderMesh_07o24")
 
-[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=773495396]
+[node name="Pole" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=2043784754]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_ng13a")
 
-[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=696744430]
+[node name="Arm" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=1709484712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -1)
 mesh = SubResource("BoxMesh_ooork")
 
-[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=1748640964]
+[node name="Fixture" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=325397359]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.15, -2)
 mesh = SubResource("BoxMesh_wlhgt")
 
-[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=1773477270]
+[node name="Lamp" type="MeshInstance3D" parent="ParkingLot/StreetLight_5" unique_id=1575644145]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.02, -2)
 mesh = SubResource("BoxMesh_xlf8s")
 
-[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_5" unique_id=861392237]
+[node name="SpotLight" type="SpotLight3D" parent="ParkingLot/StreetLight_5" unique_id=430001769]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6.95, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2549,32 +2568,32 @@ shadow_bias = 0.05
 spot_range = 18.0
 spot_angle = 55.0
 
-[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_5" unique_id=105054453]
+[node name="FixtureGlow" type="OmniLight3D" parent="ParkingLot/StreetLight_5" unique_id=326671462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -2)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 2.5
 omni_range = 4.0
 
-[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_5" unique_id=740592278]
+[node name="PoleCollision" type="CollisionShape3D" parent="ParkingLot/StreetLight_5" unique_id=1761221059]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.75, 0)
 shape = SubResource("CylinderShape3D_5jq4a")
 
-[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=1914586820 instance=ExtResource("11_kf5aa")]
+[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=209903821 instance=ExtResource("11_kf5aa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -32)
 
-[node name="RoofCrown" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=992843990]
+[node name="RoofCrown" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1752806540]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 24.7, 0)
 mesh = SubResource("BoxMesh_xjghk")
 
-[node name="RooftopPediment" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1013194969]
+[node name="RooftopPediment" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1728693491]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.2, 13)
 mesh = SubResource("BoxMesh_782y0")
 
-[node name="PedimentGoldTrim" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2066735603]
+[node name="PedimentGoldTrim" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1402599974]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 29.5, 13)
 mesh = SubResource("BoxMesh_jkkdf")
 
-[node name="NeonCeaserRooftop" type="Label3D" parent="PubCasinoBuilding" unique_id=212294842]
+[node name="NeonCeaserRooftop" type="Label3D" parent="PubCasinoBuilding" unique_id=1603567625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.2, 14.4)
 modulate = Color(0.15, 0.95, 1, 1)
 outline_modulate = Color(0, 0.5, 0.9, 1)
@@ -2582,25 +2601,25 @@ text = "ceaser"
 font_size = 230
 outline_size = 28
 
-[node name="CeaserNeonLight" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1402852742]
+[node name="CeaserNeonLight" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=91396351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 27.2, 15)
 light_color = Color(0.1, 0.9, 1, 1)
 light_energy = 6.0
 omni_range = 18.0
 
-[node name="EntranceCanopy" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1919862146]
+[node name="EntranceCanopy" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1486163908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.5, 17.5)
 mesh = SubResource("BoxMesh_1skw7")
 
-[node name="CanopyTrim" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1077917231]
+[node name="CanopyTrim" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1933906156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.9, 17.5)
 mesh = SubResource("BoxMesh_0ia2x")
 
-[node name="@MeshInstance3D@50" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=984528181]
+[node name="@MeshInstance3D@50" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=408052050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 21.2)
 mesh = SubResource("BoxMesh_k3qud")
 
-[node name="NeonCeaserMarquee" type="Label3D" parent="PubCasinoBuilding" unique_id=600537913]
+[node name="NeonCeaserMarquee" type="Label3D" parent="PubCasinoBuilding" unique_id=1355208542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 21.4)
 modulate = Color(1, 0.65, 0.1, 1)
 outline_modulate = Color(1, 0.2, 0, 1)
@@ -2608,202 +2627,202 @@ text = "ceaser"
 font_size = 170
 outline_size = 24
 
-[node name="@OmniLight3D@51" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1199077420]
+[node name="@OmniLight3D@51" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=666246326]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 22)
 light_color = Color(1, 0.55, 0.1, 1)
 light_energy = 5.0
 omni_range = 14.0
 
-[node name="@MeshInstance3D@52" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1413873908]
+[node name="@MeshInstance3D@52" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=572493341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_pyou7")
 
-[node name="@MeshInstance3D@53" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=811909306]
+[node name="@MeshInstance3D@53" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=806826792]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_0cwuu")
 
-[node name="@MeshInstance3D@54" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1037209152]
+[node name="@MeshInstance3D@54" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2120736177]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_c0sto")
 
-[node name="@MeshInstance3D@55" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1862786350]
+[node name="@MeshInstance3D@55" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1349977723]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_mnm1r")
 
-[node name="@MeshInstance3D@56" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=453931737]
+[node name="@MeshInstance3D@56" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1438683496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_rq2uj")
 
-[node name="@MeshInstance3D@57" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1654458741]
+[node name="@MeshInstance3D@57" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=328448474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 3.5, 20.8)
 mesh = SubResource("CylinderMesh_ndncv")
 
-[node name="@SpotLight3D@58" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=1736790204]
+[node name="@SpotLight3D@58" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=326308413]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -7, 6, 17.5)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 5.5
 spot_range = 10.0
 spot_angle = 65.0
 
-[node name="@SpotLight3D@59" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=217578338]
+[node name="@SpotLight3D@59" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=1988036432]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 6, 17.5)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 5.5
 spot_range = 10.0
 spot_angle = 65.0
 
-[node name="@SpotLight3D@60" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=405538746]
+[node name="@SpotLight3D@60" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=1552082828]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 7, 6, 17.5)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 5.5
 spot_range = 10.0
 spot_angle = 65.0
 
-[node name="PorchPlatform" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1274333325]
+[node name="PorchPlatform" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=112205231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 16.5)
 mesh = SubResource("BoxMesh_1bk2t")
 
-[node name="@CollisionShape3D@61" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=832126977]
+[node name="@CollisionShape3D@61" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1832027121]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 16.5)
 shape = SubResource("BoxShape3D_us41t")
 
-[node name="@MeshInstance3D@62" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=192216995]
+[node name="@MeshInstance3D@62" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=667089743]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 20.6)
 mesh = SubResource("BoxMesh_ioalh")
 
-[node name="@MeshInstance3D@63" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=250653315]
+[node name="@MeshInstance3D@63" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1996137111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 19.8)
 mesh = SubResource("BoxMesh_ic1s8")
 
-[node name="@MeshInstance3D@64" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1617244925]
+[node name="@MeshInstance3D@64" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1595162351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 2.9, 12.8)
 material_override = SubResource("StandardMaterial3D_pnqdr")
 mesh = SubResource("BoxMesh_gcjlj")
 
-[node name="@MeshInstance3D@65" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2013061516]
+[node name="@MeshInstance3D@65" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1353405878]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 2.9, 12.8)
 material_override = SubResource("StandardMaterial3D_pnqdr")
 mesh = SubResource("BoxMesh_jltoj")
 
-[node name="@MeshInstance3D@66" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1778856637]
+[node name="@MeshInstance3D@66" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=379737492]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 1.3, 14.8)
 mesh = SubResource("CylinderMesh_qv4pe")
 
-[node name="@MeshInstance3D@67" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=831713372]
+[node name="@MeshInstance3D@67" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1330433862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 1.3, 14.8)
 mesh = SubResource("CylinderMesh_jpyy5")
 
-[node name="EntranceFoyerGlow" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=856268026]
+[node name="EntranceFoyerGlow" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1502164173]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 13.5)
 light_color = Color(1, 0.85, 0.55, 1)
 light_energy = 5.0
 omni_range = 9.0
 
-[node name="@MeshInstance3D@68" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2031062285]
+[node name="@MeshInstance3D@68" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=308761881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 1.2, 13.6)
 mesh = SubResource("BoxMesh_pu3jb")
 
-[node name="@CollisionShape3D@69" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=731203479]
+[node name="@CollisionShape3D@69" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1499057018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 1.2, 13.6)
 shape = SubResource("BoxShape3D_oyvph")
 
-[node name="@MeshInstance3D@70" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2143513158]
+[node name="@MeshInstance3D@70" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1696781284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 1.2, 13.6)
 mesh = SubResource("BoxMesh_cg06y")
 
-[node name="@CollisionShape3D@71" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=487583376]
+[node name="@CollisionShape3D@71" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=599200567]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 1.2, 13.6)
 shape = SubResource("BoxShape3D_42qul")
 
-[node name="@MeshInstance3D@72" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1637220617]
+[node name="@MeshInstance3D@72" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1835612340]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 7.3, 13.6)
 mesh = SubResource("BoxMesh_pfu4r")
 
-[node name="@CollisionShape3D@73" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1925541807]
+[node name="@CollisionShape3D@73" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=334091506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 7.3, 13.6)
 shape = SubResource("BoxShape3D_sujbt")
 
-[node name="@MeshInstance3D@74" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=100242955]
+[node name="@MeshInstance3D@74" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1422348948]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7.3, 13.6)
 mesh = SubResource("BoxMesh_gfujr")
 
-[node name="@CollisionShape3D@75" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1969300800]
+[node name="@CollisionShape3D@75" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1596419024]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7.3, 13.6)
 shape = SubResource("BoxShape3D_oiv1s")
 
-[node name="@MeshInstance3D@76" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=655805342]
+[node name="@MeshInstance3D@76" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=627973921]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.5, 4.55, 13.6)
 mesh = SubResource("BoxMesh_lg1p3")
 
-[node name="@CollisionShape3D@77" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=636945090]
+[node name="@CollisionShape3D@77" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1438175030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.5, 4.55, 13.6)
 shape = SubResource("BoxShape3D_h5aa6")
 
-[node name="@MeshInstance3D@78" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=266208392]
+[node name="@MeshInstance3D@78" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2084049396]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 4.55, 13.6)
 mesh = SubResource("BoxMesh_v0unw")
 
-[node name="@CollisionShape3D@79" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1188647966]
+[node name="@CollisionShape3D@79" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=349407941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 4.55, 13.6)
 shape = SubResource("BoxShape3D_5hc8e")
 
-[node name="@MeshInstance3D@80" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1263464068]
+[node name="@MeshInstance3D@80" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1092604189]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 4.55, 13.6)
 mesh = SubResource("BoxMesh_gs6wr")
 
-[node name="@CollisionShape3D@81" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1720443240]
+[node name="@CollisionShape3D@81" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=579514813]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 4.55, 13.6)
 shape = SubResource("BoxShape3D_swjnp")
 
-[node name="@MeshInstance3D@82" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=263407693]
+[node name="@MeshInstance3D@82" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1371976163]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5, 4.55, 13.6)
 mesh = SubResource("BoxMesh_odox0")
 
-[node name="@CollisionShape3D@83" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1622517081]
+[node name="@CollisionShape3D@83" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1758426293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5, 4.55, 13.6)
 shape = SubResource("BoxShape3D_xli50")
 
-[node name="PanoramicWindowLeft" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1919010521]
+[node name="PanoramicWindowLeft" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2060870087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_va3jj")
 
-[node name="@CollisionShape3D@84" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=495366626]
+[node name="@CollisionShape3D@84" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=725294274]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.3, 4.2, 13.6)
 shape = SubResource("BoxShape3D_hklrt")
 
-[node name="PanoramicWindowRight" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=613015879]
+[node name="PanoramicWindowRight" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1417801301]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_g3jvt")
 
-[node name="@CollisionShape3D@85" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=673147155]
+[node name="@CollisionShape3D@85" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=642758531]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3, 4.2, 13.6)
 shape = SubResource("BoxShape3D_aa3a4")
 
-[node name="@MeshInstance3D@86" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=144807833]
+[node name="@MeshInstance3D@86" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1792256117]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_82irp")
 
-[node name="@MeshInstance3D@87" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=234017144]
+[node name="@MeshInstance3D@87" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1611674549]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_dhsbr")
 
-[node name="@MeshInstance3D@88" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1350290678]
+[node name="@MeshInstance3D@88" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=284375210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_8mmwt")
 
-[node name="@MeshInstance3D@89" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1932192249]
+[node name="@MeshInstance3D@89" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=321146481]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_ogp8c")
 
-[node name="@MeshInstance3D@90" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1723828522]
+[node name="@MeshInstance3D@90" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=804447955]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_xskhi")
 
-[node name="@MeshInstance3D@91" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1347910363]
+[node name="@MeshInstance3D@91" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1501864468]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.3, 4.2, 13.6)
 mesh = SubResource("BoxMesh_r3tk6")
 
-[node name="WindowSpot_L" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=1173216117]
+[node name="WindowSpot_L" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=2025744011]
 transform = Transform3D(1, 0, 0, 0, 0.9659258, -0.25881904, 0, 0.25881904, 0.9659258, -16, 5.8, 12)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2811,7 +2830,7 @@ shadow_enabled = true
 spot_range = 28.0
 spot_angle = 55.0
 
-[node name="WindowSpot_R" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=1536903654]
+[node name="WindowSpot_R" type="SpotLight3D" parent="PubCasinoBuilding" unique_id=84518313]
 transform = Transform3D(1, 0, 0, 0, 0.9659258, -0.25881904, 0, 0.25881904, 0.9659258, 16, 5.8, 12)
 light_color = Color(1, 0.88, 0.65, 1)
 light_energy = 8.0
@@ -2819,586 +2838,586 @@ shadow_enabled = true
 spot_range = 28.0
 spot_angle = 55.0
 
-[node name="@MeshInstance3D@92" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1869105978]
+[node name="@MeshInstance3D@92" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1336916307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 13.6)
 mesh = SubResource("BoxMesh_6mk1q")
 
-[node name="@CollisionShape3D@93" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=331731094]
+[node name="@CollisionShape3D@93" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1347551069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 13.6)
 shape = SubResource("BoxShape3D_3fmgr")
 
-[node name="InteriorCarpetFloor" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2110193391]
+[node name="InteriorCarpetFloor" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1544568869]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.5)
 mesh = SubResource("BoxMesh_jvb0b")
 
-[node name="@CollisionShape3D@94" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=329323517]
+[node name="@CollisionShape3D@94" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1098685461]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.5)
 shape = SubResource("BoxShape3D_4ajkn")
 
-[node name="@MeshInstance3D@95" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=45786415]
+[node name="@MeshInstance3D@95" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2070263200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.2, 0.5)
 mesh = SubResource("BoxMesh_wcn4b")
 
-[node name="@CollisionShape3D@96" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=956285696]
+[node name="@CollisionShape3D@96" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1054145375]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.2, 0.5)
 shape = SubResource("BoxShape3D_y1wbm")
 
-[node name="@MeshInstance3D@97" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=435371177]
+[node name="@MeshInstance3D@97" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=975419652]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.55, -12.5)
 mesh = SubResource("BoxMesh_kg1gg")
 
-[node name="@CollisionShape3D@98" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=507809311]
+[node name="@CollisionShape3D@98" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1554905582]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.55, -12.5)
 shape = SubResource("BoxShape3D_sbjvq")
 
-[node name="@MeshInstance3D@99" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=650670470]
+[node name="@MeshInstance3D@99" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=513321630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 4.55, 0.5)
 material_override = ExtResource("13_e755i")
 mesh = SubResource("BoxMesh_7t54w")
 
-[node name="@CollisionShape3D@100" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1173702843]
+[node name="@CollisionShape3D@100" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1017677633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 4.55, 0.5)
 shape = SubResource("BoxShape3D_u7a3r")
 
-[node name="@MeshInstance3D@101" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=77381194]
+[node name="@MeshInstance3D@101" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=173208081]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4.55, 0.5)
 material_override = ExtResource("13_e755i")
 mesh = SubResource("BoxMesh_v3gpn")
 
-[node name="@CollisionShape3D@102" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1314245146]
+[node name="@CollisionShape3D@102" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1505328494]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4.55, 0.5)
 shape = SubResource("BoxShape3D_us255")
 
-[node name="UpperFacade" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1147580563]
+[node name="UpperFacade" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1919893608]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.5, 0)
 mesh = SubResource("BoxMesh_6yex2")
 
-[node name="@MeshInstance3D@103" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=24127587]
+[node name="@MeshInstance3D@103" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=992105898]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 7.2, 4)
 mesh = SubResource("CylinderMesh_7o110")
 
-[node name="@OmniLight3D@104" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1407728695]
+[node name="@OmniLight3D@104" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1402084745]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 6.7999997, 4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@105" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1189528685]
+[node name="@MeshInstance3D@105" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=592098881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, 4)
 mesh = SubResource("CylinderMesh_csnd4")
 
-[node name="@OmniLight3D@106" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1631490853]
+[node name="@OmniLight3D@106" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=809374157]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.7999997, 4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@107" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1399201131]
+[node name="@MeshInstance3D@107" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=643614525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 7.2, 4)
 mesh = SubResource("CylinderMesh_qnhgw")
 
-[node name="@OmniLight3D@108" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1749820001]
+[node name="@OmniLight3D@108" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=536849337]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 6.7999997, 4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@109" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1553628564]
+[node name="@MeshInstance3D@109" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1489608765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 7.2, -4)
 mesh = SubResource("CylinderMesh_hwwvy")
 
-[node name="@OmniLight3D@110" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1820808639]
+[node name="@OmniLight3D@110" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1404634240]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 6.7999997, -4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@111" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=187763529]
+[node name="@MeshInstance3D@111" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1153129842]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.2, -4)
 mesh = SubResource("CylinderMesh_bie0u")
 
-[node name="@OmniLight3D@112" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1669948720]
+[node name="@OmniLight3D@112" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=904964]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.7999997, -4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@113" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=785660881]
+[node name="@MeshInstance3D@113" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=321568168]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 7.2, -4)
 mesh = SubResource("CylinderMesh_278oh")
 
-[node name="@OmniLight3D@114" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1520282861]
+[node name="@OmniLight3D@114" type="OmniLight3D" parent="PubCasinoBuilding" unique_id=1833797688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 6.7999997, -4)
 light_color = Color(1, 0.84, 0.6, 1)
 light_energy = 3.6
 omni_range = 15.0
 
-[node name="@MeshInstance3D@115" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=852330645]
+[node name="@MeshInstance3D@115" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=938006065]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38, 2.5)
 material_override = ExtResource("16_xhfw6")
 mesh = SubResource("BoxMesh_23igq")
 
-[node name="@CollisionShape3D@116" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1702720120]
+[node name="@CollisionShape3D@116" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1416396056]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38, 2.5)
 shape = SubResource("BoxShape3D_86fa3")
 
-[node name="@MeshInstance3D@117" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1784382496]
+[node name="@MeshInstance3D@117" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=837434169]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, -0.8)
 material_override = ExtResource("16_xhfw6")
 mesh = SubResource("BoxMesh_wyn45")
 
-[node name="@MeshInstance3D@118" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2121268748]
+[node name="@MeshInstance3D@118" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1162574027]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_knmok")
 mesh = SubResource("CylinderMesh_1gtpo")
 
-[node name="@MeshInstance3D@119" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2132374536]
+[node name="@MeshInstance3D@119" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=509697737]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_dv312")
 mesh = SubResource("CylinderMesh_3w13t")
 
-[node name="@MeshInstance3D@120" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1545022912]
+[node name="@MeshInstance3D@120" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=824773312]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_a3lqv")
 mesh = SubResource("CylinderMesh_5nx5i")
 
-[node name="@MeshInstance3D@121" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=950047607]
+[node name="@MeshInstance3D@121" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1467210588]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_3byd6")
 mesh = SubResource("CylinderMesh_sicgo")
 
-[node name="@MeshInstance3D@122" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1445008583]
+[node name="@MeshInstance3D@122" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=223285930]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_vqv3k")
 mesh = SubResource("CylinderMesh_l6de7")
 
-[node name="@MeshInstance3D@123" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1629416579]
+[node name="@MeshInstance3D@123" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=548201620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_37gv6")
 mesh = SubResource("CylinderMesh_lor1n")
 
-[node name="@MeshInstance3D@124" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1341247557]
+[node name="@MeshInstance3D@124" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=846480733]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_3nuqr")
 mesh = SubResource("CylinderMesh_ytrts")
 
-[node name="@MeshInstance3D@125" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1374830742]
+[node name="@MeshInstance3D@125" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1526154867]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_rr7s2")
 mesh = SubResource("CylinderMesh_m3weo")
 
-[node name="@MeshInstance3D@126" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=755295180]
+[node name="@MeshInstance3D@126" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1447058938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_6iefa")
 mesh = SubResource("CylinderMesh_fl1ps")
 
-[node name="@MeshInstance3D@127" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1356173685]
+[node name="@MeshInstance3D@127" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=295608033]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_5bes7")
 mesh = SubResource("CylinderMesh_rx7t8")
 
-[node name="@MeshInstance3D@128" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1644264854]
+[node name="@MeshInstance3D@128" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=397882077]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 1.8, -0.3)
 material_override = SubResource("StandardMaterial3D_ney1u")
 mesh = SubResource("CylinderMesh_c3oxh")
 
-[node name="@MeshInstance3D@129" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=727154203]
+[node name="@MeshInstance3D@129" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1731753682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_40kxg")
 mesh = SubResource("CylinderMesh_rgy20")
 
-[node name="@MeshInstance3D@130" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1940360802]
+[node name="@MeshInstance3D@130" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1083048936]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_xcpgp")
 mesh = SubResource("CylinderMesh_26gsj")
 
-[node name="@MeshInstance3D@131" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1002148492]
+[node name="@MeshInstance3D@131" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=432857987]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_5p1vr")
 mesh = SubResource("CylinderMesh_o4sth")
 
-[node name="@MeshInstance3D@132" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=889695337]
+[node name="@MeshInstance3D@132" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=56285841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_pibjy")
 mesh = SubResource("CylinderMesh_infih")
 
-[node name="@MeshInstance3D@133" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=26936769]
+[node name="@MeshInstance3D@133" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1920154057]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_yyimg")
 mesh = SubResource("CylinderMesh_hrvyo")
 
-[node name="@MeshInstance3D@134" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=444896683]
+[node name="@MeshInstance3D@134" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=43844428]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_366eq")
 mesh = SubResource("CylinderMesh_4y0y3")
 
-[node name="@MeshInstance3D@135" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=991337675]
+[node name="@MeshInstance3D@135" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1623392810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_vbxff")
 mesh = SubResource("CylinderMesh_ieawi")
 
-[node name="@MeshInstance3D@136" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=155135161]
+[node name="@MeshInstance3D@136" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=443661700]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_nsim6")
 mesh = SubResource("CylinderMesh_ht1ta")
 
-[node name="@MeshInstance3D@137" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=707502833]
+[node name="@MeshInstance3D@137" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=323485875]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_r6dbk")
 mesh = SubResource("CylinderMesh_h7prt")
 
-[node name="@MeshInstance3D@138" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1869209490]
+[node name="@MeshInstance3D@138" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1766923469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_lulrp")
 mesh = SubResource("CylinderMesh_atocm")
 
-[node name="@MeshInstance3D@139" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=832369680]
+[node name="@MeshInstance3D@139" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=385911918]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 2.6, -0.3)
 material_override = SubResource("StandardMaterial3D_rxh8v")
 mesh = SubResource("CylinderMesh_skfgk")
 
-[node name="@MeshInstance3D@140" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1645716333]
+[node name="@MeshInstance3D@140" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=780808521]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_412c5")
 mesh = SubResource("CylinderMesh_kbnur")
 
-[node name="@MeshInstance3D@141" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=607887278]
+[node name="@MeshInstance3D@141" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=12342393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_tdgw4")
 mesh = SubResource("CylinderMesh_essjx")
 
-[node name="@MeshInstance3D@142" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=782424529]
+[node name="@MeshInstance3D@142" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1929945586]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_cys8q")
 mesh = SubResource("CylinderMesh_brr72")
 
-[node name="@MeshInstance3D@143" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=253809645]
+[node name="@MeshInstance3D@143" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=847595533]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_uh3bd")
 mesh = SubResource("CylinderMesh_nrjd5")
 
-[node name="@MeshInstance3D@144" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=22608290]
+[node name="@MeshInstance3D@144" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=434540675]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_sl8fv")
 mesh = SubResource("CylinderMesh_nshi5")
 
-[node name="@MeshInstance3D@145" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1559517167]
+[node name="@MeshInstance3D@145" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2093523330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_n1qq3")
 mesh = SubResource("CylinderMesh_57nll")
 
-[node name="@MeshInstance3D@146" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=603074911]
+[node name="@MeshInstance3D@146" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1876305553]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_7mgyp")
 mesh = SubResource("CylinderMesh_dvaue")
 
-[node name="@MeshInstance3D@147" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=106536456]
+[node name="@MeshInstance3D@147" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=772107902]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_n1s1r")
 mesh = SubResource("CylinderMesh_pxysq")
 
-[node name="@MeshInstance3D@148" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=812837294]
+[node name="@MeshInstance3D@148" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1132402181]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_ltobn")
 mesh = SubResource("CylinderMesh_kc7gs")
 
-[node name="@MeshInstance3D@149" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=910029797]
+[node name="@MeshInstance3D@149" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=219867041]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_64p2c")
 mesh = SubResource("CylinderMesh_xgshr")
 
-[node name="@MeshInstance3D@150" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2086779054]
+[node name="@MeshInstance3D@150" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1583891511]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 3.4, -0.3)
 material_override = SubResource("StandardMaterial3D_sgwaq")
 mesh = SubResource("CylinderMesh_523m2")
 
-[node name="@MeshInstance3D@151" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=783302791]
+[node name="@MeshInstance3D@151" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1618160744]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_6b7wv")
 
-[node name="@MeshInstance3D@152" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@151" unique_id=1943652570]
+[node name="@MeshInstance3D@152" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@151" unique_id=948871188]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_6m6ft")
 
-[node name="@MeshInstance3D@153" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1643021074]
+[node name="@MeshInstance3D@153" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=807665575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_n4fqu")
 
-[node name="@MeshInstance3D@154" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@153" unique_id=393506721]
+[node name="@MeshInstance3D@154" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@153" unique_id=1630519343]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_bey1m")
 
-[node name="@MeshInstance3D@155" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1550910804]
+[node name="@MeshInstance3D@155" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=859279940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_4fxnv")
 
-[node name="@MeshInstance3D@156" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@155" unique_id=397219869]
+[node name="@MeshInstance3D@156" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@155" unique_id=1806707223]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_xjm2v")
 
-[node name="@MeshInstance3D@157" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=163110433]
+[node name="@MeshInstance3D@157" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1227984630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_4pyj8")
 
-[node name="@MeshInstance3D@158" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@157" unique_id=1145719123]
+[node name="@MeshInstance3D@158" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@157" unique_id=1297249245]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_cyeli")
 
-[node name="@MeshInstance3D@159" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=501949562]
+[node name="@MeshInstance3D@159" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1683064368]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_yhrqb")
 
-[node name="@MeshInstance3D@160" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@159" unique_id=1537359188]
+[node name="@MeshInstance3D@160" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@159" unique_id=206636462]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_amesp")
 
-[node name="@MeshInstance3D@161" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=982619104]
+[node name="@MeshInstance3D@161" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2070407162]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_b0ffw")
 
-[node name="@MeshInstance3D@162" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@161" unique_id=228773097]
+[node name="@MeshInstance3D@162" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@161" unique_id=2064854060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_gjsq6")
 
-[node name="@MeshInstance3D@163" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1968909435]
+[node name="@MeshInstance3D@163" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=723847369]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_h41ed")
 
-[node name="@MeshInstance3D@164" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@163" unique_id=1192385453]
+[node name="@MeshInstance3D@164" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@163" unique_id=354980301]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_pxbtv")
 
-[node name="@MeshInstance3D@165" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1399713932]
+[node name="@MeshInstance3D@165" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1402583900]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_led7e")
 
-[node name="@MeshInstance3D@166" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@165" unique_id=1611640694]
+[node name="@MeshInstance3D@166" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@165" unique_id=661512243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_hchhe")
 
-[node name="@MeshInstance3D@167" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=668901739]
+[node name="@MeshInstance3D@167" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1349677671]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_2bnsq")
 
-[node name="@MeshInstance3D@168" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@167" unique_id=626698920]
+[node name="@MeshInstance3D@168" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@167" unique_id=143951024]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_ybg7i")
 
-[node name="@MeshInstance3D@169" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=601317510]
+[node name="@MeshInstance3D@169" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1828608683]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_j0lq4")
 
-[node name="@MeshInstance3D@170" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@169" unique_id=961502775]
+[node name="@MeshInstance3D@170" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@169" unique_id=473774584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_ogcpe")
 
-[node name="@MeshInstance3D@171" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1595009314]
+[node name="@MeshInstance3D@171" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1515106277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 1.25, 3.8)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("CylinderMesh_ugdpp")
 
-[node name="@MeshInstance3D@172" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@171" unique_id=1578554509]
+[node name="@MeshInstance3D@172" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@171" unique_id=1460929760]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 0)
 material_override = ExtResource("12_t5ykj")
 mesh = SubResource("CylinderMesh_vp57m")
 
-[node name="@MeshInstance3D@173" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1036225462]
+[node name="@MeshInstance3D@173" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=14151841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.28, 2)
 material_override = ExtResource("18_152kg")
 mesh = SubResource("CylinderMesh_unwqh")
 
-[node name="@CollisionShape3D@174" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1926590145]
+[node name="@CollisionShape3D@174" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=863174571]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.28, 2)
 shape = SubResource("CylinderShape3D_y1r3f")
 
-[node name="@MeshInstance3D@175" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=995346565]
+[node name="@MeshInstance3D@175" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=690979101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.28, -6)
 material_override = ExtResource("18_152kg")
 mesh = SubResource("BoxMesh_cphva")
 
-[node name="@CollisionShape3D@176" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1460055846]
+[node name="@CollisionShape3D@176" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=451654872]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.28, -6)
 shape = SubResource("BoxShape3D_db4lo")
 
-[node name="@MeshInstance3D@177" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1775739531]
+[node name="@MeshInstance3D@177" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=54551720]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, 4)
 material_override = ExtResource("19_r4e17")
 mesh = SubResource("BoxMesh_6s55k")
 
-[node name="@MeshInstance3D@179" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@177" unique_id=240664293]
+[node name="@MeshInstance3D@179" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@177" unique_id=1010338615]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.46)
 material_override = ExtResource("20_y57op")
 mesh = SubResource("BoxMesh_sas64")
 
-[node name="@Label3D@180" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@177" unique_id=313586355]
+[node name="@Label3D@180" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@177" unique_id=1783920044]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.46)
 modulate = Color(1, 0.9, 0.2, 1)
 text = "777"
 font_size = 42
 outline_size = 8
 
-[node name="@CollisionShape3D@178" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=815573205]
+[node name="@CollisionShape3D@178" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1541250025]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, 4)
 shape = SubResource("BoxShape3D_yaq36")
 
-[node name="@MeshInstance3D@181" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1964920451]
+[node name="@MeshInstance3D@181" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=926952684]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, 1.2)
 material_override = ExtResource("19_r4e17")
 mesh = SubResource("BoxMesh_jthuq")
 
-[node name="@MeshInstance3D@183" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@181" unique_id=528843073]
+[node name="@MeshInstance3D@183" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@181" unique_id=312702730]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.46)
 material_override = ExtResource("20_y57op")
 mesh = SubResource("BoxMesh_ra4ob")
 
-[node name="@Label3D@184" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@181" unique_id=143470441]
+[node name="@Label3D@184" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@181" unique_id=1332903729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.46)
 modulate = Color(1, 0.9, 0.2, 1)
 text = "JACKPOT"
 font_size = 42
 outline_size = 8
 
-[node name="@CollisionShape3D@182" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=2141597024]
+[node name="@CollisionShape3D@182" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1564507795]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, 1.2)
 shape = SubResource("BoxShape3D_msijb")
 
-[node name="@MeshInstance3D@185" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=643771271]
+[node name="@MeshInstance3D@185" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=417279004]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, -1.6)
 material_override = ExtResource("19_r4e17")
 mesh = SubResource("BoxMesh_msjsc")
 
-[node name="@MeshInstance3D@187" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@185" unique_id=2075107988]
+[node name="@MeshInstance3D@187" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@185" unique_id=785336585]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.46)
 material_override = ExtResource("20_y57op")
 mesh = SubResource("BoxMesh_pxji5")
 
-[node name="@Label3D@188" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@185" unique_id=1467655609]
+[node name="@Label3D@188" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@185" unique_id=83231152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.46)
 modulate = Color(1, 0.9, 0.2, 1)
 text = "CHERRY"
 font_size = 42
 outline_size = 8
 
-[node name="@CollisionShape3D@186" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=89517786]
+[node name="@CollisionShape3D@186" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1851146811]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, -1.6)
 shape = SubResource("BoxShape3D_dsace")
 
-[node name="@MeshInstance3D@189" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1208315308]
+[node name="@MeshInstance3D@189" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=456237002]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, -4.4)
 material_override = ExtResource("19_r4e17")
 mesh = SubResource("BoxMesh_rp0ac")
 
-[node name="@MeshInstance3D@191" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@189" unique_id=374180990]
+[node name="@MeshInstance3D@191" type="MeshInstance3D" parent="PubCasinoBuilding/@MeshInstance3D@189" unique_id=1028549438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.46)
 material_override = ExtResource("20_y57op")
 mesh = SubResource("BoxMesh_x6ncu")
 
-[node name="@Label3D@192" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@189" unique_id=628747889]
+[node name="@Label3D@192" type="Label3D" parent="PubCasinoBuilding/@MeshInstance3D@189" unique_id=277032479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0.46)
 modulate = Color(1, 0.9, 0.2, 1)
 text = "BAR"
 font_size = 42
 outline_size = 8
 
-[node name="@CollisionShape3D@190" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=1058187432]
+[node name="@CollisionShape3D@190" type="CollisionShape3D" parent="PubCasinoBuilding" unique_id=2121637524]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -18, 2, -4.4)
 shape = SubResource("BoxShape3D_xyg1i")
 
-[node name="@MeshInstance3D@193" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=623720866]
+[node name="@MeshInstance3D@193" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=286689073]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.18, -10.5)
 material_override = ExtResource("17_1epgm")
 mesh = SubResource("BoxMesh_tbq0a")
 
-[node name="@MeshInstance3D@194" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=2000212575]
+[node name="@MeshInstance3D@194" type="MeshInstance3D" parent="PubCasinoBuilding" unique_id=1958479674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.05, -8.6)
 material_override = ExtResource("16_xhfw6")
 mesh = SubResource("BoxMesh_gacyr")
 
-[node name="NPC_Boris" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1223382658]
+[node name="NPC_Boris" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=910620417]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 3.6, 0.8, 15.2)
 script = ExtResource("21_mlv25")
 character_name = "Boris"
 role_title = "Head Bouncer"
 dialogues = Array[String](["Welcome to ceaser. Keep your hands clean and your conduct orderly.", "Doors are open 24/7. Head on in—bar is straight ahead, tables to the right, slots to the left.", "Look at that vibrant glass facade—you can see the whole action from right out here on the porch!"])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=748798160]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=656081268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_cqvx6")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=2130236799]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=1257886642]
 
-[node name="@MeshInstance3D@195" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1920670531]
+[node name="@MeshInstance3D@195" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1690901865]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_hw2p4")
 
-[node name="@MeshInstance3D@196" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1047893925]
+[node name="@MeshInstance3D@196" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=899075619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_2ging")
 
-[node name="@MeshInstance3D@197" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=513818967]
+[node name="@MeshInstance3D@197" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1406929202]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_erygv")
 
-[node name="@MeshInstance3D@198" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1704712061]
+[node name="@MeshInstance3D@198" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1081940058]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_jq4lb")
 
-[node name="@MeshInstance3D@199" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=703002370]
+[node name="@MeshInstance3D@199" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=577414103]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_2qqo3")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1079207439]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1069594382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_fa53f")
 
-[node name="@MeshInstance3D@200" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=902902304]
+[node name="@MeshInstance3D@200" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=489547516]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_1h6gc")
 
-[node name="@MeshInstance3D@201" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1685587581]
+[node name="@MeshInstance3D@201" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=791206797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_beq13")
 
-[node name="@MeshInstance3D@202" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=298273472]
+[node name="@MeshInstance3D@202" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=87832388]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_yn2tr")
 
-[node name="@MeshInstance3D@203" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=377422286]
+[node name="@MeshInstance3D@203" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1323158725]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_hlqhc")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1514426387]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Boris/Model" unique_id=1821081005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@204" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model/Head" unique_id=1539423293]
+[node name="@MeshInstance3D@204" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model/Head" unique_id=1403452884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_wfnqd")
 
-[node name="@MeshInstance3D@205" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model/Head" unique_id=1200946096]
+[node name="@MeshInstance3D@205" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Boris/Model/Head" unique_id=1739942164]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_oxq8j")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=1277937765]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=1301907527]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3408,7 +3427,7 @@ Head Bouncer"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=1554675248]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Boris" unique_id=321104750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3418,71 +3437,71 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="NPC_Marcus" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=446246175]
+[node name="NPC_Marcus" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1862296512]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0.6)
 script = ExtResource("21_mlv25")
 character_name = "Marcus"
 role_title = "Bartender"
 dialogues = Array[String](["Welcome to ceaser! What can I get started for you tonight?", "Careful with that craft brew—one bottle inverts your motor skills, and if you drink too much, even your mouse goes opposite!", "Keep your buzz up with drinks or smokes, or you'll fall asleep and slip into a coma!", "If your controls get crazy, grab an energy can with [3] to sober up instantly."])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=978375899]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=888249976]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_fysbh")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=114573534]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=177651047]
 
-[node name="@MeshInstance3D@206" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=2102868520]
+[node name="@MeshInstance3D@206" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=403366405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_7hyvy")
 
-[node name="@MeshInstance3D@207" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=377065399]
+[node name="@MeshInstance3D@207" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1830795263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_1ctjj")
 
-[node name="@MeshInstance3D@208" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=614346696]
+[node name="@MeshInstance3D@208" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1405839415]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_tt664")
 
-[node name="@MeshInstance3D@209" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=401751966]
+[node name="@MeshInstance3D@209" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=514334911]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_u2dkd")
 
-[node name="@MeshInstance3D@210" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=760473366]
+[node name="@MeshInstance3D@210" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1252777846]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_jqj5w")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1310728479]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1787932154]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_prv6b")
 
-[node name="@MeshInstance3D@211" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1370633121]
+[node name="@MeshInstance3D@211" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1263327239]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_wu3qp")
 
-[node name="@MeshInstance3D@212" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=67240919]
+[node name="@MeshInstance3D@212" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=49130010]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_ams41")
 
-[node name="@MeshInstance3D@213" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=309559017]
+[node name="@MeshInstance3D@213" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=873724452]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_i8dkc")
 
-[node name="@MeshInstance3D@214" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=788913435]
+[node name="@MeshInstance3D@214" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=194003584]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_3g57t")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=1653246245]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Marcus/Model" unique_id=967757992]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@215" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model/Head" unique_id=2054448873]
+[node name="@MeshInstance3D@215" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model/Head" unique_id=1452602633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_164n3")
 
-[node name="@MeshInstance3D@216" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model/Head" unique_id=869307054]
+[node name="@MeshInstance3D@216" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Marcus/Model/Head" unique_id=423504417]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_11eo3")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=115159508]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=460360799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3492,7 +3511,7 @@ Bartender"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=281653018]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Marcus" unique_id=1433963726]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3502,71 +3521,71 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="NPC_Elena" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1137170871]
+[node name="NPC_Elena" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1620076604]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.8, 0.6)
 script = ExtResource("21_mlv25")
 character_name = "Elena"
 role_title = "Casino Dealer"
 dialogues = Array[String](["Welcome to the high-limit blackjack table at ceaser! Place your bets.", "Dealer stands on all 17s. Blackjack pays 3 to 2!", "The panoramic windows look stunning from out in the parking lot tonight!"])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=425655958]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=999677916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_ry55y")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=396590350]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=2126590109]
 
-[node name="@MeshInstance3D@217" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1768963917]
+[node name="@MeshInstance3D@217" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=407210152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_5i8qv")
 
-[node name="@MeshInstance3D@218" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1449286724]
+[node name="@MeshInstance3D@218" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=637023341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_2cm6d")
 
-[node name="@MeshInstance3D@219" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1497428872]
+[node name="@MeshInstance3D@219" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=21926500]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_86o1n")
 
-[node name="@MeshInstance3D@220" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1627184492]
+[node name="@MeshInstance3D@220" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1801091356]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_so78f")
 
-[node name="@MeshInstance3D@221" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=545213660]
+[node name="@MeshInstance3D@221" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1047499880]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_4xvjf")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1912338071]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=331287069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_2l0qr")
 
-[node name="@MeshInstance3D@222" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=435053635]
+[node name="@MeshInstance3D@222" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=435603991]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_i47pe")
 
-[node name="@MeshInstance3D@223" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1664404945]
+[node name="@MeshInstance3D@223" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1717910800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_4in87")
 
-[node name="@MeshInstance3D@224" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=863327771]
+[node name="@MeshInstance3D@224" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1215129293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_w08nx")
 
-[node name="@MeshInstance3D@225" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=72785482]
+[node name="@MeshInstance3D@225" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=694971570]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_o5xqw")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=567934131]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Elena/Model" unique_id=1560177736]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@226" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model/Head" unique_id=1722765006]
+[node name="@MeshInstance3D@226" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model/Head" unique_id=869061216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_71l73")
 
-[node name="@MeshInstance3D@227" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model/Head" unique_id=2139335543]
+[node name="@MeshInstance3D@227" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Elena/Model/Head" unique_id=1442672938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_4dw8d")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=152658356]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=150089851]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3576,7 +3595,7 @@ Casino Dealer"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=292389354]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Elena" unique_id=1181710435]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3586,71 +3605,71 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="NPC_Vincent" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1024930541]
+[node name="NPC_Vincent" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1944424044]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 19.5, 0.8, -5.5)
 script = ExtResource("21_mlv25")
 character_name = "Vincent"
 role_title = "High Roller"
 dialogues = Array[String](["Another winning hand! I'm up ten grand tonight at ceaser!", "Never split tens, and always double down on eleven!", "ceaser is the only place in town with this kind of electricity."])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=236642714]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=1781556585]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_x0r3k")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=1668025252]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=432540961]
 
-[node name="@MeshInstance3D@228" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1845101896]
+[node name="@MeshInstance3D@228" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=400734444]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_lg08l")
 
-[node name="@MeshInstance3D@229" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=266258654]
+[node name="@MeshInstance3D@229" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=386753493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_ba35y")
 
-[node name="@MeshInstance3D@230" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1708015726]
+[node name="@MeshInstance3D@230" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1183791791]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_ms02b")
 
-[node name="@MeshInstance3D@231" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1183613429]
+[node name="@MeshInstance3D@231" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1513882623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_gnxea")
 
-[node name="@MeshInstance3D@232" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=109778643]
+[node name="@MeshInstance3D@232" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=35580698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_xpsxg")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=231650530]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1229994055]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_r40yo")
 
-[node name="@MeshInstance3D@233" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=79735415]
+[node name="@MeshInstance3D@233" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=86041948]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_ihkff")
 
-[node name="@MeshInstance3D@234" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1010914277]
+[node name="@MeshInstance3D@234" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=2092081502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_fmdyn")
 
-[node name="@MeshInstance3D@235" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=806999558]
+[node name="@MeshInstance3D@235" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1310105418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_rk1tj")
 
-[node name="@MeshInstance3D@236" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=2084921186]
+[node name="@MeshInstance3D@236" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=7346616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_s3wxf")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=328961606]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Vincent/Model" unique_id=1591356722]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@237" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model/Head" unique_id=965849679]
+[node name="@MeshInstance3D@237" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model/Head" unique_id=1438630151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_5flcu")
 
-[node name="@MeshInstance3D@238" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model/Head" unique_id=378929260]
+[node name="@MeshInstance3D@238" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Vincent/Model/Head" unique_id=1259090297]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_66tfw")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=1089161401]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=571808996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3660,7 +3679,7 @@ High Roller"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=1520224679]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Vincent" unique_id=1742495776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3670,71 +3689,71 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="NPC_Lucky_Lou" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1676203103]
+[node name="NPC_Lucky_Lou" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=184950007]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -16.8, 0.8, 1.2)
 script = ExtResource("21_mlv25")
 character_name = "Lucky Lou"
 role_title = "Slot Fanatic"
 dialogues = Array[String](["Just one more pull! I can feel the jackpot coming on this machine!", "Triple sevens pay out 10,000 to one! I'm not leaving until the sirens go off."])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=1497944741]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=1900087438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_mnpme")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=1466943020]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=305562696]
 
-[node name="@MeshInstance3D@239" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=928468063]
+[node name="@MeshInstance3D@239" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=732601605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_ypyer")
 
-[node name="@MeshInstance3D@240" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=265254306]
+[node name="@MeshInstance3D@240" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=929328940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_5h1ta")
 
-[node name="@MeshInstance3D@241" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=2034673809]
+[node name="@MeshInstance3D@241" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1076613321]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_ygrm7")
 
-[node name="@MeshInstance3D@242" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=496147774]
+[node name="@MeshInstance3D@242" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=2039660999]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_0xkeh")
 
-[node name="@MeshInstance3D@243" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=2108716805]
+[node name="@MeshInstance3D@243" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=816628537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_80jji")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=819433984]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=52058542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_3btbf")
 
-[node name="@MeshInstance3D@244" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=826312902]
+[node name="@MeshInstance3D@244" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=856894616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_g7rky")
 
-[node name="@MeshInstance3D@245" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=802527848]
+[node name="@MeshInstance3D@245" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1510002481]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_2dxw8")
 
-[node name="@MeshInstance3D@246" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1350011781]
+[node name="@MeshInstance3D@246" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=773185151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_ivugr")
 
-[node name="@MeshInstance3D@247" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1279574630]
+[node name="@MeshInstance3D@247" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=479140107]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_g7xqt")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1347652512]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model" unique_id=1787181862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@248" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model/Head" unique_id=395089247]
+[node name="@MeshInstance3D@248" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model/Head" unique_id=84451032]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_qlrde")
 
-[node name="@MeshInstance3D@249" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model/Head" unique_id=1895717285]
+[node name="@MeshInstance3D@249" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Lucky_Lou/Model/Head" unique_id=2090020983]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_8i2vc")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=1411453723]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=746778222]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3744,7 +3763,7 @@ Slot Fanatic"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=652908999]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Lucky_Lou" unique_id=515804784]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3754,71 +3773,71 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="NPC_Chloe" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1197139514]
+[node name="NPC_Chloe" type="CharacterBody3D" parent="PubCasinoBuilding" unique_id=1191516588]
 transform = Transform3D(0.9396926, 0, 0.34202012, 0, 1, 0, -0.34202012, 0, 0.9396926, -14.5, 0.8, -10)
 script = ExtResource("21_mlv25")
 character_name = "Chloe"
 role_title = "VIP Patron"
 dialogues = Array[String](["The ambiance here in ceaser is just gorgeous tonight, isn't it?", "Check out the white and brown van outside! You can step right inside with [E] and sit in the driver's seat."])
 
-[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1635370074]
+[node name="Collision" type="CollisionShape3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=826081538]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 shape = SubResource("CapsuleShape3D_uj8jj")
 
-[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1978293093]
+[node name="Model" type="Node3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=916834203]
 
-[node name="@MeshInstance3D@250" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1008301655]
+[node name="@MeshInstance3D@250" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1355638073]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_1efxq")
 
-[node name="@MeshInstance3D@251" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=377673608]
+[node name="@MeshInstance3D@251" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1238799290]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.06, 0.03)
 mesh = SubResource("BoxMesh_sdyip")
 
-[node name="@MeshInstance3D@252" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1325520996]
+[node name="@MeshInstance3D@252" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1154424575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_0fp3f")
 
-[node name="@MeshInstance3D@253" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1170606739]
+[node name="@MeshInstance3D@253" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=594670822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.44, 0)
 mesh = SubResource("CapsuleMesh_drymh")
 
-[node name="@MeshInstance3D@254" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1719350342]
+[node name="@MeshInstance3D@254" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1549078477]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.78, 0)
 mesh = SubResource("BoxMesh_whk4g")
 
-[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=7937895]
+[node name="Chest" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=2144967940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
 mesh = SubResource("BoxMesh_pm6w4")
 
-[node name="@MeshInstance3D@255" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1611059131]
+[node name="@MeshInstance3D@255" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1837396946]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_ts2m2")
 
-[node name="@MeshInstance3D@256" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1767911025]
+[node name="@MeshInstance3D@256" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=834607201]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_33o67")
 
-[node name="@MeshInstance3D@257" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=80340119]
+[node name="@MeshInstance3D@257" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=521730888]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.12, 0.02)
 mesh = SubResource("CapsuleMesh_758nk")
 
-[node name="@MeshInstance3D@258" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=982672087]
+[node name="@MeshInstance3D@258" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=616706101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 0.82, 0.05)
 mesh = SubResource("SphereMesh_hrqta")
 
-[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=1181650816]
+[node name="Head" type="Node3D" parent="PubCasinoBuilding/NPC_Chloe/Model" unique_id=2062172830]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
-[node name="@MeshInstance3D@259" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model/Head" unique_id=2058667894]
+[node name="@MeshInstance3D@259" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model/Head" unique_id=1865485620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
 mesh = SubResource("SphereMesh_j2wjd")
 
-[node name="@MeshInstance3D@260" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model/Head" unique_id=43454355]
+[node name="@MeshInstance3D@260" type="MeshInstance3D" parent="PubCasinoBuilding/NPC_Chloe/Model/Head" unique_id=856169449]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, -0.02)
 mesh = SubResource("SphereMesh_403y3")
 
-[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1905884750]
+[node name="NameTag" type="Label3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1582969803]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
 billboard = 2
 modulate = Color(1, 0.88, 0.45, 1)
@@ -3828,7 +3847,7 @@ VIP Patron"
 font_size = 28
 outline_size = 6
 
-[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1346280015]
+[node name="SpeechBubble" type="Label3D" parent="PubCasinoBuilding/NPC_Chloe" unique_id=1267002873]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.55, 0)
 visible = false
 billboard = 2
@@ -3838,154 +3857,154 @@ outline_size = 6
 autowrap_mode = 2
 width = 340.0
 
-[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=1389711593 instance=ExtResource("22_a82wo")]
+[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=1276451802 instance=ExtResource("22_a82wo")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15.5, 0, 2)
 
-[node name="FloorCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=647775017]
+[node name="FloorCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=823536957]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0.25)
 shape = SubResource("BoxShape3D_vny71")
 
-[node name="StepCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=1159837536]
+[node name="StepCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=2132401130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 0.09, 0.5)
 shape = SubResource("BoxShape3D_bbtd1")
 
-[node name="LeftWallCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=1879025101]
+[node name="LeftWallCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=265063482]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.22, 0.25)
 shape = SubResource("BoxShape3D_7kbdm")
 
-[node name="RightWallFrontCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=1087069106]
+[node name="RightWallFrontCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=678672752]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.22, -1.2)
 shape = SubResource("BoxShape3D_am3wt")
 
-[node name="RightWallRearCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=1695145583]
+[node name="RightWallRearCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=1464847474]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.22, 1.95)
 shape = SubResource("BoxShape3D_7dlxw")
 
-[node name="FrontCabCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=761196994]
+[node name="FrontCabCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=190293696]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.15)
 shape = SubResource("BoxShape3D_6joau")
 
-[node name="RearWallCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=976197532]
+[node name="RearWallCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=28088444]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.22, 2.65)
 shape = SubResource("BoxShape3D_c32c7")
 
-[node name="RoofCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=863434077]
+[node name="RoofCollision" type="CollisionShape3D" parent="ParkedVan" unique_id=2146307905]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.25)
 shape = SubResource("BoxShape3D_invtg")
 
-[node name="Chassis" type="MeshInstance3D" parent="ParkedVan" unique_id=1798782340]
+[node name="Chassis" type="MeshInstance3D" parent="ParkedVan" unique_id=1892115980]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 mesh = SubResource("BoxMesh_pic13")
 
-[node name="VanFloor" type="MeshInstance3D" parent="ParkedVan" unique_id=1329531744]
+[node name="VanFloor" type="MeshInstance3D" parent="ParkedVan" unique_id=731006227]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0.25)
 mesh = SubResource("BoxMesh_xjm2b")
 
-[node name="EntranceStep" type="MeshInstance3D" parent="ParkedVan" unique_id=24365112]
+[node name="EntranceStep" type="MeshInstance3D" parent="ParkedVan" unique_id=1641286900]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 0.12, 0.5)
 mesh = SubResource("BoxMesh_265bt")
 
-[node name="LeftLowerBody" type="MeshInstance3D" parent="ParkedVan" unique_id=936012053]
+[node name="LeftLowerBody" type="MeshInstance3D" parent="ParkedVan" unique_id=1432342093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0.77, 0.25)
 mesh = SubResource("BoxMesh_3bcvm")
 
-[node name="LeftStripe" type="MeshInstance3D" parent="ParkedVan" unique_id=1577253709]
+[node name="LeftStripe" type="MeshInstance3D" parent="ParkedVan" unique_id=1791679573]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.22, 0.25)
 mesh = SubResource("BoxMesh_317op")
 
-[node name="LeftUpperBody" type="MeshInstance3D" parent="ParkedVan" unique_id=1147140864]
+[node name="LeftUpperBody" type="MeshInstance3D" parent="ParkedVan" unique_id=1203240185]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.68, 0.25)
 mesh = SubResource("BoxMesh_7pejy")
 
-[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="ParkedVan" unique_id=1215437143]
+[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="ParkedVan" unique_id=1939785050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.68, -0.6)
 mesh = SubResource("BoxMesh_xjrgl")
 
-[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="ParkedVan" unique_id=2108372364]
+[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="ParkedVan" unique_id=1344883573]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 1.68, 1.2)
 mesh = SubResource("BoxMesh_p43no")
 
-[node name="@MeshInstance3D@4" type="MeshInstance3D" parent="ParkedVan" unique_id=1924776380]
+[node name="@MeshInstance3D@4" type="MeshInstance3D" parent="ParkedVan" unique_id=890245639]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0.77, -1.2)
 mesh = SubResource("BoxMesh_liu50")
 
-[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="ParkedVan" unique_id=578709644]
+[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="ParkedVan" unique_id=1091075130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.22, -1.2)
 mesh = SubResource("BoxMesh_bvvsy")
 
-[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="ParkedVan" unique_id=483703303]
+[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="ParkedVan" unique_id=1830544906]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.68, -1.2)
 mesh = SubResource("BoxMesh_7yosi")
 
-[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="ParkedVan" unique_id=771503662]
+[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="ParkedVan" unique_id=1152383592]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.68, -1.2)
 mesh = SubResource("BoxMesh_tq47p")
 
-[node name="@MeshInstance3D@8" type="MeshInstance3D" parent="ParkedVan" unique_id=1315927026]
+[node name="@MeshInstance3D@8" type="MeshInstance3D" parent="ParkedVan" unique_id=723137399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 0.77, 1.95)
 mesh = SubResource("BoxMesh_2xx6u")
 
-[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="ParkedVan" unique_id=1531425106]
+[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="ParkedVan" unique_id=2113982576]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.22, 1.95)
 mesh = SubResource("BoxMesh_184w4")
 
-[node name="@MeshInstance3D@10" type="MeshInstance3D" parent="ParkedVan" unique_id=77947092]
+[node name="@MeshInstance3D@10" type="MeshInstance3D" parent="ParkedVan" unique_id=6892581]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1, 1.68, 1.95)
 mesh = SubResource("BoxMesh_tmcm2")
 
-[node name="SlidingDoorOpen" type="MeshInstance3D" parent="ParkedVan" unique_id=1575494971]
+[node name="SlidingDoorOpen" type="MeshInstance3D" parent="ParkedVan" unique_id=1090974973]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.2, 1.85)
 mesh = SubResource("BoxMesh_iq14l")
 
-[node name="@MeshInstance3D@11" type="MeshInstance3D" parent="ParkedVan" unique_id=724123475]
+[node name="@MeshInstance3D@11" type="MeshInstance3D" parent="ParkedVan" unique_id=948702076]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.65, 1.85)
 mesh = SubResource("BoxMesh_64a2o")
 
-[node name="@MeshInstance3D@12" type="MeshInstance3D" parent="ParkedVan" unique_id=1200312137]
+[node name="@MeshInstance3D@12" type="MeshInstance3D" parent="ParkedVan" unique_id=1098883396]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.26, 1.15, 1.2)
 mesh = SubResource("BoxMesh_x7qos")
 
-[node name="HighTopRoof" type="MeshInstance3D" parent="ParkedVan" unique_id=47491355]
+[node name="HighTopRoof" type="MeshInstance3D" parent="ParkedVan" unique_id=1429477191]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0.25)
 mesh = SubResource("BoxMesh_fh820")
 
-[node name="@MeshInstance3D@13" type="MeshInstance3D" parent="ParkedVan" unique_id=1713133962]
+[node name="@MeshInstance3D@13" type="MeshInstance3D" parent="ParkedVan" unique_id=1696007344]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 2.32, 0.25)
 mesh = SubResource("BoxMesh_twung")
 
-[node name="@MeshInstance3D@14" type="MeshInstance3D" parent="ParkedVan" unique_id=666315007]
+[node name="@MeshInstance3D@14" type="MeshInstance3D" parent="ParkedVan" unique_id=1583458973]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 2.32, 0.25)
 mesh = SubResource("BoxMesh_j2x5t")
 
-[node name="@MeshInstance3D@15" type="MeshInstance3D" parent="ParkedVan" unique_id=588509113]
+[node name="@MeshInstance3D@15" type="MeshInstance3D" parent="ParkedVan" unique_id=1511096052]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, -1)
 mesh = SubResource("BoxMesh_mmgqi")
 
-[node name="@MeshInstance3D@16" type="MeshInstance3D" parent="ParkedVan" unique_id=18723029]
+[node name="@MeshInstance3D@16" type="MeshInstance3D" parent="ParkedVan" unique_id=951530868]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 0.2)
 mesh = SubResource("BoxMesh_e8e1v")
 
-[node name="@MeshInstance3D@17" type="MeshInstance3D" parent="ParkedVan" unique_id=1627569063]
+[node name="@MeshInstance3D@17" type="MeshInstance3D" parent="ParkedVan" unique_id=817629845]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 1.4)
 mesh = SubResource("BoxMesh_0yokb")
 
-[node name="CabHood" type="MeshInstance3D" parent="ParkedVan" unique_id=637292491]
+[node name="CabHood" type="MeshInstance3D" parent="ParkedVan" unique_id=2049357493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, -2.18)
 mesh = SubResource("BoxMesh_34qvm")
 
-[node name="Windshield" type="MeshInstance3D" parent="ParkedVan" unique_id=1691528112]
+[node name="Windshield" type="MeshInstance3D" parent="ParkedVan" unique_id=10675252]
 transform = Transform3D(1, 0, 0, 0, 0.88294756, 0.46947157, 0, -0.46947157, 0.88294756, 0, 1.5, -1.48)
 mesh = SubResource("BoxMesh_cxbmf")
 
-[node name="FrontBumper" type="MeshInstance3D" parent="ParkedVan" unique_id=2016536943]
+[node name="FrontBumper" type="MeshInstance3D" parent="ParkedVan" unique_id=1105945579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -2.85)
 mesh = SubResource("BoxMesh_htpp1")
 
-[node name="@MeshInstance3D@18" type="MeshInstance3D" parent="ParkedVan" unique_id=138803010]
+[node name="@MeshInstance3D@18" type="MeshInstance3D" parent="ParkedVan" unique_id=1109577850]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.75, 0.75, -2.86)
 mesh = SubResource("CylinderMesh_uu4m4")
 
-[node name="@SpotLight3D@19" type="SpotLight3D" parent="ParkedVan" unique_id=1218421223]
+[node name="@SpotLight3D@19" type="SpotLight3D" parent="ParkedVan" unique_id=1300206537]
 transform = Transform3D(1, 0, 0, 0, -0.9961947, -0.08715564, 0, 0.08715564, -0.9961947, -0.75, 0.75, -2.9)
 light_color = Color(1, 0.95, 0.85, 1)
 light_energy = 5.0
@@ -3993,11 +4012,11 @@ shadow_enabled = true
 spot_range = 24.0
 spot_angle = 35.0
 
-[node name="@MeshInstance3D@20" type="MeshInstance3D" parent="ParkedVan" unique_id=1439997741]
+[node name="@MeshInstance3D@20" type="MeshInstance3D" parent="ParkedVan" unique_id=672206350]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.75, 0.75, -2.86)
 mesh = SubResource("CylinderMesh_v8rem")
 
-[node name="@SpotLight3D@21" type="SpotLight3D" parent="ParkedVan" unique_id=199972274]
+[node name="@SpotLight3D@21" type="SpotLight3D" parent="ParkedVan" unique_id=1488361444]
 transform = Transform3D(1, 0, 0, 0, -0.9961947, -0.08715564, 0, 0.08715564, -0.9961947, 0.75, 0.75, -2.9)
 light_color = Color(1, 0.95, 0.85, 1)
 light_energy = 5.0
@@ -4005,264 +4024,264 @@ shadow_enabled = true
 spot_range = 24.0
 spot_angle = 35.0
 
-[node name="@MeshInstance3D@22" type="MeshInstance3D" parent="ParkedVan" unique_id=1054187893]
+[node name="@MeshInstance3D@22" type="MeshInstance3D" parent="ParkedVan" unique_id=655723419]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.77, 2.65)
 mesh = SubResource("BoxMesh_xfuwu")
 
-[node name="@MeshInstance3D@23" type="MeshInstance3D" parent="ParkedVan" unique_id=1931286629]
+[node name="@MeshInstance3D@23" type="MeshInstance3D" parent="ParkedVan" unique_id=353136242]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.68, 2.65)
 mesh = SubResource("BoxMesh_7kv7a")
 
-[node name="@MeshInstance3D@24" type="MeshInstance3D" parent="ParkedVan" unique_id=1047929754]
+[node name="@MeshInstance3D@24" type="MeshInstance3D" parent="ParkedVan" unique_id=1886633617]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 2.82)
 mesh = SubResource("BoxMesh_kt41q")
 
-[node name="@MeshInstance3D@25" type="MeshInstance3D" parent="ParkedVan" unique_id=1779242203]
+[node name="@MeshInstance3D@25" type="MeshInstance3D" parent="ParkedVan" unique_id=236525797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 1.15, 2.72)
 mesh = SubResource("BoxMesh_48rk8")
 
-[node name="@MeshInstance3D@26" type="MeshInstance3D" parent="ParkedVan" unique_id=1772441689]
+[node name="@MeshInstance3D@26" type="MeshInstance3D" parent="ParkedVan" unique_id=1196108135]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 1.15, 2.72)
 mesh = SubResource("BoxMesh_obey7")
 
-[node name="@Label3D@27" type="Label3D" parent="ParkedVan" unique_id=645946097]
+[node name="@Label3D@27" type="Label3D" parent="ParkedVan" unique_id=456006523]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, -2.88)
 text = "VAN-777"
 font_size = 28
 outline_size = 6
 
-[node name="@Label3D@28" type="Label3D" parent="ParkedVan" unique_id=32289835]
+[node name="@Label3D@28" type="Label3D" parent="ParkedVan" unique_id=127048031]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.38, 2.88)
 text = "VAN-777"
 font_size = 28
 outline_size = 6
 
-[node name="@Node3D@29" type="Node3D" parent="ParkedVan" unique_id=1328185207]
+[node name="@Node3D@29" type="Node3D" parent="ParkedVan" unique_id=1903607929]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12, 0.38, -1.6)
 
-[node name="@MeshInstance3D@30" type="MeshInstance3D" parent="ParkedVan/@Node3D@29" unique_id=628420835]
+[node name="@MeshInstance3D@30" type="MeshInstance3D" parent="ParkedVan/@Node3D@29" unique_id=437974695]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_6xjqw")
 
-[node name="@MeshInstance3D@31" type="MeshInstance3D" parent="ParkedVan/@Node3D@29" unique_id=994480676]
+[node name="@MeshInstance3D@31" type="MeshInstance3D" parent="ParkedVan/@Node3D@29" unique_id=1350584233]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_1nw08")
 
-[node name="@Node3D@32" type="Node3D" parent="ParkedVan" unique_id=1398018764]
+[node name="@Node3D@32" type="Node3D" parent="ParkedVan" unique_id=2109397896]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.12, 0.38, -1.6)
 
-[node name="@MeshInstance3D@33" type="MeshInstance3D" parent="ParkedVan/@Node3D@32" unique_id=1894822078]
+[node name="@MeshInstance3D@33" type="MeshInstance3D" parent="ParkedVan/@Node3D@32" unique_id=83589561]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_3nt4j")
 
-[node name="@MeshInstance3D@34" type="MeshInstance3D" parent="ParkedVan/@Node3D@32" unique_id=763393313]
+[node name="@MeshInstance3D@34" type="MeshInstance3D" parent="ParkedVan/@Node3D@32" unique_id=1662980575]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_2hfv8")
 
-[node name="@Node3D@35" type="Node3D" parent="ParkedVan" unique_id=296821658]
+[node name="@Node3D@35" type="Node3D" parent="ParkedVan" unique_id=1441431134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12, 0.38, 1.6)
 
-[node name="@MeshInstance3D@36" type="MeshInstance3D" parent="ParkedVan/@Node3D@35" unique_id=262712917]
+[node name="@MeshInstance3D@36" type="MeshInstance3D" parent="ParkedVan/@Node3D@35" unique_id=352935534]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_i37j2")
 
-[node name="@MeshInstance3D@37" type="MeshInstance3D" parent="ParkedVan/@Node3D@35" unique_id=846842720]
+[node name="@MeshInstance3D@37" type="MeshInstance3D" parent="ParkedVan/@Node3D@35" unique_id=784640053]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_mfa5o")
 
-[node name="@Node3D@38" type="Node3D" parent="ParkedVan" unique_id=1621281443]
+[node name="@Node3D@38" type="Node3D" parent="ParkedVan" unique_id=2068116595]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.12, 0.38, 1.6)
 
-[node name="@MeshInstance3D@39" type="MeshInstance3D" parent="ParkedVan/@Node3D@38" unique_id=1266667642]
+[node name="@MeshInstance3D@39" type="MeshInstance3D" parent="ParkedVan/@Node3D@38" unique_id=1729428314]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_q2e5y")
 
-[node name="@MeshInstance3D@40" type="MeshInstance3D" parent="ParkedVan/@Node3D@38" unique_id=1656401936]
+[node name="@MeshInstance3D@40" type="MeshInstance3D" parent="ParkedVan/@Node3D@38" unique_id=832038667]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_33ved")
 
-[node name="@MeshInstance3D@41" type="MeshInstance3D" parent="ParkedVan" unique_id=43839363]
+[node name="@MeshInstance3D@41" type="MeshInstance3D" parent="ParkedVan" unique_id=222315441]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0.6, -1.2)
 mesh = SubResource("BoxMesh_i8e26")
 
-[node name="@MeshInstance3D@42" type="MeshInstance3D" parent="ParkedVan" unique_id=1648987881]
+[node name="@MeshInstance3D@42" type="MeshInstance3D" parent="ParkedVan" unique_id=770012241]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0.95, -0.98)
 mesh = SubResource("BoxMesh_88acb")
 
-[node name="@MeshInstance3D@43" type="MeshInstance3D" parent="ParkedVan" unique_id=703213028]
+[node name="@MeshInstance3D@43" type="MeshInstance3D" parent="ParkedVan" unique_id=202301920]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0.6, -1.2)
 mesh = SubResource("BoxMesh_6iv5p")
 
-[node name="@MeshInstance3D@44" type="MeshInstance3D" parent="ParkedVan" unique_id=839792627]
+[node name="@MeshInstance3D@44" type="MeshInstance3D" parent="ParkedVan" unique_id=1796677283]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0.95, -0.98)
 mesh = SubResource("BoxMesh_5mahd")
 
-[node name="@MeshInstance3D@45" type="MeshInstance3D" parent="ParkedVan" unique_id=533885564]
+[node name="@MeshInstance3D@45" type="MeshInstance3D" parent="ParkedVan" unique_id=1199760329]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -1.65)
 mesh = SubResource("BoxMesh_qngms")
 
-[node name="@MeshInstance3D@46" type="MeshInstance3D" parent="ParkedVan" unique_id=872385447]
+[node name="@MeshInstance3D@46" type="MeshInstance3D" parent="ParkedVan" unique_id=537636630]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, -0.70710677, 0, 0.70710677, 0.70710677, -0.55, 1.05, -1.45)
 mesh = SubResource("CylinderMesh_odx4w")
 
-[node name="LoungeMattress" type="MeshInstance3D" parent="ParkedVan" unique_id=156572335]
+[node name="LoungeMattress" type="MeshInstance3D" parent="ParkedVan" unique_id=1786808851]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 1.85)
 mesh = SubResource("BoxMesh_apc04")
 
-[node name="@MeshInstance3D@47" type="MeshInstance3D" parent="ParkedVan" unique_id=1557932627]
+[node name="@MeshInstance3D@47" type="MeshInstance3D" parent="ParkedVan" unique_id=1485755190]
 transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, -0.55, 0.62, 2.3)
 material_override = SubResource("StandardMaterial3D_khlgd")
 mesh = SubResource("BoxMesh_3qgxm")
 
-[node name="@MeshInstance3D@48" type="MeshInstance3D" parent="ParkedVan" unique_id=877475962]
+[node name="@MeshInstance3D@48" type="MeshInstance3D" parent="ParkedVan" unique_id=283160251]
 transform = Transform3D(1, 0, 0, 0, 0.9396926, 0.34202012, 0, -0.34202012, 0.9396926, 0.55, 0.62, 2.3)
 material_override = SubResource("StandardMaterial3D_cn6lj")
 mesh = SubResource("BoxMesh_fr6rd")
 
-[node name="@MeshInstance3D@49" type="MeshInstance3D" parent="ParkedVan" unique_id=1673645850]
+[node name="@MeshInstance3D@49" type="MeshInstance3D" parent="ParkedVan" unique_id=94438442]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.62, 0.45)
 mesh = SubResource("BoxMesh_tu25c")
 
-[node name="InteriorDomeLight" type="OmniLight3D" parent="ParkedVan" unique_id=82100886]
+[node name="InteriorDomeLight" type="OmniLight3D" parent="ParkedVan" unique_id=955876764]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, 0.5)
 light_color = Color(1, 0.88, 0.68, 1)
 light_energy = 2.4
 omni_range = 4.2
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=1372130957 instance=ExtResource("34_11yus")]
+[node name="Player" type="CharacterBody3D" parent="." unique_id=930063819 instance=ExtResource("34_11yus")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24)
 script = ExtResource("35_b6ruc")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1839756331]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1427450360]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_md1ol")
 
-[node name="Head" type="Node3D" parent="Player" unique_id=996918143]
+[node name="Head" type="Node3D" parent="Player" unique_id=2138906569]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Player/Head" unique_id=608597294]
+[node name="Camera3D" type="Camera3D" parent="Player/Head" unique_id=1088031852]
 current = true
 
-[node name="Flashlight" type="SpotLight3D" parent="Player/Head/Camera3D" unique_id=1721583063]
+[node name="Flashlight" type="SpotLight3D" parent="Player/Head/Camera3D" unique_id=1540821630]
 light_color = Color(1, 0.98, 0.92, 1)
 light_energy = 3.5
 shadow_enabled = true
 spot_range = 28.0
 spot_angle = 38.0
 
-[node name="ViewModels" type="Node3D" parent="Player/Head/Camera3D" unique_id=261141366]
+[node name="ViewModels" type="Node3D" parent="Player/Head/Camera3D" unique_id=689466946]
 
-[node name="CigarettePack" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=1925602242]
+[node name="CigarettePack" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=1692486023]
 transform = Transform3D(0.8822647, 0.23445082, 0.4082179, -0.1344309, 0.95652544, -0.25881904, -0.45115116, 0.17346981, 0.87542605, -0.3, -0.55, -0.35)
 visible = false
 
-[node name="@MeshInstance3D@331" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=669325280]
+[node name="@MeshInstance3D@331" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=301176626]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.012, 0)
 mesh = SubResource("BoxMesh_bj30b")
 
-[node name="@MeshInstance3D@332" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=359321589]
+[node name="@MeshInstance3D@332" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=70701832]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.008, -0.0121)
 mesh = SubResource("BoxMesh_jc3p3")
 
-[node name="@MeshInstance3D@333" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=1638908172]
+[node name="@MeshInstance3D@333" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=1862401772]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.012, -0.0122)
 mesh = SubResource("BoxMesh_hax0n")
 
-[node name="@MeshInstance3D@334" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=108907584]
+[node name="@MeshInstance3D@334" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=679440432]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.028, 0)
 mesh = SubResource("BoxMesh_t4otl")
 
-[node name="@MeshInstance3D@335" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=2057089937]
+[node name="@MeshInstance3D@335" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=487215376]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.015, 0.036, 0)
 mesh = SubResource("CylinderMesh_j2b1d")
 
-[node name="@MeshInstance3D@336" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=1785748471]
+[node name="@MeshInstance3D@336" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=862584384]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.015, 0.036, 0)
 mesh = SubResource("CylinderMesh_cs1tg")
 
-[node name="ExtractedCig" type="Node3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=994893359]
+[node name="ExtractedCig" type="Node3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=879701470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.035, 0)
 
-[node name="@MeshInstance3D@337" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=323673933]
+[node name="@MeshInstance3D@337" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=1910789215]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 mesh = SubResource("CylinderMesh_2dvfe")
 
-[node name="@MeshInstance3D@338" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=1735810805]
+[node name="@MeshInstance3D@338" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/ExtractedCig" unique_id=797700991]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.044)
 mesh = SubResource("CylinderMesh_giy8y")
 
-[node name="PackLid" type="Node3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=1192196273]
+[node name="PackLid" type="Node3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack" unique_id=8167870]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0.012)
 
-[node name="@MeshInstance3D@339" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/PackLid" unique_id=1475287631]
+[node name="@MeshInstance3D@339" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/CigarettePack/PackLid" unique_id=1800563296]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.013, -0.012)
 mesh = SubResource("BoxMesh_fdfoy")
 
-[node name="Lighter" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=423180858]
+[node name="Lighter" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=1501083305]
 transform = Transform3D(0.9309405, -0.14106478, -0.33682406, 0.08583164, 0.98106027, -0.17364818, 0.35494038, 0.13274597, 0.9254165, 0.32, -0.55, -0.3)
 visible = false
 
-[node name="@MeshInstance3D@340" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1482563906]
+[node name="@MeshInstance3D@340" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1255034616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.005, 0)
 mesh = SubResource("BoxMesh_hhpqf")
 
-[node name="@MeshInstance3D@341" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1090044403]
+[node name="@MeshInstance3D@341" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1371413638]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003, 0.03, 0)
 mesh = SubResource("BoxMesh_g5jhy")
 
-[node name="@MeshInstance3D@342" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1535793008]
+[node name="@MeshInstance3D@342" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=119011519]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.009, 0.033, 0)
 mesh = SubResource("CylinderMesh_holxr")
 
-[node name="LighterLid" type="Node3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1771925079]
+[node name="LighterLid" type="Node3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1342961326]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018, 0.021, 0)
 
-[node name="@MeshInstance3D@343" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter/LighterLid" unique_id=2072185947]
+[node name="@MeshInstance3D@343" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter/LighterLid" unique_id=2108921668]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, 0.014, 0)
 mesh = SubResource("BoxMesh_mx1m4")
 
-[node name="LighterFlame" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1564205155]
+[node name="LighterFlame" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=308802504]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004, 0.048, 0)
 visible = false
 mesh = SubResource("SphereMesh_4gjji")
 
-[node name="LighterLight" type="OmniLight3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=773944789]
+[node name="LighterLight" type="OmniLight3D" parent="Player/Head/Camera3D/ViewModels/Lighter" unique_id=1419679681]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004, 0.052, 0)
 visible = false
 light_color = Color(1, 0.72, 0.2, 1)
 light_energy = 4.5
 omni_range = 2.5
 
-[node name="Cigarette" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=18260622]
+[node name="Cigarette" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=916355891]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.28, -0.35)
 visible = false
 
-[node name="FilterMesh" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=1386479080]
+[node name="FilterMesh" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=229380037]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0.005)
 mesh = SubResource("CylinderMesh_u2ulf")
 
-[node name="PaperMesh" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=2004785746]
+[node name="PaperMesh" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=441324288]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.0445)
 mesh = SubResource("CylinderMesh_6e8lb")
 
-[node name="TipAssembly" type="Node3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=87646924]
+[node name="TipAssembly" type="Node3D" parent="Player/Head/Camera3D/ViewModels/Cigarette" unique_id=706218864]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.077)
 
-[node name="EmberTip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=136934237]
+[node name="EmberTip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=1205885779]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 mesh = SubResource("CylinderMesh_2gdjj")
 surface_material_override/0 = ExtResource("43_sgvw8")
 
-[node name="AshTip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=394331265]
+[node name="AshTip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=151070180]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.004)
 mesh = SubResource("CylinderMesh_sc3ue")
 
-[node name="EmberLight" type="OmniLight3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=995241897]
+[node name="EmberLight" type="OmniLight3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=115228831]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.005)
 light_color = Color(1, 0.35, 0.05, 1)
 omni_range = 1.5
 
-[node name="SmokeParticles" type="CPUParticles3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=504563902]
+[node name="SmokeParticles" type="CPUParticles3D" parent="Player/Head/Camera3D/ViewModels/Cigarette/TipAssembly" unique_id=2134690797]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.004, -0.006)
 emitting = false
 amount = 20
@@ -4276,44 +4295,44 @@ initial_velocity_max = 0.22
 scale_amount_min = 0.015
 scale_amount_max = 0.045
 
-[node name="Bottle" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=383279726]
+[node name="Bottle" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=1430407750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, -0.42, -0.38)
 visible = false
 
-[node name="@MeshInstance3D@344" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1478849941]
+[node name="@MeshInstance3D@344" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=821486675]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
 mesh = SubResource("CylinderMesh_ha2mi")
 
-[node name="@MeshInstance3D@345" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=888940876]
+[node name="@MeshInstance3D@345" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=852510747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
 mesh = SubResource("CylinderMesh_apa73")
 
-[node name="NozzleLip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1813454467]
+[node name="NozzleLip" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1822255396]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
 mesh = SubResource("CylinderMesh_74r1k")
 
-[node name="@MeshInstance3D@346" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1185418156]
+[node name="@MeshInstance3D@346" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1934743551]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.231, 0)
 material_override = SubResource("StandardMaterial3D_8svfe")
 mesh = SubResource("CylinderMesh_2a3c5")
 
-[node name="@MeshInstance3D@347" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1669990724]
+[node name="@MeshInstance3D@347" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/Bottle" unique_id=1328245032]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
 mesh = SubResource("CylinderMesh_42b1b")
 
-[node name="EnergyCan" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=2058810432]
+[node name="EnergyCan" type="Node3D" parent="Player/Head/Camera3D/ViewModels" unique_id=1659025835]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, -0.42, -0.4)
 visible = false
 
-[node name="@MeshInstance3D@348" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/EnergyCan" unique_id=1039424130]
+[node name="@MeshInstance3D@348" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/EnergyCan" unique_id=209261022]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
 mesh = SubResource("CylinderMesh_h7ic4")
 
-[node name="@MeshInstance3D@349" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/EnergyCan" unique_id=811512285]
+[node name="@MeshInstance3D@349" type="MeshInstance3D" parent="Player/Head/Camera3D/ViewModels/EnergyCan" unique_id=514907938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.142, 0)
 mesh = SubResource("CylinderMesh_au7lq")
 
-[node name="ExhaleSmoke" type="CPUParticles3D" parent="Player/Head/Camera3D" unique_id=1101622875]
+[node name="ExhaleSmoke" type="CPUParticles3D" parent="Player/Head/Camera3D" unique_id=179918843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -0.22)
 emitting = false
 amount = 24
@@ -4329,28 +4348,28 @@ initial_velocity_max = 0.6
 scale_amount_min = 0.03
 scale_amount_max = 0.09
 
-[node name="HUD" type="CanvasLayer" parent="Player" unique_id=1091208695]
+[node name="HUD" type="CanvasLayer" parent="Player" unique_id=1725862184]
 
-[node name="ScreenFX" type="ColorRect" parent="Player/HUD" unique_id=933643350]
+[node name="ScreenFX" type="ColorRect" parent="Player/HUD" unique_id=1398821264]
 material = SubResource("ShaderMaterial_ua5cf")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Crosshair" type="CenterContainer" parent="Player/HUD" unique_id=1343845193]
+[node name="Crosshair" type="CenterContainer" parent="Player/HUD" unique_id=1451152508]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Dot" type="ColorRect" parent="Player/HUD/Crosshair" unique_id=1314078894]
+[node name="Dot" type="ColorRect" parent="Player/HUD/Crosshair" unique_id=806249333]
 custom_minimum_size = Vector2(4, 4)
 layout_mode = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 0.8)
 
-[node name="ControlsUI" type="MarginContainer" parent="Player/HUD" unique_id=1304837128]
+[node name="ControlsUI" type="MarginContainer" parent="Player/HUD" unique_id=1748955861]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
@@ -4359,100 +4378,102 @@ mouse_filter = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_bottom = 15
 
-[node name="PanelContainer" type="PanelContainer" parent="Player/HUD/ControlsUI" unique_id=943195230]
+[node name="PanelContainer" type="PanelContainer" parent="Player/HUD/ControlsUI" unique_id=531780737]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer" unique_id=902933424]
+[node name="VBoxContainer" type="VBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer" unique_id=365612343]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 3
 
-[node name="@Label@350" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=156188567]
+[node name="@Label@350" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1434768258]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "HIGH  •  ceaser"
 
-[node name="BuzzContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1966865151]
+[node name="BuzzContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=280833990]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="BuzzLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1848150419]
+[node name="BuzzLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1966970305]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 1)
-text = "AWAKE / BUZZ STAMINA: 100% (Keep smoking or drinking to avoid coma!)"
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+text = "🚨 COMA RED BAR: 100% (Keep smoking or drinking to keep it up!)"
 
-[node name="BuzzBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=1553679883]
-custom_minimum_size = Vector2(200, 14)
+[node name="BuzzBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/BuzzContainer" unique_id=89205237]
+custom_minimum_size = Vector2(240, 16)
 layout_mode = 2
 mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_51ujp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_tk41t")
 value = 100.0
 
-[node name="DrunkContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1161245908]
+[node name="DrunkContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=290872118]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="DrunkLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=1213749109]
+[node name="DrunkLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=1860643776]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.85, 0.95, 1)
 text = "DRUNKENNESS METER: 0% (Sober / Normal)"
 
-[node name="DrunkBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=1450914007]
+[node name="DrunkBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/DrunkContainer" unique_id=636711967]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SmokeContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=612527324]
+[node name="SmokeContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=334287457]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SmokeLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=1664389664]
+[node name="SmokeLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=526633083]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.75, 0.75, 0.85, 1)
 text = "SMOKE DENSITY: 0%"
 
-[node name="SmokeBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=2083947421]
+[node name="SmokeBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/SmokeContainer" unique_id=910825827]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="CigContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1319285622]
+[node name="CigContainer" type="HBoxContainer" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=2029097096]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="CigLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=1878023173]
+[node name="CigLabel" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=1286864353]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(1, 0.82, 0.45, 1)
 text = "🚬 CIGARETTE: None (Press [1] to pull out pack & light)"
 
-[node name="CigBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=370054038]
+[node name="CigBar" type="ProgressBar" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer/CigContainer" unique_id=1495954683]
 custom_minimum_size = Vector2(200, 14)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="ActionKeys" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1378010959]
+[node name="ActionKeys" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1158799292]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
 text = "[1] Take/Light Cigarette (🖱️ Scroll Wheel to Smoke)   [2] Drink (+Buzz/Drunk)   [3] Energy Drink   [E] Van/Talk"
 
-[node name="@Label@351" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=260540657]
+[node name="@Label@351" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=42186486]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
 text = "[W/A/S/D] Move 360° (Inverts when drunk!)   [Mouse] 360° Look (Inverts when 60%+ drunk!)   [Shift] Sprint   [F] Light"
 
-[node name="EffectBadge" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1044244737]
+[node name="EffectBadge" type="Label" parent="Player/HUD/ControlsUI/PanelContainer/VBoxContainer" unique_id=1568958563]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 1)
 text = "Status: Awake • Normal"
 
-[node name="InteractPrompt" type="Label" parent="Player/HUD" unique_id=1699551701]
+[node name="InteractPrompt" type="Label" parent="Player/HUD" unique_id=778112729]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -4467,7 +4488,7 @@ theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 0.95, 0.35, 1)
 text = "[E] Interact"
 
-[node name="DialogueUI" type="PanelContainer" parent="Player/HUD" unique_id=1117118533]
+[node name="DialogueUI" type="PanelContainer" parent="Player/HUD" unique_id=803711763]
 visible = false
 anchors_preset = 12
 anchor_top = 1.0
@@ -4479,7 +4500,7 @@ offset_right = -280.0
 offset_bottom = -135.0
 mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="Player/HUD/DialogueUI" unique_id=1261122677]
+[node name="Margin" type="MarginContainer" parent="Player/HUD/DialogueUI" unique_id=536174485]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -4487,53 +4508,53 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="Player/HUD/DialogueUI/Margin" unique_id=2084822669]
+[node name="VBox" type="VBoxContainer" parent="Player/HUD/DialogueUI/Margin" unique_id=1606895627]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SpeakerName" type="Label" parent="Player/HUD/DialogueUI/Margin/VBox" unique_id=2087584685]
+[node name="SpeakerName" type="Label" parent="Player/HUD/DialogueUI/Margin/VBox" unique_id=1328498089]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
 text = "Character Name"
 
-[node name="DialogueText" type="Label" parent="Player/HUD/DialogueUI/Margin/VBox" unique_id=564050532]
+[node name="DialogueText" type="Label" parent="Player/HUD/DialogueUI/Margin/VBox" unique_id=223849829]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "\"Welcome to ceaser!\""
 autowrap_mode = 3
 
-[node name="ComaUI" type="PanelContainer" parent="Player/HUD" unique_id=1435751253]
+[node name="ComaUI" type="PanelContainer" parent="Player/HUD" unique_id=2083997845]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="@CenterContainer@352" type="CenterContainer" parent="Player/HUD/ComaUI" unique_id=550981767]
+[node name="@CenterContainer@352" type="CenterContainer" parent="Player/HUD/ComaUI" unique_id=729290801]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="@VBoxContainer@353" type="VBoxContainer" parent="Player/HUD/ComaUI/@CenterContainer@352" unique_id=101290845]
+[node name="@VBoxContainer@353" type="VBoxContainer" parent="Player/HUD/ComaUI/@CenterContainer@352" unique_id=265725513]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="@Label@354" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=1372917538]
+[node name="@Label@354" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=497700051]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
 theme_override_colors/font_color = Color(1, 0.15, 0.2, 1)
 text = "YOU FELL ASLEEP & SLIPPED INTO A COMA"
 horizontal_alignment = 1
 
-[node name="@Label@355" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=1910550721]
+[node name="@Label@355" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=196439987]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 text = "You stopped smoking and drinking for too long..."
 horizontal_alignment = 1
 
-[node name="@Label@356" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=431476609]
+[node name="@Label@356" type="Label" parent="Player/HUD/ComaUI/@CenterContainer@352/@VBoxContainer@353" unique_id=1483310178]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
