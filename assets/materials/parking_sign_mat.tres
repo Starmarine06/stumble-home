@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/parking_sign.png" id="1_unwed"]
+
+[resource]
+albedo_texture = ExtResource("1_unwed")
+roughness = 0.3

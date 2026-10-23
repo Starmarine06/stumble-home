@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/asphalt_albedo.png" id="1_rak0b"]
+[ext_resource type="Texture2D" path="res://assets/textures/asphalt_roughness.png" id="2_hrthl"]
+
+[resource]
+albedo_texture = ExtResource("1_rak0b")
+roughness = 0.88
+roughness_texture = ExtResource("2_hrthl")
+uv1_scale = Vector3(32, 32, 1)

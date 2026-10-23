@@ -1,0 +1,370 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://assets/materials/lamp_metal.tres" id="1_uraa1"]
+[ext_resource type="Material" path="res://assets/materials/car_paint_metal.tres" id="2_gm33m"]
+[ext_resource type="Material" path="res://assets/materials/car_glass_tint.tres" id="3_ugdpj"]
+[ext_resource type="Material" path="res://assets/materials/headlight_led.tres" id="4_hylxu"]
+[ext_resource type="Material" path="res://assets/materials/taillight_led.tres" id="5_6mia2"]
+[ext_resource type="Material" path="res://assets/materials/car_chrome.tres" id="6_a1jdg"]
+[ext_resource type="Material" path="res://assets/materials/tire_rubber.tres" id="7_7vqyg"]
+[ext_resource type="Material" path="res://assets/materials/car_rim.tres" id="8_l8qg8"]
+[ext_resource type="Material" path="res://assets/materials/brake_caliper.tres" id="9_f45sw"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wqyfr"]
+size = Vector3(2.1, 1.4, 4.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5alo1"]
+material = ExtResource("1_uraa1")
+size = Vector3(1.85, 0.22, 4.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e2of5"]
+material = ExtResource("2_gm33m")
+size = Vector3(2, 0.48, 4.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_01gm8"]
+material = ExtResource("2_gm33m")
+size = Vector3(1.88, 0.16, 1.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ukyks"]
+material = ExtResource("2_gm33m")
+size = Vector3(0.55, 0.09, 0.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wheit"]
+material = ExtResource("2_gm33m")
+size = Vector3(1.6, 0.54, 2.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rca20"]
+material = ExtResource("3_ugdpj")
+size = Vector3(1.54, 0.62, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_564x8"]
+material = ExtResource("3_ugdpj")
+size = Vector3(1.54, 0.58, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wonq5"]
+material = ExtResource("3_ugdpj")
+size = Vector3(0.04, 0.42, 1.55)
+
+[sub_resource type="BoxMesh" id="BoxMesh_a0vko"]
+material = ExtResource("3_ugdpj")
+size = Vector3(0.04, 0.42, 1.55)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5v174"]
+material = ExtResource("1_uraa1")
+size = Vector3(1.35, 0.26, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2ntcc"]
+material = ExtResource("1_uraa1")
+size = Vector3(2.05, 0.06, 0.28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xgq7n"]
+material = ExtResource("4_hylxu")
+size = Vector3(0.18, 0.1, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vxoq5"]
+material = ExtResource("4_hylxu")
+size = Vector3(0.18, 0.1, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_r0sta"]
+material = ExtResource("4_hylxu")
+size = Vector3(0.18, 0.1, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i7p6m"]
+material = ExtResource("4_hylxu")
+size = Vector3(0.18, 0.1, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jpbq3"]
+material = ExtResource("5_6mia2")
+size = Vector3(1.85, 0.14, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cp34m"]
+material = ExtResource("1_uraa1")
+size = Vector3(1.7, 0.18, 0.22)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qan03"]
+material = ExtResource("6_a1jdg")
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.24
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_q0x31"]
+material = ExtResource("6_a1jdg")
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.24
+
+[sub_resource type="BoxMesh" id="BoxMesh_7bujf"]
+material = ExtResource("2_gm33m")
+size = Vector3(1.82, 0.05, 0.35)
+
+[sub_resource type="BoxMesh" id="BoxMesh_674ip"]
+material = ExtResource("1_uraa1")
+size = Vector3(0.06, 0.26, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_by4ao"]
+material = ExtResource("1_uraa1")
+size = Vector3(0.06, 0.26, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8wskw"]
+material = ExtResource("2_gm33m")
+size = Vector3(0.18, 0.12, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ne700"]
+material = ExtResource("2_gm33m")
+size = Vector3(0.18, 0.12, 0.22)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3eqls"]
+material = ExtResource("7_7vqyg")
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ny8tk"]
+material = ExtResource("8_l8qg8")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.27
+
+[sub_resource type="BoxMesh" id="BoxMesh_lx8lc"]
+material = ExtResource("9_f45sw")
+size = Vector3(0.08, 0.16, 0.14)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_yar4g"]
+material = ExtResource("7_7vqyg")
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mtrmc"]
+material = ExtResource("8_l8qg8")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.27
+
+[sub_resource type="BoxMesh" id="BoxMesh_ywuf3"]
+material = ExtResource("9_f45sw")
+size = Vector3(0.08, 0.16, 0.14)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ucy7f"]
+material = ExtResource("7_7vqyg")
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vkjk1"]
+material = ExtResource("8_l8qg8")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.27
+
+[sub_resource type="BoxMesh" id="BoxMesh_qpupt"]
+material = ExtResource("9_f45sw")
+size = Vector3(0.08, 0.16, 0.14)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2l7tn"]
+material = ExtResource("7_7vqyg")
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_s3jln"]
+material = ExtResource("8_l8qg8")
+top_radius = 0.25
+bottom_radius = 0.25
+height = 0.27
+
+[sub_resource type="BoxMesh" id="BoxMesh_d42dk"]
+material = ExtResource("9_f45sw")
+size = Vector3(0.08, 0.16, 0.14)
+
+[node name="ParkedCar" type="StaticBody3D" unique_id=305866712]
+
+[node name="CarCollision" type="CollisionShape3D" parent="." unique_id=1245193201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("BoxShape3D_wqyfr")
+
+[node name="Chassis" type="MeshInstance3D" parent="." unique_id=471966449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+mesh = SubResource("BoxMesh_5alo1")
+
+[node name="LowerBody" type="MeshInstance3D" parent="." unique_id=1632346014]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
+mesh = SubResource("BoxMesh_e2of5")
+
+[node name="Hood" type="MeshInstance3D" parent="." unique_id=1310959649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, -1.25)
+mesh = SubResource("BoxMesh_01gm8")
+
+[node name="HoodScoop" type="MeshInstance3D" parent="." unique_id=245886304]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, -1.15)
+mesh = SubResource("BoxMesh_ukyks")
+
+[node name="CabinRoof" type="MeshInstance3D" parent="." unique_id=678589279]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.32)
+mesh = SubResource("BoxMesh_wheit")
+
+[node name="Windshield" type="MeshInstance3D" parent="." unique_id=429521510]
+transform = Transform3D(1, 0, 0, 0, 0.809017, 0.58778524, 0, -0.58778524, 0.809017, 0, 0.98, -0.75)
+mesh = SubResource("BoxMesh_rca20")
+
+[node name="RearWindow" type="MeshInstance3D" parent="." unique_id=1710643572]
+transform = Transform3D(1, 0, 0, 0, 0.8290376, -0.5591929, 0, 0.5591929, 0.8290376, 0, 0.98, 1.38)
+mesh = SubResource("BoxMesh_564x8")
+
+[node name="SideWindow_L" type="MeshInstance3D" parent="." unique_id=62213430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.805, 1.05, 0.32)
+mesh = SubResource("BoxMesh_wonq5")
+
+[node name="SideWindow_R" type="MeshInstance3D" parent="." unique_id=631710765]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.805, 1.05, 0.32)
+mesh = SubResource("BoxMesh_a0vko")
+
+[node name="FrontGrille" type="MeshInstance3D" parent="." unique_id=2042158672]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, -2.27)
+mesh = SubResource("BoxMesh_5v174")
+
+[node name="FrontSplitter" type="MeshInstance3D" parent="." unique_id=2143351665]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, -2.28)
+mesh = SubResource("BoxMesh_2ntcc")
+
+[node name="Headlight_L_0" type="MeshInstance3D" parent="." unique_id=1836054821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.85, 0.62, -2.26)
+mesh = SubResource("BoxMesh_xgq7n")
+
+[node name="Headlight_L_1" type="MeshInstance3D" parent="." unique_id=2000829520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.63, 0.62, -2.26)
+mesh = SubResource("BoxMesh_vxoq5")
+
+[node name="Headlight_R_0" type="MeshInstance3D" parent="." unique_id=96283223]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.63, 0.62, -2.26)
+mesh = SubResource("BoxMesh_r0sta")
+
+[node name="Headlight_R_1" type="MeshInstance3D" parent="." unique_id=1857317236]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.85, 0.62, -2.26)
+mesh = SubResource("BoxMesh_i7p6m")
+
+[node name="HeadlightBeamLeft" type="SpotLight3D" parent="." unique_id=1812036655]
+transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, -0.74, 0.62, -2.3)
+light_color = Color(0.92, 0.96, 1, 1)
+light_energy = 5.0
+shadow_enabled = true
+spot_range = 22.0
+spot_angle = 38.0
+
+[node name="HeadlightBeamRight" type="SpotLight3D" parent="." unique_id=939762724]
+transform = Transform3D(1, 0, 0, 0, 0.9945219, 0.104528464, 0, -0.104528464, 0.9945219, 0.74, 0.62, -2.3)
+light_color = Color(0.92, 0.96, 1, 1)
+light_energy = 5.0
+shadow_enabled = true
+spot_range = 22.0
+spot_angle = 38.0
+
+[node name="RearTailLightBar" type="MeshInstance3D" parent="." unique_id=311871249]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, 2.27)
+mesh = SubResource("BoxMesh_jpbq3")
+
+[node name="RearDiffuser" type="MeshInstance3D" parent="." unique_id=1807749113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 2.24)
+mesh = SubResource("BoxMesh_cp34m")
+
+[node name="Exhaust_L" type="MeshInstance3D" parent="." unique_id=247976032]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.55, 0.2, 2.32)
+mesh = SubResource("CylinderMesh_qan03")
+
+[node name="Exhaust_R" type="MeshInstance3D" parent="." unique_id=1535993067]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0.55, 0.2, 2.32)
+mesh = SubResource("CylinderMesh_q0x31")
+
+[node name="RearSpoiler" type="MeshInstance3D" parent="." unique_id=1325166591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02, 2.12)
+mesh = SubResource("BoxMesh_7bujf")
+
+[node name="SpoilerStand_L" type="MeshInstance3D" parent="." unique_id=1583842648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.88, 2.12)
+mesh = SubResource("BoxMesh_674ip")
+
+[node name="SpoilerStand_R" type="MeshInstance3D" parent="." unique_id=1386439742]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.88, 2.12)
+mesh = SubResource("BoxMesh_by4ao")
+
+[node name="SideMirror_L" type="MeshInstance3D" parent="." unique_id=1583351342]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02, 0.9, -0.45)
+mesh = SubResource("BoxMesh_8wskw")
+
+[node name="SideMirror_R" type="MeshInstance3D" parent="." unique_id=961526938]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.02, 0.9, -0.45)
+mesh = SubResource("BoxMesh_ne700")
+
+[node name="Wheel_FL" type="Node3D" parent="." unique_id=1139721028]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.36, -1.35)
+
+[node name="Tire" type="MeshInstance3D" parent="Wheel_FL" unique_id=1196945861]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_3eqls")
+
+[node name="Rim" type="MeshInstance3D" parent="Wheel_FL" unique_id=307301346]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_ny8tk")
+
+[node name="BrakeCaliper" type="MeshInstance3D" parent="Wheel_FL" unique_id=603201982]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("BoxMesh_lx8lc")
+
+[node name="Wheel_FR" type="Node3D" parent="." unique_id=1350370598]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.36, -1.35)
+
+[node name="Tire" type="MeshInstance3D" parent="Wheel_FR" unique_id=665689069]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_yar4g")
+
+[node name="Rim" type="MeshInstance3D" parent="Wheel_FR" unique_id=956105986]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_mtrmc")
+
+[node name="BrakeCaliper" type="MeshInstance3D" parent="Wheel_FR" unique_id=348503835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("BoxMesh_ywuf3")
+
+[node name="Wheel_RL" type="Node3D" parent="." unique_id=1350503976]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.36, 1.45)
+
+[node name="Tire" type="MeshInstance3D" parent="Wheel_RL" unique_id=1867030440]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_ucy7f")
+
+[node name="Rim" type="MeshInstance3D" parent="Wheel_RL" unique_id=436685958]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_vkjk1")
+
+[node name="BrakeCaliper" type="MeshInstance3D" parent="Wheel_RL" unique_id=109430320]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("BoxMesh_qpupt")
+
+[node name="Wheel_RR" type="Node3D" parent="." unique_id=1135190293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.36, 1.45)
+
+[node name="Tire" type="MeshInstance3D" parent="Wheel_RR" unique_id=1614856254]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_2l7tn")
+
+[node name="Rim" type="MeshInstance3D" parent="Wheel_RR" unique_id=24004847]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_s3jln")
+
+[node name="BrakeCaliper" type="MeshInstance3D" parent="Wheel_RR" unique_id=1358189191]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("BoxMesh_d42dk")
+
+[node name="Plate_Front" type="Label3D" parent="." unique_id=1388807723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -2.3)
+outline_modulate = Color(0.1, 0.1, 0.1, 1)
+text = "HIGH-777"
+font_size = 28
+outline_size = 6
+
+[node name="Plate_Rear" type="Label3D" parent="." unique_id=907194081]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.32, 2.3)
+outline_modulate = Color(0.1, 0.1, 0.1, 1)
+text = "HIGH-777"
+font_size = 28
+outline_size = 6
