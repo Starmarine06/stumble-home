@@ -10,6 +10,8 @@ func _init() -> void:
 func set_owner_recursive(node: Node, scene_root: Node) -> void:
 	if node != scene_root:
 		node.owner = scene_root
+	if node != scene_root and node.scene_file_path != "":
+		return
 	for child in node.get_children():
 		set_owner_recursive(child, scene_root)
 

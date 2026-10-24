@@ -20,17 +20,17 @@ func _init(p_cash: int = 1000) -> void:
 	player_cash = p_cash
 	var min_allowed = mini(50, player_cash) if player_cash > 0 else 0
 	current_bet = min_allowed
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	# 1. Dim Backdrop Overlay (Focuses player attention on modal dialog)
 	var backdrop = ColorRect.new()
 	backdrop.name = "Backdrop"
-	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	backdrop.color = Color(0.02, 0.03, 0.06, 0.70)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(backdrop)
@@ -38,7 +38,7 @@ func _ready() -> void:
 	# 2. Centering Container (Guarantees dead center placement on any screen resolution)
 	var center = CenterContainer.new()
 	center.name = "CenterContainer"
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 

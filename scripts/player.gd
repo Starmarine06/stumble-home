@@ -1149,8 +1149,10 @@ func handle_interaction() -> void:
 		return
 
 	# 3b. If near Roulette Table itself, open 3D Roulette
-	var r_table = get_tree().root.find_child("RouletteTable3D", true, false) if get_tree() else null
-	if is_inside_tree() and r_table and r_table.is_inside_tree() and global_position.distance_to(r_table.global_position) < 3.2:
+	var r_table = get_tree().get_first_node_in_group("roulette_tables") as Node3D if get_tree() else null
+	if not r_table and get_tree():
+		r_table = get_tree().root.find_child("RouletteTable3D", true, false)
+	if is_inside_tree() and r_table and r_table.is_inside_tree() and global_position.distance_to(r_table.global_position) < 3.8:
 		_open_casino_minigame(3)
 		return
 
@@ -1335,8 +1337,15 @@ func update_interaction_prompt() -> void:
 			interact_prompt_lbl.visible = true
 			return
 
-	var table_node = get_tree().root.find_child("RouletteTable3D", true, false) if get_tree() else null
-	if is_inside_tree() and table_node and table_node.is_inside_tree() and global_position.distance_to(table_node.global_position) < 3.2:
+	if aim_part_idx != -1 and not minigame_active:
+		interact_prompt_lbl.text = "Hold Right-Click / LMB or [E] to lift %s (%d kg)" % [PART_NAMES[aim_part_idx], int(PART_MASS[aim_part_idx])]
+		interact_prompt_lbl.visible = true
+		return
+
+	var table_node = get_tree().get_first_node_in_group("roulette_tables") as Node3D if get_tree() else null
+	if not table_node and get_tree():
+		table_node = get_tree().root.find_child("RouletteTable3D", true, false)
+	if is_inside_tree() and table_node and table_node.is_inside_tree() and global_position.distance_to(table_node.global_position) < 3.8:
 		if table_node.get("is_spinning"):
 			interact_prompt_lbl.text = "🎲 Wheel is spinning in realtime... Watch the ball settle!"
 		else:
@@ -1363,6 +1372,14 @@ func update_interaction_prompt() -> void:
 		interact_prompt_lbl.text = "[E] Talk to %s" % n_name
 		interact_prompt_lbl.visible = true
 		return
+
+	if active_station_idx != -1:
+		for st in minigame_stations:
+			if st and is_instance_valid(st) and st.get_meta("station_idx", -1) == active_station_idx:
+				var lbl_txt = str(st.get_meta("label_text", "PLAY MINIGAME"))
+				interact_prompt_lbl.text = "[E] " + lbl_txt
+				interact_prompt_lbl.visible = true
+				return
 
 	interact_prompt_lbl.visible = false
 
@@ -1879,7 +1896,9 @@ func _open_3d_darts_minigame() -> void:
 	)
 
 func _open_3d_roulette_minigame() -> void:
-	var table_node = get_tree().root.find_child("RouletteTable3D", true, false)
+	var table_node = get_tree().get_first_node_in_group("roulette_tables") as Node3D if get_tree() else null
+	if not table_node and get_tree():
+		table_node = get_tree().root.find_child("RouletteTable3D", true, false)
 	if table_node and table_node.get("is_spinning"):
 		if interact_prompt_lbl:
 			interact_prompt_lbl.text = "🎲 Wheel is spinning! Watch the ball settle..."
@@ -1912,7 +1931,9 @@ func _open_3d_roulette_minigame() -> void:
 		print("Roulette bet confirmed: $%d on %s (Remaining cash: $%d)" % [bet_amt, bet_type, player_money])
 		
 		# Find live RouletteTable3D in the world scene
-		var live_table = get_tree().root.find_child("RouletteTable3D", true, false)
+		var live_table = get_tree().get_first_node_in_group("roulette_tables") as Node3D if get_tree() else null
+		if not live_table and get_tree():
+			live_table = get_tree().root.find_child("RouletteTable3D", true, false)
 		if live_table and live_table.has_method("start_spin"):
 			live_table.start_spin(self, bet_amt, bet_type, bet_param)
 		else:
@@ -1976,12 +1997,7 @@ func _detect_aimed_part() -> void:
 			best_dot = dot
 			aim_part_idx = i
 
-	if aim_part_idx != -1 and not minigame_active:
-		if interact_prompt_lbl:
-			interact_prompt_lbl.text = "Hold Right-Click / LMB or [E] to lift %s (%d kg)" % [PART_NAMES[aim_part_idx], int(PART_MASS[aim_part_idx])]
-			interact_prompt_lbl.visible = true
-	elif not minigame_active and active_station_idx == -1 and interact_prompt_lbl and not interact_prompt_lbl.text.begins_with("★") and not interact_prompt_lbl.text.begins_with("🚐") and not interact_prompt_lbl.text.begins_with("🟢") and not interact_prompt_lbl.text.begins_with("🎉"):
-		interact_prompt_lbl.visible = false
+
 
 func _lift_part(idx: int) -> void:
 	if idx < 0 or idx >= 4:

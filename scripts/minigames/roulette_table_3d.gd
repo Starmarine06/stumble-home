@@ -73,6 +73,7 @@ var winning_number: int = 0
 var winning_color: String = "GREEN"
 
 func _ready() -> void:
+	add_to_group("roulette_tables")
 	if table_body != null:
 		return
 	setup_materials()

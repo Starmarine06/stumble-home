@@ -18,6 +18,7 @@ var idle_seed: float = 0.0
 @onready var chest_mesh: Node3D = get_node_or_null("Chest")
 
 func _ready() -> void:
+	add_to_group("npcs")
 	idle_seed = randf() * 100.0
 	if not name_tag:
 		name_tag = find_child("NameTag", true, false)
