@@ -556,7 +556,7 @@ func is_ui_active() -> bool:
 		return true
 	if shaky_holder and shaky_holder.get_child_count() > 0:
 		return true
-	if is_mouse_unlocked or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	if is_mouse_unlocked:
 		return true
 	return false
 
@@ -1148,6 +1148,12 @@ func handle_interaction() -> void:
 		_open_casino_minigame(3)
 		return
 
+	# 3b. If near Roulette Table itself, open 3D Roulette
+	var r_table = get_tree().root.find_child("RouletteTable3D", true, false) if get_tree() else null
+	if is_inside_tree() and r_table and r_table.is_inside_tree() and global_position.distance_to(r_table.global_position) < 3.2:
+		_open_casino_minigame(3)
+		return
+
 	# 4. Otherwise talk to nearby NPC
 	if npc and npc.has_method("talk"):
 		current_talking_npc = npc
@@ -1329,10 +1335,26 @@ func update_interaction_prompt() -> void:
 			interact_prompt_lbl.visible = true
 			return
 
+	var table_node = get_tree().root.find_child("RouletteTable3D", true, false) if get_tree() else null
+	if is_inside_tree() and table_node and table_node.is_inside_tree() and global_position.distance_to(table_node.global_position) < 3.2:
+		if table_node.get("is_spinning"):
+			interact_prompt_lbl.text = "🎲 Wheel is spinning in realtime... Watch the ball settle!"
+		else:
+			interact_prompt_lbl.text = "🎲 [E] Play 3D European Roulette (Bet Money)"
+		interact_prompt_lbl.visible = true
+		return
+
 	var npc = get_nearby_npc()
 	if npc:
 		if npc.name == "NPC_Barney" or npc.get_meta("is_darts_npc", false):
 			interact_prompt_lbl.text = "🎯 [E] Play Darts with Barney (Bet Money)"
+			interact_prompt_lbl.visible = true
+			return
+		if npc.name == "NPC_Antoine" or npc.get_meta("is_roulette_npc", false):
+			if table_node and table_node.get("is_spinning"):
+				interact_prompt_lbl.text = "🎲 Wheel is spinning in realtime... Watch the ball settle!"
+			else:
+				interact_prompt_lbl.text = "🎲 [E] Play 3D European Roulette (Bet Money)"
 			interact_prompt_lbl.visible = true
 			return
 		var n_name = npc.get("character_name")
@@ -1857,6 +1879,18 @@ func _open_3d_darts_minigame() -> void:
 	)
 
 func _open_3d_roulette_minigame() -> void:
+	var table_node = get_tree().root.find_child("RouletteTable3D", true, false)
+	if table_node and table_node.get("is_spinning"):
+		if interact_prompt_lbl:
+			interact_prompt_lbl.text = "🎲 Wheel is spinning! Watch the ball settle..."
+			interact_prompt_lbl.visible = true
+		minigame_active = false
+		return
+
+	is_mouse_unlocked = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	minigame_active = true
+
 	var betting_dlg = RouletteBettingDialogClass.new(player_money)
 	var hud_node = get_node_or_null("HUD")
 	if hud_node:
@@ -1874,31 +1908,15 @@ func _open_3d_roulette_minigame() -> void:
 		player_money = maxi(0, player_money - bet_amt)
 		is_mouse_unlocked = false
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		minigame_active = false # Crucial! Frees player movement and mouse look immediately!
 		print("Roulette bet confirmed: $%d on %s (Remaining cash: $%d)" % [bet_amt, bet_type, player_money])
 		
-		# Find RouletteTable3D and Antoine NPC in the scene
-		var table_node = get_tree().root.find_child("RouletteTable3D", true, false)
-		var antoine_node = get_tree().root.find_child("NPC_Antoine", true, false)
-		
-		var roulette_session = Roulette3DGameClass.new()
-		add_child(roulette_session)
-		active_roulette_3d = roulette_session
-		
-		roulette_session.start_roulette_session(self, table_node, antoine_node, bet_amt, bet_type, bet_param)
-		
-		roulette_session.finished.connect(func(won_tyre: bool, payout: int):
-			minigame_active = false
-			active_roulette_3d = null
-			is_mouse_unlocked = false
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-			if payout > 0:
-				player_money += payout
-				print("Won roulette cash payout: $%d" % payout)
-			if won_tyre:
-				_on_minigame_won(3)
-			elif payout == 0:
-				print("Lost roulette round!")
-		)
+		# Find live RouletteTable3D in the world scene
+		var live_table = get_tree().root.find_child("RouletteTable3D", true, false)
+		if live_table and live_table.has_method("start_spin"):
+			live_table.start_spin(self, bet_amt, bet_type, bet_param)
+		else:
+			print("⚠️ Could not find RouletteTable3D to start physical spin!")
 	)
 
 func _on_minigame_won(idx: int) -> void:

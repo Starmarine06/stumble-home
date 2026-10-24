@@ -16,6 +16,7 @@ func _run_tests() -> void:
 	await _test_feature_main_car_parts()
 	await _test_roulette_table_3d_structure()
 	await _test_roulette_betting_dialog()
+	await _test_roulette_table_inworld_spin()
 	await _test_roulette_3d_physics_and_payout()
 	
 	print("\n=======================================================")
@@ -183,6 +184,52 @@ func _test_roulette_betting_dialog() -> void:
 	print("  ✓ RouletteBettingDialog stepper controls, all-in preset, and bet selection verified!")
 
 	dialog.queue_free()
+	await process_frame
+
+func _test_roulette_table_inworld_spin() -> void:
+	print("\n--- Test 4b: RouletteTable3D In-World Realtime Spin & Free Movement ---")
+	var table = RouletteTable3D.new()
+	root.add_child(table)
+
+	# Player scene instance
+	var player_scene = load("res://scenes/player.tscn")
+	var dummy_player = player_scene.instantiate()
+	dummy_player.name = "DummyPlayer"
+	dummy_player.player_money = 1000
+	root.add_child(dummy_player)
+	await process_frame
+
+	assert(table.is_spinning == false, "Table should initially not be spinning")
+	
+	# Start spin with bet
+	table.start_spin(dummy_player, 100, "RED")
+	assert(table.is_spinning == true, "Table should be spinning after start_spin")
+	assert(table.phase == table.SpinPhase.RIM_ORBIT, "Initial phase must be RIM_ORBIT")
+	assert(table.ball_speed < -15.0, "Ball speed must be counter-clockwise (< -15)")
+	assert(table.rotor_speed > 4.0, "Rotor speed must be clockwise (> 4)")
+
+	# Player movement remains unhindered
+	assert(dummy_player.minigame_active == false, "Player minigame_active must remain FALSE for free movement!")
+	assert(dummy_player.is_ui_active() == false, "Player is_ui_active() must be FALSE so player can walk freely!")
+
+	# Simulate physics process steps
+	print("  Simulating physical table in-world spin steps...")
+	table._process(2.5) # Rim orbit -> Spiral drop
+	assert(table.phase == table.SpinPhase.SPIRAL_DROP, "Should transition to SPIRAL_DROP")
+
+	table._process(1.7) # Spiral drop -> Deflector bounce
+	assert(table.phase == table.SpinPhase.DEFLECTOR_BOUNCE, "Should transition to DEFLECTOR_BOUNCE")
+
+	table._process(1.5) # Deflector bounce -> Fret hopping
+	assert(table.phase == table.SpinPhase.FRET_HOPPING, "Should transition to FRET_HOPPING")
+
+	table._process(1.5) # Fret hopping -> Settled
+	assert(table.phase == table.SpinPhase.SETTLED, "Should transition to SETTLED")
+	assert(table.win_marker.visible == true, "Win marker must be visible on settled pocket")
+	print("    ✓ In-world physical ball settled in pocket #%d (Number %d, %s)!" % [table.winning_pocket_idx, table.winning_number, table.winning_color])
+
+	table.queue_free()
+	dummy_player.queue_free()
 	await process_frame
 
 func _test_roulette_3d_physics_and_payout() -> void:
