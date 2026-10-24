@@ -39,31 +39,60 @@ func _draw() -> void:
 	draw_rect(Rect2(size.x * 0.5 - 22, -6, 44, 14), Color(0.1, 0.1, 0.1), false, 2.0)
 	draw_string(_font, Vector2(PAD + 2, 30), "PARTS", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(1, 0.92, 0.6))
 
+	var parts_list: Array = []
+	var part_names: Array = ["Battery", "Fuel Pump", "Spark Plugs", "Spare Tyre"]
+	var solid_q: float = 0.75
+
+	var game_node = get_tree().root.get_node_or_null("Game") if (get_tree() and get_tree().root) else null
+	if game_node and ("parts" in game_node) and not game_node.parts.is_empty():
+		parts_list = game_node.parts
+		if "PART_NAMES" in game_node:
+			part_names = game_node.PART_NAMES
+		if "SOLID_Q" in game_node:
+			solid_q = game_node.SOLID_Q
+	else:
+		var pl = get_tree().get_first_node_in_group("player") if get_tree() else null
+		if not pl and get_tree() and get_tree().root:
+			pl = get_tree().root.find_child("Player", true, false)
+		if pl and ("local_parts" in pl):
+			parts_list = pl.local_parts
+			if "PART_NAMES" in pl:
+				part_names = pl.PART_NAMES
+			if "SOLID_Q" in pl:
+				solid_q = pl.SOLID_Q
+
+	if parts_list.is_empty():
+		return
+
 	var fitted := 0
-	for i in Game.parts.size():
-		var p: Dictionary = Game.parts[i]
-		var y := HEAD_H + i * ROW_H
+	for i in parts_list.size():
+		var p: Dictionary = parts_list[i]
+		var y: float = HEAD_H + float(i) * ROW_H
 		var shake := Vector2.ZERO
 		var tint := Color(1, 1, 1, 0.05)
 		var box_col := Color(0.35, 0.37, 0.42)
 		var mark := 0 # 0 empty, 1 carried, 2 fitted, 3 loose
-		match p.state:
-			Game.PS.CARRIED:
-				mark = 1
-				box_col = Color(1.0, 0.82, 0.25)
-				tint = Color(1.0, 0.82, 0.25, 0.10 + 0.08 * sin(t * 6.0))
-			Game.PS.INSTALLED:
-				fitted += 1
-				if p.q >= Game.SOLID_Q:
-					mark = 2
-					box_col = Color(0.3, 0.85, 0.4)
-					tint = Color(0.3, 0.85, 0.4, 0.12)
-				else:
-					mark = 3
-					box_col = Color(1.0, 0.5, 0.15)
-					var amp := 3.0 if p.warned else 1.0
-					shake = Vector2(sin(t * 40.0), cos(t * 33.0)) * amp
-					tint = Color(1.0, 0.3, 0.1, 0.14 + (0.14 * sin(t * 12.0) if p.warned else 0.0))
+		var p_state: int = int(p.get("state", 0))
+		var p_q: float = float(p.get("q", 0.0))
+		var p_warned: bool = bool(p.get("warned", false))
+		
+		# 1 = CARRIED, 2 = INSTALLED (matching Player.PS)
+		if p_state == 1:
+			mark = 1
+			box_col = Color(1.0, 0.82, 0.25)
+			tint = Color(1.0, 0.82, 0.25, 0.10 + 0.08 * sin(t * 6.0))
+		elif p_state == 2:
+			fitted += 1
+			if p_q >= solid_q:
+				mark = 2
+				box_col = Color(0.3, 0.85, 0.4)
+				tint = Color(0.3, 0.85, 0.4, 0.12)
+			else:
+				mark = 3
+				box_col = Color(1.0, 0.5, 0.15)
+				var amp := 3.0 if p_warned else 1.0
+				shake = Vector2(sin(t * 40.0), cos(t * 33.0)) * amp
+				tint = Color(1.0, 0.3, 0.1, 0.14 + (0.14 * sin(t * 12.0) if p_warned else 0.0))
 		var row := Rect2(Vector2(PAD, y) + shake, Vector2(size.x - 2 * PAD, ROW_H - 6))
 		var rs := StyleBoxFlat.new()
 		rs.bg_color = tint
@@ -89,13 +118,14 @@ func _draw() -> void:
 
 		PartIcons.draw(self, i, row.position + Vector2(62, row.size.y * 0.5), 12.0, 1.0 if mark != 0 else 0.55)
 		var name_col := Color(1, 1, 1, 0.95) if mark != 0 else Color(1, 1, 1, 0.5)
-		draw_string(_font, row.position + Vector2(88, row.size.y * 0.5 + 6), Game.PART_NAMES[i],
+		var p_name: String = part_names[i] if i < part_names.size() else "Part %d" % i
+		draw_string(_font, row.position + Vector2(88, row.size.y * 0.5 + 6), p_name,
 			HORIZONTAL_ALIGNMENT_LEFT, row.size.x - 92, 15, name_col)
 
 	# Progress strip: one segment per part.
-	var py := HEAD_H + Game.parts.size() * ROW_H + 4.0
-	var seg_w := (size.x - 2 * PAD - 3.0 * 4.0) / maxf(Game.parts.size(), 1.0)
-	for i in Game.parts.size():
+	var py: float = HEAD_H + float(parts_list.size()) * ROW_H + 4.0
+	var seg_w: float = (size.x - 2.0 * PAD - 12.0) / maxf(float(parts_list.size()), 1.0)
+	for i in parts_list.size():
 		var r := Rect2(PAD + i * (seg_w + 4.0), py, seg_w, 10)
 		draw_rect(r, Color(1, 1, 1, 0.12))
 		if i < fitted:

@@ -1,0 +1,102 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/splash_screen.gd" id="1_hsxvm"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui_badge_18plus.png" id="2_4gp4q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3mj2l"]
+content_margin_left = 28.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+bg_color = Color(0.07, 0.09, 0.14, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.9, 0.25, 0.28, 0.9)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[node name="SplashScreen" type="Control" unique_id=1849443466]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_hsxvm")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1560668768]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.04, 0.05, 0.08, 1)
+
+[node name="ContentBox" type="CenterContainer" parent="." unique_id=857904427]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="WarningPanel" type="PanelContainer" parent="ContentBox" unique_id=2013505019]
+custom_minimum_size = Vector2(820, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3mj2l")
+
+[node name="VBox" type="VBoxContainer" parent="ContentBox/WarningPanel" unique_id=782720280]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="@CenterContainer@2" type="CenterContainer" parent="ContentBox/WarningPanel/VBox" unique_id=1896691132]
+layout_mode = 2
+
+[node name="BadgeRect" type="TextureRect" parent="ContentBox/WarningPanel/VBox/@CenterContainer@2" unique_id=1829913579]
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+texture = ExtResource("2_4gp4q")
+
+[node name="AdvisoryLabel" type="Label" parent="ContentBox/WarningPanel/VBox" unique_id=1854972994]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+text = "⚠️  CONTENT ADVISORY & RESPONSIBILITY WARNING  ⚠️"
+horizontal_alignment = 1
+
+[node name="MainTitle" type="Label" parent="ContentBox/WarningPanel/VBox" unique_id=691147774]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "PLEASE DRINK RESPONSIBLY"
+horizontal_alignment = 1
+
+[node name="@HSeparator@3" type="HSeparator" parent="ContentBox/WarningPanel/VBox" unique_id=2116275047]
+layout_mode = 2
+
+[node name="DisclaimerLabel" type="Label" parent="ContentBox/WarningPanel/VBox" unique_id=153560762]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.85, 0.88, 0.95, 1)
+text = "Stumble Home portrays comedic drunkenness, chain-smoking, and chaotic stumbling solely for slapstick video-game satire.
+
+In real life, excessive alcohol and tobacco consumption carries severe health risks.
+Never drive or stumble under the influence. Look after your friends and know your limits."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="@Control@4" type="Control" parent="ContentBox/WarningPanel/VBox" unique_id=1130604060]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="PromptLabel" type="Label" parent="ContentBox/WarningPanel/VBox" unique_id=2116151281]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
+text = "► Press Any Key or Click Anywhere to Continue ◄"
+horizontal_alignment = 1
+
+[node name="FadeOverlay" type="ColorRect" parent="." unique_id=1128787359]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

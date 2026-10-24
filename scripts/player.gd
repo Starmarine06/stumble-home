@@ -1,5 +1,11 @@
 extends CharacterBody3D
 
+# ----------------- CASINO MINIGAME PRELOADS -----------------
+const DartsScene = preload("res://scripts/minigames/darts_game.gd")
+const CupPongScene = preload("res://scripts/minigames/cup_pong_game.gd")
+const SlotsScene = preload("res://scripts/minigames/slots_game.gd")
+const RouletteScene = preload("res://scripts/minigames/roulette_game.gd")
+
 @export var walk_speed: float = 5.2
 @export var sprint_speed: float = 9.2
 @export var jump_velocity: float = 4.8
@@ -16,19 +22,18 @@ var is_mouse_unlocked: bool = false
 var default_fov: float = 75.0
 
 # ----------------- GAME MECHANIC METERS -----------------
-# 1. Coma Lifeline Red Bar (Must keep smoking or drinking, or fall into Coma!)
-var buzz_meter: float = 100.0 # 100% full at start, drains over 40s if inactive
-const BUZZ_DRAIN_RATE: float = 2.5 # ~40 seconds from full to coma if inactive
+# 1. Coma Lifeline Bar removed per user request (no coma blackout/death)
+var buzz_meter: float = 100.0
+const BUZZ_DRAIN_RATE: float = 0.0 # No coma drain
 
-# 2. Drunkenness Meter (0-100%): Controls go opposite, at 60%+ MOUSE GOES OPPOSITE TOO!
-var drunk_meter: float = 0.0
-const DRUNK_DECAY_RATE: float = 1.2
+# 2. Drunkenness Meter (Always 100% permanently drunk from boot!)
+var drunk_meter: float = 100.0 # Starts and stays fully drunk!
+const DRUNK_DECAY_RATE: float = 0.0 # Never decays
 
 # 3. Smoke Density / Dizziness Meter (0-100%):
-# Within 1 cigarette player NEVER feels dizzy (max ~25-30%); takes >1 cigarette to feel dizzy!
 var smoke_meter: float = 0.0
 const SMOKE_DECAY_RATE: float = 1.0
-const DIZZY_SMOKE_THRESHOLD: float = 38.0 # Dizziness & weird screen effects require smoking >1 cigarette!
+const DIZZY_SMOKE_THRESHOLD: float = 38.0
 
 # 4. Status Flags
 var is_in_coma: bool = false
@@ -37,11 +42,99 @@ var is_inside_van: bool = false
 var boost_timer: float = 0.0
 var fx_elapsed_time: float = 0.0
 
+# 5. Drunk Double-Image (Previous Frame Trail & Blur)
+var lag_cam_rot: Vector3 = Vector3.ZERO
+var ghost_offset: Vector2 = Vector2.ZERO
+
+const PART_NAMES: Array[String] = ["Battery", "Fuel Pump", "Spark Plugs", "Spare Tyre"]
+const PART_MASS: Array[float] = [12.0, 5.0, 0.4, 9.0]
+enum PS { WORLD, CARRIED, INSTALLED }
+var local_parts: Array = []
+
+func _get_game() -> Node:
+	if has_node("/root/Game"):
+		return get_node("/root/Game")
+	return null
+
+func _get_parts() -> Array:
+	var g = _get_game()
+	if g and ("parts" in g) and not g.parts.is_empty():
+		return g.parts
+	return local_parts
+
+func _get_scavenge_parts_root() -> Node3D:
+	if scavenge_parts_root and is_instance_valid(scavenge_parts_root):
+		return scavenge_parts_root
+	if is_inside_tree() and get_tree().root:
+		scavenge_parts_root = get_tree().root.find_child("ScavengeParts", true, false) as Node3D
+	return scavenge_parts_root
+
 # Active drink animation state
 enum AnimState { NONE, DRINKING, SOBER_CAN }
 var current_anim: AnimState = AnimState.NONE
 var anim_timer: float = 0.0
 var anim_duration: float = 0.0
+
+# ----------------- DRUNKEN STRIDE & WASD KEY-SHIFT STUMBLE MECHANIC -----------------
+enum WASDKey { NONE, W, A, S, D }
+var current_step_key: WASDKey = WASDKey.NONE
+var key_hold_time: float = 0.0
+var drunk_momentum: float = 0.0
+var is_stumbling: bool = false
+var stumble_timer: float = 0.0
+var stumble_direction: Vector3 = Vector3.ZERO
+var last_move_direction: Vector3 = Vector3.ZERO
+var is_fallen_down: bool = false
+var fall_stun_timer: float = 0.0
+var step_shift_feedback_timer: float = 0.0
+var is_stunned: bool = false
+var balance_tilt: float = 0.0 # Legacy fallback for tests/external references
+var balance_bar: Control = null
+var drunk_model: Drunk = null
+
+# ----------------- CASINO MINIGAME STATIONS & PARTS UNLOCKED -----------------
+var minigame_stations: Array[Node] = []
+var active_station_idx: int = -1
+var won_parts: Array[bool] = [false, false, false, false] # Battery, FuelPump, SparkPlugs, SpareTyre
+var player_money: int = 1000 # 4-Patron Shared Wallet ($1,000 Starting Cash)
+var wallet_label: Label = null
+
+# 3D Darts & Betting Dialog Preloads
+const Darts3DGameClass = preload("res://scripts/minigames/darts_3d_game.gd")
+const DartsBettingDialogClass = preload("res://scripts/ui/darts_betting_dialog.gd")
+var active_darts_3d: Node = null
+
+# 3D Roulette & Betting Dialog Preloads
+const Roulette3DGameClass = preload("res://scripts/minigames/roulette_3d_game.gd")
+const RouletteBettingDialogClass = preload("res://scripts/ui/roulette_betting_dialog.gd")
+var active_roulette_3d: Node = null
+
+# ----------------- CAR PART SCAVENGING & CARRYING -----------------
+var carried_part_idx: int = -1
+var carried_reach: float = 1.0
+var carried_rel_yaw: float = 0.0
+var carried_hp: Vector3 = Vector3.ZERO
+var carried_hv: Vector3 = Vector3.ZERO
+var arm_strain: float = 0.0
+var aim_part_idx: int = -1
+var fit_q: float = -1.0
+var minigame_active: bool = false
+var grab_cd: float = 0.0
+
+# References to Car Parts Viewmodels & HUD
+@onready var carried_part_root: Node3D = get_node_or_null("Head/Camera3D/ViewModels/CarriedPart")
+var carried_meshes: Array[MeshInstance3D] = []
+@onready var strain_bar: ProgressBar = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/StrainContainer/StrainBar")
+@onready var strain_label: Label = get_node_or_null("HUD/ControlsUI/PanelContainer/VBoxContainer/StrainContainer/StrainLabel")
+@onready var shaky_holder: Control = get_node_or_null("HUD/ShakyHolder")
+
+var part_checklist: PartChecklist = null
+var part_compass: PartCompass = null
+var part_crosshair: PartCrosshair = null
+var scavenge_parts_root: Node3D = null
+var van_root: Node3D = null
+var van_slots: Array[Node3D] = []
+var victory_ui: Control = null
 
 # ----------------- REALISTIC SMOKING SYSTEM -----------------
 enum SmokingSeqState {
@@ -265,6 +358,12 @@ func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	is_mouse_unlocked = false
 
+	# Smooth step/ramp walking without getting stuck or needing to jump
+	floor_snap_length = 0.45
+	floor_max_angle = deg_to_rad(50.0)
+	floor_constant_speed = true
+	floor_stop_on_slope = true
+
 	reset_viewmodels()
 
 	if dialogue_ui:
@@ -273,6 +372,132 @@ func _ready() -> void:
 		interact_prompt_lbl.visible = false
 	if coma_ui:
 		coma_ui.visible = false
+	if buzz_bar and buzz_bar.get_parent():
+		buzz_bar.get_parent().visible = false
+
+	# Initialize Drunk Balance Model
+	drunk_model = Drunk.new(0.6)
+	drunk_model.tripped.connect(func():
+		_play_sfx(&"passout")
+		print("⚠️ Tripped! Regaining balance...")
+	)
+
+	# Initialize local_parts and sync with Game if available
+	local_parts = [
+		{"name": "Battery", "state": PS.WORLD, "holder": 0, "pos": Vector3(14.2, 1.35, -43.2), "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false},
+		{"name": "Fuel Pump", "state": PS.WORLD, "holder": 0, "pos": Vector3(-6.0, 1.35, -26.0), "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false},
+		{"name": "Spark Plugs", "state": PS.WORLD, "holder": 0, "pos": Vector3(-16.0, 1.35, -32.0), "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false},
+		{"name": "Spare Tyre", "state": PS.WORLD, "holder": 0, "pos": Vector3(20.0, 0.95, -34.0), "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false}
+	]
+	var g_node = _get_game()
+	if g_node and ("parts" in g_node) and g_node.parts.is_empty():
+		g_node.parts = local_parts.duplicate(true)
+
+	# Locate ScavengeParts root in the scene
+	scavenge_parts_root = get_tree().root.find_child("ScavengeParts", true, false)
+	# Locate MinigameStations in the scene
+	var st_root = get_tree().root.find_child("MinigameStations", true, false)
+	if st_root:
+		minigame_stations = st_root.get_children()
+	else:
+		minigame_stations = get_tree().get_nodes_in_group("minigame_stations")
+	# Locate Van root
+	van_root = get_tree().root.find_child("ParkedVan", true, false)
+	if not van_root:
+		van_root = get_tree().root.find_child("Van", true, false)
+	van_slots.clear()
+	if van_root:
+		for s_name in ["Slot_Battery", "Slot_FuelPump", "Slot_SparkPlugs", "Slot_SpareTyre"]:
+			var slot_node = van_root.find_child(s_name, true, false) as Node3D
+			van_slots.append(slot_node)
+			if slot_node:
+				var ghost = slot_node.find_child("Ghost", true, false)
+				if ghost:
+					ghost.visible = false
+
+	# Setup CarriedPart viewmodel meshes
+	if not carried_part_root:
+		carried_part_root = find_child("CarriedPart", true, false)
+	if carried_part_root:
+		carried_meshes.clear()
+		for i in 4:
+			var m = carried_part_root.get_node_or_null("Mesh_%d" % i)
+			if not m:
+				for c in carried_part_root.get_children():
+					if c.name.begins_with("Mesh_%d" % i):
+						m = c
+						break
+			if m:
+				carried_meshes.append(m as MeshInstance3D)
+				m.visible = false
+
+	# Setup HUD widgets
+	var hud_node = get_node_or_null("HUD")
+	if hud_node:
+		part_checklist = PartChecklist.new()
+		part_checklist.name = "PartChecklist"
+		part_checklist.position = Vector2(20, 20)
+		hud_node.add_child(part_checklist)
+
+		# 4-Patron Shared Wallet in Top Right ($1,000 Starting Cash)
+		var wallet_panel = PanelContainer.new()
+		wallet_panel.name = "WalletPanel"
+		var w_sb = StyleBoxFlat.new()
+		w_sb.bg_color = Color(0.06, 0.08, 0.12, 0.94)
+		w_sb.border_color = Color(0.95, 0.78, 0.22)
+		w_sb.set_border_width_all(2)
+		w_sb.set_corner_radius_all(10)
+		w_sb.shadow_size = 10
+		w_sb.shadow_color = Color(0, 0, 0, 0.6)
+		wallet_panel.add_theme_stylebox_override("panel", w_sb)
+		wallet_panel.position = Vector2(1280 - 250, 16)
+		wallet_panel.custom_minimum_size = Vector2(230, 72)
+
+		var w_margin = MarginContainer.new()
+		w_margin.add_theme_constant_override("margin_left", 14)
+		w_margin.add_theme_constant_override("margin_right", 14)
+		w_margin.add_theme_constant_override("margin_top", 8)
+		w_margin.add_theme_constant_override("margin_bottom", 8)
+		wallet_panel.add_child(w_margin)
+
+		var w_vbox = VBoxContainer.new()
+		w_vbox.add_theme_constant_override("separation", 2)
+		w_margin.add_child(w_vbox)
+
+		var w_hdr = Label.new()
+		w_hdr.text = "💰 SHARED WALLET (4 PATRONS)"
+		w_hdr.add_theme_font_size_override("font_size", 11)
+		w_hdr.add_theme_color_override("font_color", Color(0.85, 0.88, 0.95))
+		w_vbox.add_child(w_hdr)
+
+		wallet_label = Label.new()
+		wallet_label.text = "$%d" % player_money
+		wallet_label.add_theme_font_size_override("font_size", 24)
+		wallet_label.add_theme_color_override("font_color", Color(0.35, 1.0, 0.45))
+		w_vbox.add_child(wallet_label)
+
+		hud_node.add_child(wallet_panel)
+
+		part_crosshair = PartCrosshair.new()
+		part_crosshair.name = "PartCrosshair"
+		hud_node.add_child(part_crosshair)
+
+		# BalanceBar removed per user request (no manual Q/E tilt balancing)
+		balance_bar = null
+
+		if not shaky_holder:
+			shaky_holder = hud_node.find_child("ShakyHolder", true, false)
+			if not shaky_holder:
+				shaky_holder = CenterContainer.new()
+				shaky_holder.name = "ShakyHolder"
+				shaky_holder.set_anchors_preset(Control.PRESET_FULL_RECT)
+				shaky_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				hud_node.add_child(shaky_holder)
+
+	if not strain_bar:
+		strain_bar = find_child("StrainBar", true, false)
+	if not strain_label:
+		strain_label = find_child("StrainLabel", true, false)
 
 func reset_viewmodels() -> void:
 	ensure_smoking_references()
@@ -309,64 +534,160 @@ func reset_viewmodels() -> void:
 		energy_can.position = CAN_REST_POS
 		energy_can.rotation = CAN_REST_ROT
 		energy_can.visible = false
+	if carried_part_root:
+		carried_part_root.visible = false
+	for m in carried_meshes:
+		m.visible = false
+
+func is_ui_active() -> bool:
+	if dialogue_ui and dialogue_ui.visible:
+		return true
+	if victory_ui and victory_ui.visible:
+		return true
+	if active_darts_3d != null:
+		return true
+	if active_roulette_3d != null:
+		return true
+	if get_tree() and get_tree().root.find_child("DartsBettingDialog", true, false) != null:
+		return true
+	if get_tree() and get_tree().root.find_child("RouletteBettingDialog", true, false) != null:
+		return true
+	if minigame_active:
+		return true
+	if shaky_holder and shaky_holder.get_child_count() > 0:
+		return true
+	if is_mouse_unlocked or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return true
+	return false
+
+func is_modal_dialog_open() -> bool:
+	if dialogue_ui and dialogue_ui.visible:
+		return true
+	if victory_ui and victory_ui.visible:
+		return true
+	if active_darts_3d != null:
+		return true
+	if active_roulette_3d != null:
+		return true
+	if get_tree() and get_tree().root.find_child("DartsBettingDialog", true, false) != null:
+		return true
+	if get_tree() and get_tree().root.find_child("RouletteBettingDialog", true, false) != null:
+		return true
+	if minigame_active:
+		return true
+	if shaky_holder and shaky_holder.get_child_count() > 0:
+		return true
+	return false
+
+func _close_all_modals() -> void:
+	var darts_dlg = get_tree().root.find_child("DartsBettingDialog", true, false) if get_tree() else null
+	if darts_dlg:
+		darts_dlg.queue_free()
+	var roulette_dlg = get_tree().root.find_child("RouletteBettingDialog", true, false) if get_tree() else null
+	if roulette_dlg:
+		roulette_dlg.queue_free()
+	if active_darts_3d != null:
+		active_darts_3d.cleanup()
+		active_darts_3d.queue_free()
+		active_darts_3d = null
+	if active_roulette_3d != null:
+		active_roulette_3d.queue_free()
+		active_roulette_3d = null
+	if shaky_holder:
+		for c in shaky_holder.get_children():
+			c.queue_free()
+	if dialogue_ui and dialogue_ui.visible:
+		dialogue_ui.visible = false
+		current_talking_npc = null
+		dialogue_timer = 0.0
+	minigame_active = false
+	is_mouse_unlocked = false
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event: InputEvent) -> void:
-	# Coma Restart Handling
+	# Coma Restart / Menu Handling
 	if is_in_coma:
 		if event is InputEventKey and event.pressed:
 			if event.keycode == KEY_R or event.keycode == KEY_SPACE:
 				print("Restarting game after coma...")
 				get_tree().reload_current_scene()
+			elif event.keycode == KEY_M or event.keycode == KEY_ESCAPE:
+				print("Returning to Home Screen...")
+				get_tree().change_scene_to_file("res://scenes/home_screen.tscn")
+		return
+
+	# ESC key: cleanly close any active modal dialog and hide/recapture mouse
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if is_modal_dialog_open():
+			_close_all_modals()
+			return
+		else:
+			is_mouse_unlocked = not is_mouse_unlocked
+			if is_mouse_unlocked:
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			else:
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			return
+
+	# When any UI or modal dialog is open, freeze 3D camera look and gameplay actions completely!
+	if is_ui_active() or is_modal_dialog_open():
 		return
 
 	# Mouse Look (360-degree yaw & pitch)
 	if event is InputEventMouseMotion:
-		if not is_mouse_unlocked:
-			# When heavily drunk (drunk_meter >= 60%), MOUSE CONTROLS GO COMPLETELY OPPOSITE!
-			var mouse_invert = -1.0 if drunk_meter >= 60.0 else 1.0
-			
-			# Horizontal 360-degree yaw
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			var mouse_invert = 1.0
 			rotate_y(-event.relative.x * mouse_sensitivity * mouse_invert)
-			
-			# Vertical pitch
 			if head:
 				head.rotate_x(-event.relative.y * mouse_sensitivity * mouse_invert)
 				head.rotation.x = clamp(head.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
 
 	# Mouse Click to re-capture & Mouse Scroll Wheel to Smoke
 	if event is InputEventMouseButton and event.pressed:
-		if is_mouse_unlocked:
+		if is_mouse_unlocked and not is_modal_dialog_open():
 			is_mouse_unlocked = false
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		
-		# --- MOUSE SCROLL WHEEL SMOKING CONTROL ---
-		# Scrolling wheel down brings cigarette to center bottom of screen & smokes it!
-		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			handle_mouse_wheel_down_smoke()
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			handle_mouse_wheel_down_smoke()
 
-	# Keyboard shortcuts
+		# If holding a car part: mouse wheel alters reach!
+		if carried_part_idx != -1:
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				carried_reach = minf(1.5, carried_reach + 0.08)
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				carried_reach = maxf(0.6, carried_reach - 0.08)
+			# Right click or Left click while green seats the part into the van!
+			elif event.button_index == MOUSE_BUTTON_RIGHT or event.button_index == MOUSE_BUTTON_LEFT:
+				if fit_q >= 0.75:
+					_seat_part_perfectly(carried_part_idx)
+				elif fit_q >= 0.0:
+					_seat_part_crooked(carried_part_idx)
+		else:
+			# --- MOUSE SCROLL WHEEL SMOKING CONTROL ---
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN or event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				handle_mouse_wheel_down_smoke()
+
+		# Hold Right Click or Left Click to lift aimed car part
+		if (event.button_index == MOUSE_BUTTON_RIGHT or event.button_index == MOUSE_BUTTON_LEFT) and carried_part_idx == -1 and aim_part_idx != -1 and grab_cd <= 0.0:
+			_lift_part(aim_part_idx)
+
+	# Keyboard shortcuts (only when no UI is open)
 	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_ESCAPE:
-			is_mouse_unlocked = not is_mouse_unlocked
-			if is_mouse_unlocked:
-				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-			else:
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		
 		# Flashlight Toggle
-		elif event.keycode == KEY_F or event.is_action_pressed("toggle_flashlight"):
+		if event.keycode == KEY_F or event.is_action_pressed("toggle_flashlight"):
 			if flashlight:
 				flashlight.visible = not flashlight.visible
-		
+
+		# Return to Home Screen
+		elif event.keycode == KEY_M:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			get_tree().change_scene_to_file("res://scenes/home_screen.tscn")
+
 		# Screenshot
 		elif event.keycode == KEY_F12:
 			var img = get_viewport().get_texture().get_image()
 			if img:
 				img.save_png("/tmp/stumble_home_screenshot.png")
 				print("Saved screenshot to /tmp/stumble_home_screenshot.png")
-		
+
 		# --- NUMBER ACTIONS 1-3 ---
 		# 1: Cigarette Action (Pull from pack & light fresh one / puff if held)
 		elif event.keycode == KEY_1 or event.keycode == KEY_KP_1:
@@ -380,9 +701,24 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_3 or event.keycode == KEY_KP_3:
 			start_sober_can_animation()
 
-		# E: Interact (Enter/Exit Van OR Talk to NPC)
+		# Q: Drop carried car part
+		elif event.keycode == KEY_Q and not event.echo:
+			if carried_part_idx != -1:
+				_drop_carried_part()
+
+		# E: Interact / Play Casino Minigame / Seat part when green / Lift part
 		elif event.keycode == KEY_E and not event.echo:
-			handle_interaction()
+			if carried_part_idx != -1:
+				if fit_q >= 0.75:
+					_seat_part_perfectly(carried_part_idx)
+				elif fit_q >= 0.0:
+					_seat_part_crooked(carried_part_idx)
+			elif aim_part_idx != -1:
+				_lift_part(aim_part_idx)
+			elif active_station_idx != -1:
+				_open_casino_minigame(active_station_idx)
+			else:
+				handle_interaction()
 
 # ----------------- REALISTIC SMOKING ACTIONS & SEQUENCES -----------------
 
@@ -802,7 +1138,17 @@ func handle_interaction() -> void:
 			enter_van(van)
 			return
 
-	# 2. Otherwise talk to nearby NPC
+	# 2. If near Barney Darts NPC, open 3D Darts Challenge & Betting
+	if npc and (npc.name == "NPC_Barney" or npc.get_meta("is_darts_npc", false)):
+		_open_casino_minigame(0)
+		return
+
+	# 3. If near Antoine Roulette Croupier NPC, open 3D Roulette
+	if npc and (npc.name == "NPC_Antoine" or npc.get_meta("is_roulette_npc", false)):
+		_open_casino_minigame(3)
+		return
+
+	# 4. Otherwise talk to nearby NPC
 	if npc and npc.has_method("talk"):
 		current_talking_npc = npc
 		var res: Dictionary = npc.talk()
@@ -848,42 +1194,19 @@ func close_dialogue() -> void:
 		dialogue_ui.visible = false
 	current_talking_npc = null
 	dialogue_timer = 0.0
+	is_mouse_unlocked = false
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-# ----------------- COMA & GAME OVER -----------------
+# ----------------- COMA & GAME OVER (DISABLED PER USER REQUEST) -----------------
 
 func trigger_coma() -> void:
-	if is_in_coma:
-		return
-	is_in_coma = true
-	velocity = Vector3.ZERO
-	print("!!! PLAYER FELL ASLEEP AND ENTERED A COMA !!!")
-	
-	# Camera collapses to floor
-	if head:
-		head.rotation.x = deg_to_rad(-65.0)
-		head.position.y = 0.25
-
-	if not coma_ui:
-		coma_ui = find_child("ComaUI", true, false)
-	if coma_ui:
-		coma_ui.visible = true
-	if interact_prompt_lbl:
-		interact_prompt_lbl.visible = false
+	# Coma disabled per user request
+	pass
 
 # ----------------- PROCESS & METER UPDATES -----------------
 
 func _process(delta: float) -> void:
 	fx_elapsed_time += delta
-
-	# Coma State Handling
-	if is_in_coma:
-		coma_fade = min(1.0, coma_fade + delta * 2.0)
-		if screen_fx_rect and screen_fx_rect.material:
-			var mat = screen_fx_rect.material as ShaderMaterial
-			if mat:
-				mat.set_shader_parameter("coma_fade", coma_fade)
-				mat.set_shader_parameter("fx_time", fx_elapsed_time)
-		return
 
 	# Update active animations
 	if current_anim != AnimState.NONE:
@@ -895,30 +1218,40 @@ func _process(delta: float) -> void:
 	# Update realistic smoking sequence & scroll-wheel puffing
 	update_smoking_sequence(delta)
 
-	# --- METER DRAINS & DECAYS ---
-	# 1. Buzz / Addiction Meter: Constantly drains unless smoking or drinking!
-	buzz_meter = max(0.0, buzz_meter - BUZZ_DRAIN_RATE * delta)
-	if buzz_meter <= 0.0:
-		trigger_coma()
-		return
+	# --- METER UPDATES ---
+	# Player is always 100% drunk per user request
+	drunk_meter = 100.0
 
-	# 2. Drunk Meter slowly decays
-	drunk_meter = max(0.0, drunk_meter - DRUNK_DECAY_RATE * delta)
-
-	# 3. Smoke Density Meter slowly clears
+	# Smoke Density Meter slowly clears
 	smoke_meter = max(0.0, smoke_meter - SMOKE_DECAY_RATE * delta)
 
-	# 4. Energy boost timer
+	# Energy boost timer
 	if boost_timer > 0.0:
 		boost_timer = max(0.0, boost_timer - delta)
+
+	# Drunk Double-Image Camera Lag Tracking (Previous Frame Ghost Trail)
+	if camera:
+		var cur_cam_rot = Vector3(camera.rotation.x, rotation.y, camera.rotation.z)
+		if lag_cam_rot == Vector3.ZERO:
+			lag_cam_rot = cur_cam_rot
+
+		# Smoothly lag behind current rotation by several frames
+		lag_cam_rot = lag_cam_rot.lerp(cur_cam_rot, clampf(delta * 10.0, 0.05, 0.35))
+		var delta_rot = cur_cam_rot - lag_cam_rot
+
+		# Continuous drunken sway separation
+		var sway_offset = Vector2(
+			sin(fx_elapsed_time * 2.2) * 0.016,
+			cos(fx_elapsed_time * 1.7) * 0.012
+		)
+
+		# Total ghost offset passed to screen shader
+		ghost_offset = Vector2(delta_rot.y * 0.40, -delta_rot.x * 0.40) + sway_offset
 
 	# Update Post-Processing Shader Parameters
 	if screen_fx_rect and screen_fx_rect.material:
 		var mat = screen_fx_rect.material as ShaderMaterial
 		if mat:
-			# Dizziness & weird screen distortion only trigger when smoke_meter > DIZZY_SMOKE_THRESHOLD (38.0%).
-			# Within 1 cigarette (peak ~25%), dizzy_intensity is strictly 0.0 -> NO dizziness!
-			# Takes smoking >1 cigarette to feel dizzy!
 			var dizzy_int = 0.0
 			if smoke_meter > DIZZY_SMOKE_THRESHOLD:
 				dizzy_int = clamp((smoke_meter - DIZZY_SMOKE_THRESHOLD) / (100.0 - DIZZY_SMOKE_THRESHOLD), 0.0, 1.0)
@@ -927,18 +1260,17 @@ func _process(delta: float) -> void:
 			if smoke_meter > DIZZY_SMOKE_THRESHOLD:
 				smoke_cloud_int = dizzy_int
 			elif smoke_meter > 10.0:
-				smoke_cloud_int = (smoke_meter / DIZZY_SMOKE_THRESHOLD) * 0.04 # Subtle wisp only
+				smoke_cloud_int = (smoke_meter / DIZZY_SMOKE_THRESHOLD) * 0.04
 
-			var d_int = drunk_meter / 100.0
-			# Drowsy blackout flash when the red coma bar is critically low (< 30%)
-			var drowsy_pulse = 0.0
-			if buzz_meter < 30.0:
-				drowsy_pulse = (sin(fx_elapsed_time * 5.0) * 0.5 + 0.5) * (1.0 - buzz_meter / 30.0) * 0.75
+			var d_int = 1.0 # Fully drunk always
 
 			mat.set_shader_parameter("smoke_intensity", smoke_cloud_int)
 			mat.set_shader_parameter("dizzy_intensity", dizzy_int)
 			mat.set_shader_parameter("drunk_intensity", d_int)
-			mat.set_shader_parameter("coma_fade", drowsy_pulse)
+			mat.set_shader_parameter("ghost_offset", ghost_offset)
+			mat.set_shader_parameter("blur_amount", 0.0032)
+			mat.set_shader_parameter("double_vision_mix", 0.44)
+			mat.set_shader_parameter("coma_fade", 0.0)
 			mat.set_shader_parameter("fx_time", fx_elapsed_time)
 
 	# Dynamic Camera Effects (Warping FOV & Sway)
@@ -946,8 +1278,7 @@ func _process(delta: float) -> void:
 		var dizzy_int = 0.0
 		if smoke_meter > DIZZY_SMOKE_THRESHOLD:
 			dizzy_int = clamp((smoke_meter - DIZZY_SMOKE_THRESHOLD) / (100.0 - DIZZY_SMOKE_THRESHOLD), 0.0, 1.0)
-		var d_int = drunk_meter / 100.0
-		
+
 		# Smoking makes FOV breathe wildly only when dizzy (>1 cigarette smoked!)
 		if dizzy_int > 0.05:
 			var fov_pulse = sin(fx_elapsed_time * 3.5) * 14.0 * dizzy_int
@@ -959,9 +1290,9 @@ func _process(delta: float) -> void:
 		var roll = 0.0
 		if dizzy_int > 0.05:
 			roll += sin(fx_elapsed_time * 2.0) * 0.08 * dizzy_int
-		if d_int > 0.05:
-			roll += sin(fx_elapsed_time * 2.8) * 0.16 * d_int
-		camera.rotation.z = lerp(camera.rotation.z, roll, delta * 8.0)
+		roll += sin(fx_elapsed_time * 2.8) * 0.10
+		if not is_stumbling and not is_fallen_down:
+			camera.rotation.z = lerp(camera.rotation.z, roll, delta * 8.0)
 
 	# Update Interaction Prompt Label
 	update_interaction_prompt()
@@ -1000,6 +1331,10 @@ func update_interaction_prompt() -> void:
 
 	var npc = get_nearby_npc()
 	if npc:
+		if npc.name == "NPC_Barney" or npc.get_meta("is_darts_npc", false):
+			interact_prompt_lbl.text = "🎯 [E] Play Darts with Barney (Bet Money)"
+			interact_prompt_lbl.visible = true
+			return
 		var n_name = npc.get("character_name")
 		if n_name == null or n_name == "":
 			n_name = npc.name
@@ -1096,15 +1431,18 @@ func update_meters_ui() -> void:
 	if drunk_bar:
 		drunk_bar.value = drunk_meter
 	if drunk_label:
-		if drunk_meter >= 60.0:
-			drunk_label.text = "🚨 EXTREME DRUNK (%.0f%%) - MOUSE & WASD CONTROLS INVERTED!" % drunk_meter
-			drunk_label.add_theme_color_override("font_color", Color(1.0, 0.15, 0.2))
-		elif drunk_meter >= 30.0:
-			drunk_label.text = "⚠️ DRUNK (%.0f%%) - WASD MOVEMENT INVERTED!" % drunk_meter
-			drunk_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.2))
+		if is_stumbling:
+			drunk_label.text = "⚠️ RUNAWAY MOMENTUM! LOSING FOOTING AND FALLING!"
+			drunk_label.add_theme_color_override("font_color", Color(1.0, 0.25, 0.25))
+		elif drunk_momentum > 0.2:
+			drunk_label.text = "⚠️ RUNAWAY MOMENTUM (%.0f%%) - SHIFT WASD KEYS TO KEEP FOOTING!" % (drunk_momentum * 100.0)
+			drunk_label.add_theme_color_override("font_color", Color(1.0, 0.50, 0.15))
+		elif step_shift_feedback_timer > 0.0:
+			drunk_label.text = "👟 GOOD DRUNKEN STRIDE! Shifted step to [%s]" % _wasd_key_name(current_step_key)
+			drunk_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.45))
 		else:
-			drunk_label.text = "DRUNKENNESS METER: %.0f%% (Sober / Mild Buzz)" % drunk_meter
-			drunk_label.add_theme_color_override("font_color", Color(0.7, 0.85, 0.95))
+			drunk_label.text = "🍺 PERMANENTLY DRUNK • Alternate WASD keys while walking (Don't hold 1 key!)"
+			drunk_label.add_theme_color_override("font_color", Color(0.4, 0.9, 1.0))
 
 	# Update Smoke & Dizziness Meter
 	if smoke_bar:
@@ -1163,13 +1501,10 @@ func update_meters_ui() -> void:
 		elif current_anim == AnimState.SOBER_CAN:
 			badges.append("⚡ Energy Can...")
 
-		if buzz_meter < 25.0:
-			badges.append("🚨 RED BAR CRITICAL - COMA IMMINENT")
-
-		if drunk_meter >= 60.0:
-			badges.append("🚨 MOUSE & WASD INVERTED")
-		elif drunk_meter >= 30.0:
-			badges.append("⚠️ WASD INVERTED")
+		if drunk_momentum > 0.35:
+			badges.append("⚠️ MOMENTUM HIGH — SHIFT WASD STEP!")
+		else:
+			badges.append("🍺 DRUNK (Alternate WASD steps)")
 
 		if smoke_meter >= 38.0:
 			badges.append("💨 DIZZY SMOKE (SCREEN WEIRD)")
@@ -1181,62 +1516,212 @@ func update_meters_ui() -> void:
 
 # ----------------- PHYSICS & MOVEMENT -----------------
 
-func _physics_process(delta: float) -> void:
-	if is_in_coma:
-		return
+func _wasd_key_name(k: WASDKey) -> String:
+	match k:
+		WASDKey.W: return "W"
+		WASDKey.A: return "A"
+		WASDKey.S: return "S"
+		WASDKey.D: return "D"
+		_: return ""
 
+func _trigger_runaway_stumble() -> void:
+	if is_stumbling or is_fallen_down or is_inside_van or minigame_active:
+		return
+	is_stumbling = true
+	stumble_timer = 0.75 # Runaway momentum stumble before losing footing
+	var cam_fwd = -global_transform.basis.z
+	stumble_direction = last_move_direction if last_move_direction != Vector3.ZERO else cam_fwd
+	current_step_key = WASDKey.NONE
+	key_hold_time = 0.0
+	drunk_momentum = 1.0
+	_play_sfx(&"clang")
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "⚠️ RUNAWAY MOMENTUM! CAN'T STOP! LOSING BALANCE..."
+		interact_prompt_lbl.visible = true
+
+func _trigger_fall_down() -> void:
+	is_stumbling = false
+	is_fallen_down = true
+	is_stunned = true
+	fall_stun_timer = 1.8
+	velocity = Vector3.ZERO
+	_play_sfx(&"crash")
+	_play_sfx(&"passout")
+	if carried_part_idx != -1:
+		_drop_carried_part()
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "💥 FELL FLAT! Shift between WASD keys while walking to stay on your feet!"
+		interact_prompt_lbl.visible = true
+
+func _apply_step_climb(dir: Vector3, delta: float) -> void:
+	if not is_on_floor() or dir == Vector3.ZERO:
+		return
+	var step_height: float = 0.42
+	var test_dist: float = clampf(velocity.length() * delta + 0.14, 0.08, 0.28)
+	var fwd_motion: Vector3 = dir.normalized() * test_dist
+	if test_move(global_transform, fwd_motion):
+		var up_step = Vector3(0, step_height, 0)
+		if not test_move(global_transform, up_step):
+			var up_trans = global_transform
+			up_trans.origin.y += step_height
+			if not test_move(up_trans, fwd_motion):
+				global_position.y += step_height
+				velocity.y = 0.0
+
+func _physics_process(delta: float) -> void:
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	# Handle Jump
-	var wants_jump = Input.is_action_just_pressed("jump") or Input.is_physical_key_pressed(KEY_SPACE)
-	if wants_jump and is_on_floor():
+	# 1. Handle Fallen Down Flat State
+	if is_fallen_down:
+		fall_stun_timer -= delta
+		velocity.x = lerp(velocity.x, 0.0, 10.0 * delta)
+		velocity.z = lerp(velocity.z, 0.0, 10.0 * delta)
+		if camera:
+			camera.rotation.z = lerpf(camera.rotation.z, deg_to_rad(65.0), 8.0 * delta)
+		if head:
+			head.position.y = lerpf(head.position.y, 0.35, 8.0 * delta)
+		move_and_slide()
+		if fall_stun_timer <= 0.0:
+			is_fallen_down = false
+			is_stunned = false
+			if head:
+				head.position.y = default_head_y
+			if camera:
+				camera.rotation.z = 0.0
+				camera.rotation.x = deg_to_rad(6.0)
+			if interact_prompt_lbl:
+				interact_prompt_lbl.text = "★ Stumbled back to feet! Alternate WASD steps to keep your balance!"
+				interact_prompt_lbl.visible = true
+		return
+
+	# 2. Handle Runaway Stumble Forward State
+	if is_stumbling:
+		stumble_timer -= delta
+		var stumble_speed = walk_speed * 1.25
+		velocity.x = stumble_direction.x * stumble_speed
+		velocity.z = stumble_direction.z * stumble_speed
+
+		# Camera pitch dips forward and shakes during drunken tumble
+		if head:
+			head.position.y = lerpf(head.position.y, default_head_y - 0.20, 8.0 * delta)
+		if camera:
+			camera.rotation.x = lerpf(camera.rotation.x, deg_to_rad(-16.0), 8.0 * delta)
+			camera.rotation.z = sin(fx_elapsed_time * 16.0) * deg_to_rad(12.0)
+
+		_apply_step_climb(stumble_direction, delta)
+		move_and_slide()
+
+		if stumble_timer <= 0.0:
+			_trigger_fall_down()
+		return
+
+	# 3. Handle Jump
+	var wants_jump = (Input.is_action_just_pressed("jump") or Input.is_physical_key_pressed(KEY_SPACE)) and not minigame_active and not is_stunned and not is_ui_active() and not is_modal_dialog_open()
+	var carried_mass = PART_MASS[carried_part_idx] if carried_part_idx != -1 else 0.0
+	if wants_jump and is_on_floor() and carried_mass < 6.0:
 		velocity.y = jump_velocity
 
-	# Determine current speed
-	var is_sprinting = Input.is_action_pressed("sprint") or Input.is_physical_key_pressed(KEY_SHIFT)
-	var current_speed = sprint_speed if is_sprinting else walk_speed
+	# Speed determination with carried weight penalty
+	var is_sprinting = (Input.is_action_pressed("sprint") or Input.is_physical_key_pressed(KEY_SHIFT)) and not is_stunned and not minigame_active and not is_ui_active() and not is_modal_dialog_open()
+	var speed_penalty = clampf(1.0 - 0.03 * carried_mass, 0.45, 1.0)
+	var current_speed = (sprint_speed if is_sprinting and carried_mass < 5.0 else walk_speed) * speed_penalty
 	if boost_timer > 0.0:
 		current_speed *= 1.25
 
-	# Raw input direction from WASD / Arrows
-	var input_dir = Vector2.ZERO
-	if Input.is_action_pressed("move_left") or Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
-		input_dir.x -= 1.0
-	if Input.is_action_pressed("move_right") or Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
-		input_dir.x += 1.0
-	if Input.is_action_pressed("move_forward") or Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
-		input_dir.y -= 1.0
-	if Input.is_action_pressed("move_backward") or Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
-		input_dir.y += 1.0
+	# 4. WASD Key Input & Drunken Key-Shift Rhythm Mechanics
+	var pressed_keys: Array[WASDKey] = []
+	if not minigame_active and not is_stunned and not is_ui_active() and not is_modal_dialog_open():
+		if Input.is_action_pressed("move_forward") or Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
+			pressed_keys.append(WASDKey.W)
+		if Input.is_action_pressed("move_left") or Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
+			pressed_keys.append(WASDKey.A)
+		if Input.is_action_pressed("move_backward") or Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
+			pressed_keys.append(WASDKey.S)
+		if Input.is_action_pressed("move_right") or Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
+			pressed_keys.append(WASDKey.D)
 
-	# --- DRUNK INVERTED CONTROLS ---
-	# When drunk_meter >= 30%, WASD controls go completely opposite!
-	if drunk_meter >= 30.0:
-		input_dir = -input_dir # W goes backward, S forward, A right, D left!
+	if step_shift_feedback_timer > 0.0:
+		step_shift_feedback_timer -= delta
 
-	input_dir = input_dir.normalized()
+	if pressed_keys.is_empty():
+		# Key released!
+		if current_step_key != WASDKey.NONE:
+			# Player let go of the movement key they were walking with!
+			# If held for too long (> 0.55s) or accumulated runaway momentum:
+			# -> keeps going forward, loses balance, and falls!
+			if key_hold_time >= 0.55 or drunk_momentum > 0.15:
+				_trigger_runaway_stumble()
+			else:
+				# Quick tap release (< 0.55s) safely stops
+				current_step_key = WASDKey.NONE
+				key_hold_time = 0.0
+				drunk_momentum = 0.0
+	else:
+		# One or more movement keys are pressed
+		var is_shifted = false
+		var new_step_key = current_step_key
+		if current_step_key == WASDKey.NONE:
+			new_step_key = pressed_keys[0]
+			current_step_key = new_step_key
+			key_hold_time = 0.0
+		elif not pressed_keys.has(current_step_key):
+			# Key changed!
+			new_step_key = pressed_keys[0]
+			is_shifted = true
+		elif pressed_keys.size() > 1:
+			# Shifted to another pressed key (e.g. while walking W, hit A or D)
+			for pk in pressed_keys:
+				if pk != current_step_key:
+					new_step_key = pk
+					is_shifted = true
+					break
+
+		if is_shifted:
+			current_step_key = new_step_key
+			key_hold_time = 0.0
+			drunk_momentum = 0.0
+			step_shift_feedback_timer = 0.55
+			if effect_badge:
+				effect_badge.text = "👟 Good Drunken Stride! Shifted step to [%s]" % _wasd_key_name(current_step_key)
+		else:
+			# Holding same key continuously
+			key_hold_time += delta
+			if key_hold_time > 0.75:
+				drunk_momentum = clampf((key_hold_time - 0.75) / 0.75, 0.0, 1.0)
+
+			# Held one single key for too long without shifting (> 1.6s) -> runaway stumble!
+			if key_hold_time >= 1.6:
+				_trigger_runaway_stumble()
+
+	# 5. Raw input vector from pressed keys (Direct WASD: W=Forward, S=Down/Back, A=Left, D=Right)
+	var raw_input = Vector2.ZERO
+	if not minigame_active and not is_stunned and not is_ui_active() and not is_modal_dialog_open():
+		for pk in pressed_keys:
+			match pk:
+				WASDKey.W: raw_input.y -= 1.0 # Forward
+				WASDKey.S: raw_input.y += 1.0 # Down / Backward
+				WASDKey.A: raw_input.x -= 1.0 # Left
+				WASDKey.D: raw_input.x += 1.0 # Right
+		raw_input = raw_input.normalized()
+
 	# Relative movement oriented to camera yaw
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	var direction = Vector3.ZERO
+	if raw_input != Vector2.ZERO:
+		direction = (transform.basis * Vector3(raw_input.x, 0, raw_input.y)).normalized()
+		last_move_direction = direction
 
-	# Add drunk stumble drift
-	if drunk_meter >= 30.0 and direction != Vector3.ZERO:
-		var d_fact = drunk_meter / 100.0
-		var stumble_x = sin(fx_elapsed_time * 3.2) * 0.45 * d_fact
-		var stumble_z = cos(fx_elapsed_time * 2.6) * 0.45 * d_fact
-		direction = (direction + transform.basis * Vector3(stumble_x, 0, stumble_z)).normalized()
+		# Runaway momentum adds forward pull
+		var effective_speed = current_speed * (1.0 + drunk_momentum * 0.25)
+		velocity.x = lerp(velocity.x, direction.x * effective_speed, acceleration * delta)
+		velocity.z = lerp(velocity.z, direction.z * effective_speed, acceleration * delta)
 
-	# Acceleration & deceleration
-	if direction != Vector3.ZERO:
-		velocity.x = lerp(velocity.x, direction.x * current_speed, acceleration * delta)
-		velocity.z = lerp(velocity.z, direction.z * current_speed, acceleration * delta)
-		
 		# Head bobbing
 		if is_on_floor() and head:
-			var speed_factor = current_speed / walk_speed
+			var speed_factor = effective_speed / walk_speed
 			bob_timer += delta * bob_frequency * speed_factor
-			head.position.y = default_head_y + sin(bob_timer * TAU) * bob_amplitude
+			head.position.y = lerpf(head.position.y, default_head_y + sin(bob_timer * TAU) * bob_amplitude, 10.0 * delta)
 	else:
 		velocity.x = lerp(velocity.x, 0.0, friction * delta)
 		velocity.z = lerp(velocity.z, 0.0, friction * delta)
@@ -1244,4 +1729,551 @@ func _physics_process(delta: float) -> void:
 			head.position.y = lerp(head.position.y, default_head_y, 10.0 * delta)
 		bob_timer = 0.0
 
+	# Drunken natural camera roll
+	if camera and not is_stumbling and not is_fallen_down:
+		var d_roll = sin(fx_elapsed_time * 2.2) * 0.06 + (drunk_momentum * sin(fx_elapsed_time * 6.5) * 0.12)
+		camera.rotation.z = lerpf(camera.rotation.z, d_roll, 8.0 * delta)
+
+	if direction != Vector3.ZERO:
+		_apply_step_climb(direction, delta)
 	move_and_slide()
+
+	# Update Carried Part Physics, Aim Detection, Stations, and HUD
+	_update_carried_part(delta)
+	_detect_aimed_part()
+	_detect_casino_station()
+	_update_parts_hud(delta)
+
+# ----------------- CAR PART HANDLING & MINIGAME IMPLEMENTATION -----------------
+
+func _play_sfx(event: StringName) -> void:
+	if has_node("/root/Audio"):
+		get_node("/root/Audio").play(event)
+
+func _detect_casino_station() -> void:
+	active_station_idx = -1
+	if minigame_active or carried_part_idx != -1 or is_stunned or is_fallen_down:
+		return
+	
+	var eye = global_position
+	var best_dist = 3.4
+	
+	for st in minigame_stations:
+		if not st or not is_instance_valid(st) or not (st is Node3D):
+			continue
+		var d = eye.distance_to((st as Node3D).global_position)
+		if d < best_dist:
+			best_dist = d
+			active_station_idx = int(st.get_meta("station_idx", -1))
+			if interact_prompt_lbl and aim_part_idx == -1:
+				var lbl_txt = str(st.get_meta("label_text", "PLAY MINIGAME"))
+				interact_prompt_lbl.text = "[E] " + lbl_txt
+				interact_prompt_lbl.visible = true
+
+func _open_casino_minigame(idx: int) -> void:
+	if minigame_active:
+		return
+	print("Opening casino minigame for station %d..." % idx)
+	minigame_active = true
+
+	# Station 0: Full 3D Interactive Darts with Barney NPC & Wall Dartboard
+	if idx == 0:
+		_open_3d_darts_minigame()
+		return
+
+	# Station 3: Full 3D Interactive Roulette with Croupier Antoine & 3D Table
+	if idx == 3:
+		_open_3d_roulette_minigame()
+		return
+
+	if not shaky_holder:
+		minigame_active = false
+		return
+
+	var mg: Control = null
+	match idx:
+		1:
+			mg = CupPongScene.new()
+		2:
+			mg = SlotsScene.new()
+		_:
+			mg = CupPongScene.new()
+
+	shaky_holder.add_child(mg)
+	_play_sfx(&"clang")
+	
+	mg.connect("finished", func(won: bool):
+		minigame_active = false
+		is_mouse_unlocked = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		if won:
+			_on_minigame_won(idx)
+		else:
+			_on_minigame_lost(idx)
+	)
+
+func _open_3d_darts_minigame() -> void:
+	var betting_dlg = DartsBettingDialogClass.new(player_money)
+	var hud_node = get_node_or_null("HUD")
+	if hud_node:
+		hud_node.add_child(betting_dlg)
+	else:
+		add_child(betting_dlg)
+
+	betting_dlg.cancelled.connect(func():
+		minigame_active = false
+		is_mouse_unlocked = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	)
+
+	betting_dlg.bet_confirmed.connect(func(bet_amt: int):
+		player_money = maxi(0, player_money - bet_amt)
+		is_mouse_unlocked = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		print("Darts bet confirmed: $%d (Remaining cash: $%d)" % [bet_amt, player_money])
+		
+		# Find DartBoard3D and Barney NPC in the scene
+		var board_node = get_tree().root.find_child("DartBoard3D", true, false)
+		var barney_node = get_tree().root.find_child("NPC_Barney", true, false)
+		
+		var darts_session = Darts3DGameClass.new()
+		add_child(darts_session)
+		active_darts_3d = darts_session
+		
+		darts_session.start_darts_session(self, board_node, barney_node, bet_amt)
+		
+		darts_session.finished.connect(func(won_battery: bool, payout: int):
+			minigame_active = false
+			active_darts_3d = null
+			is_mouse_unlocked = false
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			if won_battery:
+				_on_minigame_won(0)
+			elif payout > 0:
+				print("Won cash payout: $%d" % payout)
+			else:
+				print("Lost darts round!")
+		)
+	)
+
+func _open_3d_roulette_minigame() -> void:
+	var betting_dlg = RouletteBettingDialogClass.new(player_money)
+	var hud_node = get_node_or_null("HUD")
+	if hud_node:
+		hud_node.add_child(betting_dlg)
+	else:
+		add_child(betting_dlg)
+
+	betting_dlg.cancelled.connect(func():
+		minigame_active = false
+		is_mouse_unlocked = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	)
+
+	betting_dlg.bet_confirmed.connect(func(bet_amt: int, bet_type: String, bet_param: Variant):
+		player_money = maxi(0, player_money - bet_amt)
+		is_mouse_unlocked = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		print("Roulette bet confirmed: $%d on %s (Remaining cash: $%d)" % [bet_amt, bet_type, player_money])
+		
+		# Find RouletteTable3D and Antoine NPC in the scene
+		var table_node = get_tree().root.find_child("RouletteTable3D", true, false)
+		var antoine_node = get_tree().root.find_child("NPC_Antoine", true, false)
+		
+		var roulette_session = Roulette3DGameClass.new()
+		add_child(roulette_session)
+		active_roulette_3d = roulette_session
+		
+		roulette_session.start_roulette_session(self, table_node, antoine_node, bet_amt, bet_type, bet_param)
+		
+		roulette_session.finished.connect(func(won_tyre: bool, payout: int):
+			minigame_active = false
+			active_roulette_3d = null
+			is_mouse_unlocked = false
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			if payout > 0:
+				player_money += payout
+				print("Won roulette cash payout: $%d" % payout)
+			if won_tyre:
+				_on_minigame_won(3)
+			elif payout == 0:
+				print("Lost roulette round!")
+		)
+	)
+
+func _on_minigame_won(idx: int) -> void:
+	print("🎉 Won casino minigame %d! Awarding %s!" % [idx, PART_NAMES[idx]])
+	won_parts[idx] = true
+	_play_sfx(&"win")
+	_play_sfx(&"horn")
+	
+	if idx >= 0 and idx < _get_parts().size():
+		_get_parts()[idx].state = PS.WORLD
+	
+	# Make physical world part visible at its station table
+	var parts_root = _get_scavenge_parts_root()
+	if parts_root:
+		var p_node = parts_root.get_node_or_null("WorldPart_%d" % idx) as Node3D
+		if p_node:
+			p_node.visible = true
+			var glow = p_node.find_child("BeaconGlow", true, false) as OmniLight3D
+			if glow:
+				glow.visible = true
+				glow.light_energy = 3.5
+	
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "🎉 WON %s! Hold Right-Click or press [E] to carry it!" % PART_NAMES[idx]
+		interact_prompt_lbl.visible = true
+
+	if part_checklist:
+		part_checklist.queue_redraw()
+
+func _on_minigame_lost(idx: int) -> void:
+	print("❌ Lost casino minigame %d" % idx)
+	_play_sfx(&"part_fit_bad")
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "❌ Didn't win! Press [E] to try again!"
+		interact_prompt_lbl.visible = true
+
+func _detect_aimed_part() -> void:
+	aim_part_idx = -1
+	var parts_root = _get_scavenge_parts_root()
+	if carried_part_idx != -1 or is_stunned or is_fallen_down or not parts_root or not camera:
+		return
+	
+	var best_dot: float = 0.72
+	var eye = camera.global_position
+	var fwd = -camera.global_transform.basis.z
+	
+	for i in 4:
+		var part_node = parts_root.get_node_or_null("WorldPart_%d" % i) as Node3D
+		if not part_node or not part_node.visible:
+			continue
+		var to_part = part_node.global_position - eye
+		var dist = to_part.length()
+		if dist > 3.8:
+			continue
+		var dot = fwd.dot(to_part.normalized())
+		if dot > best_dot:
+			best_dot = dot
+			aim_part_idx = i
+
+	if aim_part_idx != -1 and not minigame_active:
+		if interact_prompt_lbl:
+			interact_prompt_lbl.text = "Hold Right-Click / LMB or [E] to lift %s (%d kg)" % [PART_NAMES[aim_part_idx], int(PART_MASS[aim_part_idx])]
+			interact_prompt_lbl.visible = true
+	elif not minigame_active and active_station_idx == -1 and interact_prompt_lbl and not interact_prompt_lbl.text.begins_with("★") and not interact_prompt_lbl.text.begins_with("🚐") and not interact_prompt_lbl.text.begins_with("🟢") and not interact_prompt_lbl.text.begins_with("🎉"):
+		interact_prompt_lbl.visible = false
+
+func _lift_part(idx: int) -> void:
+	if idx < 0 or idx >= 4:
+		return
+	print("Lifting car part %d: %s" % [idx, PART_NAMES[idx]])
+	_play_sfx(&"clang")
+	grab_cd = 0.4
+	carried_part_idx = idx
+	carried_reach = 1.0
+	carried_rel_yaw = 0.0
+	
+	var parts_root = _get_scavenge_parts_root()
+	var part_node = parts_root.get_node_or_null("WorldPart_%d" % idx) as Node3D if parts_root else null
+	if part_node:
+		carried_hp = part_node.global_position + Vector3(0, 0.4, 0)
+		part_node.visible = false
+	else:
+		carried_hp = camera.global_position + camera.global_transform.basis * Vector3(0, -0.2, -1.0)
+	carried_hv = Vector3.ZERO
+	
+	arm_strain = minf(1.0, arm_strain + 0.15 * (PART_MASS[idx] / 12.0))
+	
+	if idx < _get_parts().size():
+		_get_parts()[idx].state = PS.CARRIED
+	
+	if carried_part_root:
+		carried_part_root.visible = true
+	for i in carried_meshes.size():
+		carried_meshes[i].visible = (i == idx)
+
+	if part_checklist:
+		part_checklist.queue_redraw()
+
+func _drop_carried_part() -> void:
+	if carried_part_idx == -1:
+		return
+	var idx = carried_part_idx
+	print("Dropping car part %d: %s" % [idx, PART_NAMES[idx]])
+	_play_sfx(&"part_fell")
+	
+	var parts_root = _get_scavenge_parts_root()
+	var part_node = parts_root.get_node_or_null("WorldPart_%d" % idx) as Node3D if parts_root else null
+	if part_node:
+		part_node.global_position = Vector3(carried_hp.x, 0.25, carried_hp.z)
+		part_node.visible = true
+		if idx < _get_parts().size():
+			_get_parts()[idx].pos = part_node.global_position
+			_get_parts()[idx].state = PS.WORLD
+	
+	if carried_part_root:
+		carried_part_root.visible = false
+	for m in carried_meshes:
+		m.visible = false
+
+	if idx < van_slots.size() and van_slots[idx]:
+		var ghost = van_slots[idx].find_child("Ghost", true, false)
+		if ghost:
+			ghost.visible = false
+
+	carried_part_idx = -1
+	fit_q = -1.0
+	grab_cd = 0.5
+
+	if part_checklist:
+		part_checklist.queue_redraw()
+
+func _update_carried_part(delta: float) -> void:
+	if carried_part_idx == -1:
+		arm_strain = maxf(0.0, arm_strain - 0.20 * delta)
+		if strain_bar:
+			strain_bar.value = arm_strain * 100.0
+		if strain_label:
+			strain_label.text = "💪 ARM STRAIN: %d%% (Drop with Shift+Q if exhausted)" % int(arm_strain * 100.0)
+		return
+	
+	var mass: float = PART_MASS[carried_part_idx]
+	var ext: float = carried_reach - 0.6
+	
+	# Arm strain accumulation
+	arm_strain = minf(1.0, arm_strain + mass * (0.007 + 0.010 * ext) * delta)
+	if strain_bar:
+		strain_bar.value = arm_strain * 100.0
+	if strain_label:
+		strain_label.text = "💪 ARM STRAIN: %d%% (%s %d kg - Drop with Shift+Q)" % [int(arm_strain * 100.0), PART_NAMES[carried_part_idx], int(mass)]
+	
+	# If arms give out or player falls down, drop part!
+	if arm_strain >= 1.0 or is_fallen_down:
+		_play_sfx(&"part_fell")
+		if interact_prompt_lbl:
+			interact_prompt_lbl.text = "⚠️ YOUR ARMS GAVE OUT! PART DROPPED!"
+			interact_prompt_lbl.visible = true
+		_drop_carried_part()
+		return
+	
+	# Drunk tremor & sway
+	var t: float = Time.get_ticks_msec() * 0.001
+	var tremor: float = 0.015 + 0.07 * (drunk_meter / 100.0) + 0.08 * arm_strain * arm_strain
+	var shake := Vector3(sin(t * 7.3), sin(t * 9.1 + 1.0), sin(t * 8.2 + 2.0)) * tremor
+	
+	# Target position in camera space
+	var target: Vector3 = camera.global_transform * Vector3(0.0, -0.22, -carried_reach) + shake
+	target.y -= arm_strain * 0.28
+	
+	# Heavy spring physics (mass inertia & trailing)
+	var m_eff := 1.0 + 0.25 * mass
+	var k := 65.0 / m_eff
+	var accel := (target - carried_hp) * k - carried_hv * (2.0 * sqrt(k) * 0.82)
+	carried_hv = (carried_hv + accel * delta).limit_length(10.0)
+	carried_hp += carried_hv * delta
+	carried_hp.y = maxf(carried_hp.y, 0.2)
+	
+	# Update carried viewmodel transform
+	if carried_part_root and camera and camera.is_inside_tree():
+		carried_part_root.visible = true
+		var local_offset = camera.global_transform.affine_inverse() * carried_hp
+		carried_part_root.position = local_offset
+		carried_part_root.rotation.y = carried_rel_yaw + sin(t * 5.0) * tremor * 0.5
+	
+	# Slot check on Camper Van
+	var slot_node = van_slots[carried_part_idx] if carried_part_idx < van_slots.size() else null
+	if slot_node and slot_node.is_inside_tree():
+		var slot_p = slot_node.global_position
+		var d = carried_hp.distance_to(slot_p)
+		var ghost = slot_node.find_child("Ghost", true, false) as MeshInstance3D
+		if d < 2.5:
+			fit_q = _calc_fit_q(carried_part_idx)
+			if ghost:
+				ghost.visible = true
+				var mat = ghost.material_override as StandardMaterial3D
+				if mat:
+					# GREEN when >= 0.75, YELLOW when 0.45-0.75, RED when < 0.45
+					var col = Color(0.9, 0.2, 0.2)
+					if fit_q >= 0.75:
+						col = Color(0.2, 0.98, 0.35) # Bright neon green!
+					elif fit_q >= 0.45:
+						col = Color(0.95, 0.75, 0.20) # Yellow / Orange
+					mat.albedo_color = Color(col.r, col.g, col.b, 0.65)
+					mat.emission = col
+					mat.emission_energy_multiplier = 1.2 if fit_q >= 0.75 else 0.6
+			if interact_prompt_lbl and not minigame_active:
+				if fit_q >= 0.75:
+					interact_prompt_lbl.text = "🟢 PERFECT FIT! Click Right-Click / LMB or [E] to bolt %s into Van!" % PART_NAMES[carried_part_idx]
+				else:
+					interact_prompt_lbl.text = "⚠️ Line up until GREEN to seat %s (Quality: %d%%)" % [PART_NAMES[carried_part_idx], int(fit_q * 100.0)]
+				interact_prompt_lbl.visible = true
+		else:
+			fit_q = -1.0
+			if ghost:
+				ghost.visible = false
+
+func _calc_fit_q(idx: int) -> float:
+	var slot_node = van_slots[idx] if idx < van_slots.size() else null
+	if not slot_node:
+		return 0.0
+	var slot_pos = slot_node.global_position
+	var dist = carried_hp.distance_to(slot_pos)
+	var pos_q = 1.0 - clampf(dist / 0.85, 0.0, 1.0)
+	var speed_q = 1.0 - clampf(carried_hv.length() / 1.5, 0.0, 1.0)
+	return clampf(pos_q * 0.7 + speed_q * 0.3, 0.0, 1.0)
+
+func _seat_part_perfectly(part_idx: int) -> void:
+	print("🟢 Seated part %d perfectly into Van!" % part_idx)
+	_play_sfx(&"clang")
+	_play_sfx(&"win")
+	
+	if part_idx >= 0 and part_idx < _get_parts().size():
+		_get_parts()[part_idx].state = PS.INSTALLED
+		_get_parts()[part_idx].q = 1.0
+
+	if part_idx < van_slots.size() and van_slots[part_idx]:
+		var inst_mesh = van_slots[part_idx].find_child("Installed", true, false)
+		if inst_mesh:
+			inst_mesh.visible = true
+		var ghost_mesh = van_slots[part_idx].find_child("Ghost", true, false)
+		if ghost_mesh:
+			ghost_mesh.visible = false
+
+	if carried_part_root:
+		carried_part_root.visible = false
+	for m in carried_meshes:
+		m.visible = false
+
+	carried_part_idx = -1
+	fit_q = -1.0
+	arm_strain = 0.0
+
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "★ %s BOLTED SECURELY INTO VAN!" % PART_NAMES[part_idx]
+		interact_prompt_lbl.visible = true
+
+	_check_all_parts_installed()
+
+func _seat_part_crooked(part_idx: int) -> void:
+	print("⚠️ Crooked fit on part %d!" % part_idx)
+	_play_sfx(&"part_fit_bad")
+	_play_sfx(&"rattle")
+	if interact_prompt_lbl:
+		interact_prompt_lbl.text = "⚠️ Crooked fit! Line up until GREEN to seat properly!"
+		interact_prompt_lbl.visible = true
+	_drop_carried_part()
+
+func _check_all_parts_installed() -> void:
+	var count = 0
+	for p in _get_parts():
+		if p.state == PS.INSTALLED:
+			count += 1
+	if count >= 4:
+		print("🎉 ALL 4 PARTS INSTALLED! Camper van is ready to drive!")
+		_play_sfx(&"win")
+		_play_sfx(&"horn")
+		
+		# Turn on camper van headlights!
+		if van_root:
+			for light in van_root.find_children("", "SpotLight3D", true, false):
+				light.light_energy = 8.0
+				light.visible = true
+		
+		if interact_prompt_lbl:
+			interact_prompt_lbl.text = "🚐 ALL 4 PARTS SECURED! The Van is running!\nPress [E] at the driver door to escape home!"
+			interact_prompt_lbl.visible = true
+
+func _update_parts_hud(delta: float) -> void:
+	if grab_cd > 0.0:
+		grab_cd -= delta
+	
+	if part_crosshair:
+		part_crosshair.strain = arm_strain
+		part_crosshair.can_grab = (carried_part_idx == -1 and aim_part_idx != -1)
+		part_crosshair.holding = (carried_part_idx != -1)
+		part_crosshair.fit_q = fit_q
+
+	if wallet_label:
+		wallet_label.text = "$%d" % player_money
+		if player_money < 50:
+			wallet_label.add_theme_color_override("font_color", Color(1.0, 0.35, 0.35))
+		else:
+			wallet_label.add_theme_color_override("font_color", Color(0.35, 1.0, 0.45))
+
+	if part_checklist:
+		part_checklist.queue_redraw()
+
+func show_victory_screen() -> void:
+	if victory_ui:
+		return
+	print("🏆 SHOWING VICTORY SCREEN!")
+	victory_ui = PanelContainer.new()
+	victory_ui.name = "VictoryOverlay"
+	victory_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+	
+	var bg_box = StyleBoxFlat.new()
+	bg_box.bg_color = Color(0.04, 0.06, 0.12, 0.88)
+	bg_box.border_color = Color(0.98, 0.78, 0.25)
+	bg_box.set_border_width_all(4)
+	bg_box.set_corner_radius_all(18)
+	victory_ui.add_theme_stylebox_override("panel", bg_box)
+	
+	var margin = MarginContainer.new()
+	for s in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + s, 36)
+	victory_ui.add_child(margin)
+	
+	var vbox = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 16)
+	margin.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "🎉 YOU MADE IT HOME!"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 42)
+	title.add_theme_color_override("font_color", Color(0.98, 0.82, 0.28))
+	vbox.add_child(title)
+	
+	var subtitle = Label.new()
+	subtitle.text = "The Camper Van was rebuilt while high & drunk!\nAll 4 parts won from the Casino & fitted! Escaped safely!"
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.add_theme_font_size_override("font_size", 20)
+	subtitle.add_theme_color_override("font_color", Color(0.9, 0.92, 0.98))
+	vbox.add_child(subtitle)
+	
+	var hsep = HSeparator.new()
+	vbox.add_child(hsep)
+	
+	var btn_row = HBoxContainer.new()
+	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_row.add_theme_constant_override("separation", 24)
+	vbox.add_child(btn_row)
+	
+	var menu_btn = Button.new()
+	menu_btn.text = "🏠 Return to Home Screen [M]"
+	menu_btn.custom_minimum_size = Vector2(240, 50)
+	menu_btn.pressed.connect(func():
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		get_tree().change_scene_to_file("res://scenes/home_screen.tscn")
+	)
+	btn_row.add_child(menu_btn)
+	
+	var replay_btn = Button.new()
+	replay_btn.text = "🔄 Play Again [R]"
+	replay_btn.custom_minimum_size = Vector2(200, 50)
+	replay_btn.pressed.connect(func():
+		get_tree().reload_current_scene()
+	)
+	btn_row.add_child(replay_btn)
+	
+	var hud_node = get_node_or_null("HUD")
+	if hud_node:
+		hud_node.add_child(victory_ui)
+	else:
+		add_child(victory_ui)
+		
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	is_mouse_unlocked = true

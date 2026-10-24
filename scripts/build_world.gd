@@ -10,6 +10,7 @@ func _init() -> void:
 	create_parking_lot_scene()
 	create_player_scene()
 	create_main_scene()
+	create_home_screen_scene()
 	print("--- All Scenes and Resources Built Successfully! ---")
 	quit(0)
 
@@ -1077,6 +1078,124 @@ func create_van_scene() -> void:
 	dome_light.omni_range = 4.2
 	root.add_child(dome_light)
 
+	# --- 4 CAR PART SLOTS (FOR REPAIR & BALANCE MECHANICS) ---
+	# Slot 0: Battery (Front Hood Engine Bay)
+	var slot_bat = Node3D.new()
+	slot_bat.name = "Slot_Battery"
+	slot_bat.position = Vector3(0.4, 0.9, -2.1)
+	root.add_child(slot_bat)
+
+	var ghost_bat = MeshInstance3D.new()
+	ghost_bat.name = "Ghost"
+	var bm0 = BoxMesh.new()
+	bm0.size = Vector3(0.5, 0.35, 0.35)
+	ghost_bat.mesh = bm0
+	var ghost_m0 = StandardMaterial3D.new()
+	ghost_m0.albedo_color = Color(0.9, 0.2, 0.2, 0.35)
+	ghost_m0.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_m0.emission_enabled = true
+	ghost_m0.emission = Color(0.9, 0.2, 0.2)
+	ghost_m0.emission_energy_multiplier = 0.5
+	ghost_bat.material_override = ghost_m0
+	slot_bat.add_child(ghost_bat)
+
+	var inst_bat = MeshInstance3D.new()
+	inst_bat.name = "Installed"
+	inst_bat.mesh = bm0
+	var real_m0 = StandardMaterial3D.new()
+	real_m0.albedo_color = Color(0.85, 0.15, 0.15)
+	real_m0.roughness = 0.4
+	inst_bat.material_override = real_m0
+	inst_bat.visible = false
+	slot_bat.add_child(inst_bat)
+
+	# Slot 1: Fuel Pump (Side Rear Left)
+	var slot_fuel = Node3D.new()
+	slot_fuel.name = "Slot_FuelPump"
+	slot_fuel.position = Vector3(-1.15, 0.8, 1.8)
+	root.add_child(slot_fuel)
+
+	var ghost_fuel = MeshInstance3D.new()
+	ghost_fuel.name = "Ghost"
+	var cm_f = CylinderMesh.new()
+	cm_f.top_radius = 0.18
+	cm_f.bottom_radius = 0.18
+	cm_f.height = 0.5
+	ghost_fuel.mesh = cm_f
+	var ghost_m1 = StandardMaterial3D.new()
+	ghost_m1.albedo_color = Color(0.9, 0.75, 0.2, 0.35)
+	ghost_m1.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_m1.emission_enabled = true
+	ghost_m1.emission = Color(0.9, 0.75, 0.2)
+	ghost_fuel.material_override = ghost_m1
+	slot_fuel.add_child(ghost_fuel)
+
+	var inst_fuel = MeshInstance3D.new()
+	inst_fuel.name = "Installed"
+	inst_fuel.mesh = cm_f
+	var real_m1 = StandardMaterial3D.new()
+	real_m1.albedo_color = Color(0.95, 0.75, 0.2)
+	inst_fuel.material_override = real_m1
+	inst_fuel.visible = false
+	slot_fuel.add_child(inst_fuel)
+
+	# Slot 2: Spark Plugs (Front Hood Engine Bay)
+	var slot_plugs = Node3D.new()
+	slot_plugs.name = "Slot_SparkPlugs"
+	slot_plugs.position = Vector3(-0.4, 0.9, -2.1)
+	root.add_child(slot_plugs)
+
+	var ghost_plugs = MeshInstance3D.new()
+	ghost_plugs.name = "Ghost"
+	var bm_p = BoxMesh.new()
+	bm_p.size = Vector3(0.3, 0.25, 0.3)
+	ghost_plugs.mesh = bm_p
+	var ghost_m2 = StandardMaterial3D.new()
+	ghost_m2.albedo_color = Color(0.3, 0.9, 0.9, 0.35)
+	ghost_m2.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_m2.emission_enabled = true
+	ghost_m2.emission = Color(0.3, 0.9, 0.9)
+	ghost_plugs.material_override = ghost_m2
+	slot_plugs.add_child(ghost_plugs)
+
+	var inst_plugs = MeshInstance3D.new()
+	inst_plugs.name = "Installed"
+	inst_plugs.mesh = bm_p
+	var real_m2 = StandardMaterial3D.new()
+	real_m2.albedo_color = Color(0.2, 0.85, 0.85)
+	inst_plugs.material_override = real_m2
+	inst_plugs.visible = false
+	slot_plugs.add_child(inst_plugs)
+
+	# Slot 3: Spare Tyre (Mounted on Rear Van Door)
+	var slot_tyre = Node3D.new()
+	slot_tyre.name = "Slot_SpareTyre"
+	slot_tyre.position = Vector3(0.0, 1.1, 2.72)
+	root.add_child(slot_tyre)
+
+	var ghost_tyre = MeshInstance3D.new()
+	ghost_tyre.name = "Ghost"
+	var tm = TorusMesh.new()
+	tm.inner_radius = 0.20
+	tm.outer_radius = 0.44
+	ghost_tyre.mesh = tm
+	ghost_tyre.rotation.x = deg_to_rad(90.0)
+	var ghost_m3 = StandardMaterial3D.new()
+	ghost_m3.albedo_color = Color(0.6, 0.6, 0.6, 0.35)
+	ghost_m3.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ghost_m3.emission_enabled = true
+	ghost_m3.emission = Color(0.6, 0.6, 0.6)
+	ghost_tyre.material_override = ghost_m3
+	slot_tyre.add_child(ghost_tyre)
+
+	var inst_tyre = MeshInstance3D.new()
+	inst_tyre.name = "Installed"
+	inst_tyre.mesh = tm
+	inst_tyre.rotation.x = deg_to_rad(90.0)
+	inst_tyre.material_override = load("res://assets/materials/van_tire_mat.tres")
+	inst_tyre.visible = false
+	slot_tyre.add_child(inst_tyre)
+
 	set_owner_recursive(root, root)
 	var packed = PackedScene.new()
 	packed.pack(root)
@@ -1221,7 +1340,7 @@ func create_pub_casino_scene() -> void:
 		dl.spot_angle = 65.0
 		root.add_child(dl)
 
-	# Porch & Steps
+	# Porch & Smooth Entrance Ramp
 	var porch = MeshInstance3D.new()
 	porch.name = "PorchPlatform"
 	var box_porch = BoxMesh.new()
@@ -1233,10 +1352,20 @@ func create_pub_casino_scene() -> void:
 
 	var porch_col = CollisionShape3D.new()
 	var box_pcol = BoxShape3D.new()
-	box_pcol.size = Vector3(24.0, 0.8, 6.0)
+	box_pcol.size = Vector3(24.0, 0.8, 5.7)
 	porch_col.shape = box_pcol
-	porch_col.position = Vector3(0, 0.4, 16.5)
+	porch_col.position = Vector3(0, 0.4, 16.35)
 	root.add_child(porch_col)
+
+	# Smooth Entrance Collision Ramp (Allows walking smoothly up into the casino without jumping!)
+	var ramp_col = CollisionShape3D.new()
+	ramp_col.name = "EntranceRampCollision"
+	var box_ramp = BoxShape3D.new()
+	box_ramp.size = Vector3(26.0, 0.20, 2.45)
+	ramp_col.shape = box_ramp
+	ramp_col.position = Vector3(0, 0.30, 20.35)
+	ramp_col.rotation.x = deg_to_rad(19.2)
+	root.add_child(ramp_col)
 
 	for step_idx in range(2):
 		var step = MeshInstance3D.new()
@@ -1611,6 +1740,30 @@ func create_pub_casino_scene() -> void:
 	col_pk.position = Vector3(18.0, 1.28, -6.0)
 	root.add_child(col_pk)
 
+	# 3D Real-Life Roulette Table at Z = -2.0 (World Z = -34.0)
+	var roulette_table_script = load("res://scripts/minigames/roulette_table_3d.gd")
+	var roulette_table = Node3D.new()
+	roulette_table.set_script(roulette_table_script)
+	roulette_table.name = "RouletteTable3D"
+	roulette_table.position = Vector3(18.0, 0.8, -2.0)
+	root.add_child(roulette_table)
+
+	# 3D Croupier NPC Antoine standing behind the Roulette Table
+	var antoine = create_npc_node(
+		"Antoine", "VIP Roulette Croupier",
+		[
+			"Mesdames et Messieurs, welcome to the VIP European Roulette table at Ceaser!",
+			"Place your bets on Red, Black, Dozens, or your lucky single number!",
+			"Hit your bet to double or 36x your cash and win the Camper Van Spare Tyre!",
+			"Rien ne va plus! No more bets once the ivory ball is launched!"
+		],
+		Vector3(18.0, 0.8, -1.25), deg_to_rad(180.0),
+		Color(0.88, 0.88, 0.92), Color(0.12, 0.12, 0.15), Color(0.45, 0.15, 0.18)
+	)
+	antoine.name = "NPC_Antoine"
+	antoine.set_meta("is_roulette_npc", true)
+	root.add_child(antoine)
+
 	# Slot Machines
 	var slot_titles = ["777", "JACKPOT", "CHERRY", "BAR"]
 	for s_idx in range(4):
@@ -1735,6 +1888,75 @@ func create_pub_casino_scene() -> void:
 		Color(0.15, 0.75, 0.75), Color(0.12, 0.60, 0.60), Color(0.65, 0.25, 0.15)
 	)
 	root.add_child(chloe)
+
+	# Barney "Bullseye" Briggs - Darts Bookie & Master
+	var barney = create_npc_node(
+		"Barney", "Darts Bookie",
+		[
+			"Fancy your aim with the arrows, mate? Step up to the board!",
+			"Put down a stake with [E]. Score 50+ points and you'll walk away with multiplied cash AND the Camper Van Battery!",
+			"Keep your elbow steady—that Ceaser craft brew gives a wicked wobble to your throwing arm!"
+		],
+		Vector3(14.0, 0.8, -10.6), deg_to_rad(140.0),
+		Color(0.25, 0.45, 0.22), Color(0.18, 0.15, 0.12), Color(0.85, 0.75, 0.35)
+	)
+	barney.name = "NPC_Barney"
+	barney.set_meta("is_darts_npc", true)
+	root.add_child(barney)
+
+	# 3D Dartboard on the Interior Back Wall inside Ceaser Casino
+	# Back wall front surface is at Z = -12.10, floor surface is at Y = 0.80
+	var dartboard_script = load("res://scripts/minigames/dart_board_3d.gd")
+	var dartboard_node = Node3D.new()
+	dartboard_node.set_script(dartboard_script)
+	dartboard_node.name = "DartBoard3D"
+	dartboard_node.position = Vector3(12.0, 2.25, -12.05)
+	dartboard_node.setup_dartboard()
+	root.add_child(dartboard_node)
+
+	# Permanent Baked Throw Line (Oche) on Casino Floor (2.4m in front of Dartboard)
+	var oche_line = MeshInstance3D.new()
+	oche_line.name = "ThrowLineOche"
+	var box_oche = BoxMesh.new()
+	box_oche.size = Vector3(1.8, 0.05, 0.16)
+	oche_line.mesh = box_oche
+	var oche_mat = StandardMaterial3D.new()
+	oche_mat.albedo_color = Color(0.95, 0.78, 0.22)
+	oche_mat.metallic = 0.85
+	oche_mat.roughness = 0.25
+	oche_mat.emission_enabled = true
+	oche_mat.emission = Color(0.95, 0.78, 0.22)
+	oche_mat.emission_energy_multiplier = 0.4
+	oche_line.material_override = oche_mat
+	oche_line.position = Vector3(12.0, 0.825, -9.65)
+	root.add_child(oche_line)
+
+	var oche_lbl = Label3D.new()
+	oche_lbl.name = "ThrowLineLabel"
+	oche_lbl.text = "►► THROW LINE (OCHE) — STAND BEHIND ◄◄"
+	oche_lbl.font_size = 32
+	oche_lbl.modulate = Color(1.0, 0.88, 0.25)
+	oche_lbl.outline_size = 6
+	oche_lbl.outline_modulate = Color(0.1, 0.1, 0.1)
+	oche_lbl.rotation.x = deg_to_rad(-90.0)
+	oche_lbl.position = Vector3(12.0, 0.81, -9.35)
+	root.add_child(oche_lbl)
+
+	# Small Pub Table for Darts & Prizes next to Barney
+	var d_table = MeshInstance3D.new()
+	var box_dt = BoxMesh.new()
+	box_dt.size = Vector3(1.2, 0.85, 1.2)
+	d_table.mesh = box_dt
+	d_table.material_override = pub_wood
+	d_table.position = Vector3(14.2, 0.825, -11.2)
+	root.add_child(d_table)
+
+	var col_dt = CollisionShape3D.new()
+	var box_cdt = BoxShape3D.new()
+	box_cdt.size = Vector3(1.2, 0.85, 1.2)
+	col_dt.shape = box_cdt
+	col_dt.position = d_table.position
+	root.add_child(col_dt)
 
 	set_owner_recursive(root, root)
 	var packed = PackedScene.new()
@@ -1934,6 +2156,63 @@ func create_player_scene() -> void:
 	var vm_root = Node3D.new()
 	vm_root.name = "ViewModels"
 	camera.add_child(vm_root)
+
+	# Carried Car Part Viewmodels
+	var carried_root = Node3D.new()
+	carried_root.name = "CarriedPart"
+	carried_root.visible = false
+	vm_root.add_child(carried_root)
+
+	# 0: Battery
+	var c_bat = MeshInstance3D.new()
+	c_bat.name = "Mesh_0_Battery"
+	var c_bm0 = BoxMesh.new()
+	c_bm0.size = Vector3(0.55, 0.38, 0.35)
+	c_bat.mesh = c_bm0
+	var c_m0 = StandardMaterial3D.new()
+	c_m0.albedo_color = Color(0.9, 0.2, 0.2)
+	c_m0.roughness = 0.4
+	c_bat.material_override = c_m0
+	carried_root.add_child(c_bat)
+
+	# 1: Fuel Pump
+	var c_fuel = MeshInstance3D.new()
+	c_fuel.name = "Mesh_1_FuelPump"
+	var c_cm1 = CylinderMesh.new()
+	c_cm1.top_radius = 0.16
+	c_cm1.bottom_radius = 0.16
+	c_cm1.height = 0.55
+	c_fuel.mesh = c_cm1
+	var c_m1 = StandardMaterial3D.new()
+	c_m1.albedo_color = Color(0.95, 0.75, 0.2)
+	c_fuel.material_override = c_m1
+	c_fuel.visible = false
+	carried_root.add_child(c_fuel)
+
+	# 2: Spark Plugs
+	var c_plugs = MeshInstance3D.new()
+	c_plugs.name = "Mesh_2_SparkPlugs"
+	var c_cm2 = CylinderMesh.new()
+	c_cm2.top_radius = 0.08
+	c_cm2.bottom_radius = 0.08
+	c_cm2.height = 0.45
+	c_plugs.mesh = c_cm2
+	var c_m2 = StandardMaterial3D.new()
+	c_m2.albedo_color = Color(0.2, 0.85, 0.85)
+	c_plugs.material_override = c_m2
+	c_plugs.visible = false
+	carried_root.add_child(c_plugs)
+
+	# 3: Spare Tyre
+	var c_tyre = MeshInstance3D.new()
+	c_tyre.name = "Mesh_3_SpareTyre"
+	var c_tm3 = TorusMesh.new()
+	c_tm3.inner_radius = 0.18
+	c_tm3.outer_radius = 0.42
+	c_tyre.mesh = c_tm3
+	c_tyre.material_override = load("res://assets/materials/van_tire_mat.tres")
+	c_tyre.visible = false
+	carried_root.add_child(c_tyre)
 
 	# Materials for Smoking viewmodels
 	var cig_paper_mat = load("res://assets/materials/cig_paper.tres")
@@ -2362,6 +2641,12 @@ func create_player_scene() -> void:
 	crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center.add_child(crosshair)
 
+	var shaky_holder = CenterContainer.new()
+	shaky_holder.name = "ShakyHolder"
+	shaky_holder.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shaky_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(shaky_holder)
+
 	# Controls & Status UI Overlay
 	var margin = MarginContainer.new()
 	margin.name = "ControlsUI"
@@ -2387,6 +2672,28 @@ func create_player_scene() -> void:
 	title_lbl.add_theme_font_size_override("font_size", 16)
 	title_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(title_lbl)
+
+	var strain_box = HBoxContainer.new()
+	strain_box.name = "StrainContainer"
+	strain_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	vbox.add_child(strain_box)
+
+	var strain_lbl = Label.new()
+	strain_lbl.name = "StrainLabel"
+	strain_lbl.text = "💪 ARM STRAIN: 0% (Drop with [Q] if exhausted)"
+	strain_lbl.add_theme_font_size_override("font_size", 12)
+	strain_lbl.add_theme_color_override("font_color", Color(0.95, 0.80, 0.35))
+	strain_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	strain_box.add_child(strain_lbl)
+
+	var strain_bar = ProgressBar.new()
+	strain_bar.name = "StrainBar"
+	strain_bar.min_value = 0.0
+	strain_bar.max_value = 100.0
+	strain_bar.value = 0.0
+	strain_bar.custom_minimum_size = Vector2(240, 14)
+	strain_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	strain_box.add_child(strain_bar)
 
 	# --- 1. COMA LIFELINE RED BAR (AVOID COMA: KEEP SMOKING OR DRINKING!) ---
 	var buzz_box = HBoxContainer.new()
@@ -2700,7 +3007,49 @@ func create_main_scene() -> void:
 	van.rotation.y = deg_to_rad(90.0)
 	root.add_child(van)
 
-	# 6. Player (spawns firmly at floor level Y = 0.0, Z = 24.0)
+	# 6. Scavengeable Car Parts (Station Tables in/around Ceaser Pub & Casino)
+	var parts_root = Node3D.new()
+	parts_root.name = "ScavengeParts"
+	root.add_child(parts_root)
+
+	# Part 0: Battery (12 kg) - Won at Darts Station inside Casino
+	var p0 = create_scavenge_part_node(0, "Battery", 12.0, Vector3(14.2, 1.35, -43.2), Color(0.92, 0.22, 0.22))
+	p0.visible = false
+	parts_root.add_child(p0)
+
+	# Part 1: Fuel Pump (5 kg) - Won at Cup Pong Station inside Casino
+	var p1 = create_scavenge_part_node(1, "Fuel Pump", 5.0, Vector3(-6.0, 1.35, -26.0), Color(0.95, 0.75, 0.2))
+	p1.visible = false
+	parts_root.add_child(p1)
+
+	# Part 2: Spark Plugs (0.4 kg) - Won at Slot Machine Station inside Casino
+	var p2 = create_scavenge_part_node(2, "Spark Plugs", 0.4, Vector3(-16.0, 1.35, -32.0), Color(0.3, 0.9, 0.9))
+	p2.visible = false
+	parts_root.add_child(p2)
+
+	# Part 3: Spare Tyre (9 kg) - Won at Casino Roulette Station inside Casino
+	var p3 = create_scavenge_part_node(3, "Spare Tyre", 9.0, Vector3(20.0, 0.95, -34.0), Color(0.18, 0.18, 0.22))
+	p3.visible = false
+	parts_root.add_child(p3)
+
+	# 7. Casino Minigame Stations (All Inside the Ceaser Pub & Casino!)
+	var stations_root = Node3D.new()
+	stations_root.name = "MinigameStations"
+	root.add_child(stations_root)
+
+	var s0 = create_minigame_station_node(0, "Darts", "🎯 PLAY DARTS WITH BARNEY (BET & WIN BATTERY)", Vector3(13.8, 0.8, -42.8), Color(0.95, 0.25, 0.25))
+	stations_root.add_child(s0)
+
+	var s1 = create_minigame_station_node(1, "Cup Pong", "🏓 PLAY CUP PONG (WIN FUEL PUMP)", Vector3(-6.0, 0.8, -26.0), Color(0.95, 0.75, 0.20))
+	stations_root.add_child(s1)
+
+	var s2 = create_minigame_station_node(2, "Slots", "🎰 PLAY SLOTS (WIN SPARK PLUGS)", Vector3(-18.0, 0.8, -32.0), Color(0.30, 0.85, 0.95))
+	stations_root.add_child(s2)
+
+	var s3 = create_minigame_station_node(3, "Roulette", "🎲 PLAY 3D ROULETTE WITH ANTOINE (BET & WIN SPARE TYRE)", Vector3(18.0, 0.8, -34.0), Color(0.85, 0.20, 0.25))
+	stations_root.add_child(s3)
+
+	# 8. Player (spawns firmly at floor level Y = 0.0, Z = 24.0)
 	var player_scene = load("res://scenes/player.tscn")
 	var player = player_scene.instantiate()
 	player.name = "Player"
@@ -2710,4 +3059,154 @@ func create_main_scene() -> void:
 	set_owner_recursive(root, root)
 	var packed = PackedScene.new()
 	packed.pack(root)
-	ResourceSaver.save(packed, "res://scenes/main.tscn")
+	ResourceSaver.save(packed, "res://scenes/feature_main.tscn")
+
+func create_home_screen_scene() -> void:
+	var builder = load("res://scripts/build_home_screen.gd").new()
+	builder.build_home_screen()
+
+
+func create_scavenge_part_node(idx: int, part_name: String, mass: float, pos: Vector3, col: Color) -> StaticBody3D:
+	var sb = StaticBody3D.new()
+	sb.name = "WorldPart_%d" % idx
+	sb.position = pos
+	sb.add_to_group("car_parts")
+	sb.set_meta("part_idx", idx)
+	sb.set_meta("part_name", part_name)
+	sb.set_meta("part_mass", mass)
+
+	var cs = CollisionShape3D.new()
+	cs.name = "Collision"
+	var sph = SphereShape3D.new()
+	sph.radius = 0.6
+	cs.shape = sph
+	sb.add_child(cs)
+
+	var mi = MeshInstance3D.new()
+	mi.name = "Mesh"
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = col
+	mat.roughness = 0.5
+	mat.emission_enabled = true
+	mat.emission = col
+	mat.emission_energy_multiplier = 0.45
+
+	match idx:
+		0: # Battery
+			var b = BoxMesh.new()
+			b.size = Vector3(0.55, 0.40, 0.35)
+			mi.mesh = b
+			mi.material_override = mat
+			sb.add_child(mi)
+			for tx in [-0.18, 0.18]:
+				var term = MeshInstance3D.new()
+				var cyl = CylinderMesh.new()
+				cyl.top_radius = 0.04
+				cyl.bottom_radius = 0.04
+				cyl.height = 0.08
+				term.mesh = cyl
+				term.position = Vector3(tx, 0.22, 0.0)
+				term.material_override = load("res://assets/materials/lighter_metal.tres")
+				sb.add_child(term)
+		1: # Fuel Pump
+			var cyl = CylinderMesh.new()
+			cyl.top_radius = 0.18
+			cyl.bottom_radius = 0.18
+			cyl.height = 0.65
+			mi.mesh = cyl
+			mi.material_override = mat
+			sb.add_child(mi)
+			var pipe = MeshInstance3D.new()
+			var p_cyl = CylinderMesh.new()
+			p_cyl.top_radius = 0.04
+			p_cyl.bottom_radius = 0.04
+			p_cyl.height = 0.4
+			pipe.mesh = p_cyl
+			pipe.rotation.z = deg_to_rad(65.0)
+			pipe.position = Vector3(0.18, 0.15, 0.0)
+			pipe.material_override = load("res://assets/materials/van_tire_mat.tres")
+			sb.add_child(pipe)
+		2: # Spark Plugs
+			var cyl = CylinderMesh.new()
+			cyl.top_radius = 0.08
+			cyl.bottom_radius = 0.08
+			cyl.height = 0.45
+			mi.mesh = cyl
+			mi.material_override = mat
+			sb.add_child(mi)
+		3: # Spare Tyre
+			var tm = TorusMesh.new()
+			tm.inner_radius = 0.20
+			tm.outer_radius = 0.45
+			mi.mesh = tm
+			mi.material_override = load("res://assets/materials/van_tire_mat.tres")
+			mi.rotation.x = deg_to_rad(90.0)
+			sb.add_child(mi)
+			var rim = MeshInstance3D.new()
+			var rm = CylinderMesh.new()
+			rm.top_radius = 0.22
+			rm.bottom_radius = 0.22
+			rm.height = 0.22
+			rim.mesh = rm
+			rim.rotation.x = deg_to_rad(90.0)
+			rim.material_override = load("res://assets/materials/lighter_metal.tres")
+			sb.add_child(rim)
+
+	var glow = OmniLight3D.new()
+	glow.name = "BeaconGlow"
+	glow.light_color = col
+	glow.light_energy = 1.2
+	glow.omni_range = 4.5
+	glow.position.y = 0.5
+	sb.add_child(glow)
+
+	return sb
+
+func create_minigame_station_node(idx: int, game_name: String, label_text: String, pos: Vector3, col: Color) -> Node3D:
+	var st = Area3D.new()
+	st.name = "Station_%d_%s" % [idx, game_name]
+	st.position = pos
+	st.add_to_group("minigame_stations")
+	st.set_meta("station_idx", idx)
+	st.set_meta("game_name", game_name)
+	st.set_meta("label_text", label_text)
+
+	var cs = CollisionShape3D.new()
+	var sph = SphereShape3D.new()
+	sph.radius = 2.5
+	cs.shape = sph
+	st.add_child(cs)
+
+	var lbl = Label3D.new()
+	lbl.name = "FloatingLabel"
+	lbl.text = label_text + "\n[E] Play Minigame"
+	lbl.font_size = 28
+	lbl.outline_size = 6
+	lbl.modulate = col
+	lbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	lbl.position = Vector3(0, 1.4, 0)
+	lbl.no_depth_test = false
+	st.add_child(lbl)
+
+	var glow = OmniLight3D.new()
+	glow.name = "StationGlow"
+	glow.light_color = col
+	glow.light_energy = 1.6
+	glow.omni_range = 3.5
+	glow.position = Vector3(0, 0.5, 0)
+	st.add_child(glow)
+
+	var ped = MeshInstance3D.new()
+	var cm = CylinderMesh.new()
+	cm.top_radius = 0.35
+	cm.bottom_radius = 0.45
+	cm.height = 0.8
+	ped.mesh = cm
+	var m = StandardMaterial3D.new()
+	m.albedo_color = Color(0.12, 0.12, 0.15)
+	m.roughness = 0.4
+	ped.material_override = m
+	ped.position.y = 0.4
+	st.add_child(ped)
+
+	return st
