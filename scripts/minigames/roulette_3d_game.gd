@@ -44,9 +44,13 @@ var bet_amount: int = 50
 var bet_type: String = "RED"
 var bet_param: Variant = null
 
-# Camera Rig for 3D Cutscene
-var original_cam_transform: Transform3D
-var session_camera: Camera3D = null
+# Camera Transition Rig (uses player body & camera directly, matching Darts)
+var cutscene_start_player_pos: Vector3 = Vector3.ZERO
+var cutscene_start_player_yaw: float = 0.0
+var cutscene_start_head_pitch: float = 0.0
+var target_player_table_pos: Vector3 = Vector3(17.32, 0.80, -32.85)
+var target_player_yaw: float = 0.0
+var target_head_pitch: float = deg_to_rad(-36.0)
 
 # Physics Simulation Variables
 var rotor_angle: float = 0.0
@@ -96,45 +100,38 @@ func start_roulette_session(
 		elif p_table.get_parent() and p_table.get_parent().has_method("set_rotor_rotation"):
 			roulette_table = p_table.get_parent()
 
-	if not roulette_table:
-		# Fallback: search tree
+	if not roulette_table and is_inside_tree() and get_tree().root:
 		roulette_table = get_tree().root.find_child("RouletteTable3D", true, false) as Node3D
 
 	if roulette_table and roulette_table.has_method("clear_win_marker"):
 		roulette_table.clear_win_marker()
 
-	# Create Session Cinematic Camera
-	_setup_session_camera()
+	# Record cutscene start parameters from player
+	if player:
+		cutscene_start_player_pos = player.global_position
+		cutscene_start_player_yaw = player.rotation.y
+		if ("head" in player) and player.head:
+			cutscene_start_head_pitch = player.head.rotation.x
+		if roulette_table and roulette_table.is_inside_tree():
+			var table_pos = roulette_table.global_position
+			target_player_table_pos = table_pos + Vector3(-0.68, 0.0, 1.15)
+	
 	_setup_hud()
 
-	# Transition in
+	# Transition in (0.65s smooth walk to front of table overlooking wheel)
 	state = SessionState.TRANSITION_IN
 	state_timer = 0.65
 	_play_sfx(&"clang")
 
-func _setup_session_camera() -> void:
-	if not player:
-		return
-	var player_cam = player.find_child("Camera3D", true, false) as Camera3D
-	if player_cam:
-		original_cam_transform = player_cam.global_transform
-	
-	session_camera = Camera3D.new()
-	session_camera.name = "RouletteCinematicCam"
-	add_child(session_camera)
-
-	# Position camera overlooking roulette bowl & felt from player side
-	var table_global_pos = roulette_table.global_position if roulette_table else Vector3(18.0, 0.8, -34.0)
-	var bowl_world_pos = table_global_pos + Vector3(-0.68, 0.88, 0.0)
-
-	# Vantage point: elevated above table looking down onto wheel bowl
-	session_camera.global_position = bowl_world_pos + Vector3(0.0, 1.15, 1.05)
-	session_camera.look_at(bowl_world_pos + Vector3(0.0, -0.05, 0.0), Vector3.UP)
-	session_camera.current = true
-
 func _setup_hud() -> void:
 	hud_overlay = CanvasLayer.new()
 	add_child(hud_overlay)
+
+	var root_ctrl = Control.new()
+	root_ctrl.name = "Root"
+	root_ctrl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root_ctrl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_overlay.add_child(root_ctrl)
 
 	var panel = PanelContainer.new()
 	panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -144,12 +141,14 @@ func _setup_hud() -> void:
 	panel.offset_bottom = 110
 
 	var box = StyleBoxFlat.new()
-	box.bg_color = Color(0.05, 0.07, 0.12, 0.90)
+	box.bg_color = Color(0.05, 0.07, 0.12, 0.92)
 	box.border_color = Color(0.96, 0.78, 0.22)
 	box.set_border_width_all(2)
 	box.set_corner_radius_all(12)
+	box.shadow_size = 14
+	box.shadow_color = Color(0, 0, 0, 0.75)
 	panel.add_theme_stylebox_override("panel", box)
-	hud_overlay.add_child(panel)
+	root_ctrl.add_child(panel)
 
 	var vbox = VBoxContainer.new()
 	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -180,13 +179,20 @@ func _process(delta: float) -> void:
 	# Always simulate rotor deceleration smoothly
 	rotor_speed = maxf(0.0, rotor_speed - rotor_friction * delta)
 	rotor_angle = fmod(rotor_angle + rotor_speed * delta, TAU)
-	if roulette_table:
+	if roulette_table and roulette_table.has_method("set_rotor_rotation"):
 		roulette_table.set_rotor_rotation(rotor_angle)
 
 	# State Machine for 3D Roulette Spin & Ball Physics
 	match state:
 		SessionState.TRANSITION_IN:
 			state_timer -= delta
+			var t = clampf(1.0 - (state_timer / 0.65), 0.0, 1.0)
+			var smooth_t = ease(t, -2.0)
+			if player:
+				player.global_position = cutscene_start_player_pos.lerp(target_player_table_pos, smooth_t)
+				player.rotation.y = lerp_angle(cutscene_start_player_yaw, target_player_yaw, smooth_t)
+				if ("head" in player) and player.head:
+					player.head.rotation.x = lerpf(cutscene_start_head_pitch, target_head_pitch, smooth_t)
 			if state_timer <= 0.0:
 				_launch_ball()
 
@@ -408,14 +414,10 @@ func _evaluate_bet_result() -> void:
 			sub_label.text = "Better luck next spin! Try again with Croupier Antoine."
 
 func _finish_session() -> void:
-	# Restore player camera
-	if session_camera:
-		session_camera.current = false
-		session_camera.queue_free()
-	
-	var player_cam = player.find_child("Camera3D", true, false) as Camera3D if player else null
-	if player_cam:
-		player_cam.current = true
+	if player and ("head" in player) and player.head:
+		var tw = player.create_tween()
+		if tw:
+			tw.tween_property(player.head, "rotation:x", 0.0, 0.25)
 
 	if hud_overlay:
 		hud_overlay.queue_free()

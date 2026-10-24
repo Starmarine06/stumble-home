@@ -1,5 +1,5 @@
 class_name DartsBettingDialog
-extends PanelContainer
+extends Control
 
 ## Casino Darts Betting Modal with Enhanced Sliding Bar System & Stepper Controls
 ## Minimum bet: $50, Maximum bet: Player's total shared wallet cash (Allows calling ALL IN).
@@ -20,26 +20,50 @@ func _init(p_cash: int = 1000) -> void:
 	player_cash = p_cash
 	var min_allowed = mini(50, player_cash) if player_cash > 0 else 0
 	current_bet = min_allowed
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(580, 500)
-	set_anchors_preset(PRESET_CENTER)
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+	# 1. Dim Backdrop Overlay (Focuses player attention on modal dialog)
+	var backdrop = ColorRect.new()
+	backdrop.name = "Backdrop"
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0.02, 0.03, 0.06, 0.70)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(backdrop)
+
+	# 2. Centering Container (Guarantees dead center placement on any screen resolution)
+	var center = CenterContainer.new()
+	center.name = "CenterContainer"
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(center)
+
+	# 3. Main Modal Panel
+	var modal_panel = PanelContainer.new()
+	modal_panel.name = "ModalPanel"
+	modal_panel.custom_minimum_size = Vector2(580, 500)
+	modal_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	center.add_child(modal_panel)
 	
 	var sb = StyleBoxFlat.new()
 	sb.bg_color = Color(0.07, 0.09, 0.14, 0.98)
 	sb.border_color = Color(0.95, 0.78, 0.22)
 	sb.set_border_width_all(3)
 	sb.set_corner_radius_all(14)
-	sb.shadow_size = 24
-	sb.shadow_color = Color(0, 0, 0, 0.8)
-	add_theme_stylebox_override("panel", sb)
+	sb.shadow_size = 28
+	sb.shadow_color = Color(0, 0, 0, 0.85)
+	modal_panel.add_theme_stylebox_override("panel", sb)
 
 	var margin = MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 28)
 	margin.add_theme_constant_override("margin_right", 28)
 	margin.add_theme_constant_override("margin_top", 22)
 	margin.add_theme_constant_override("margin_bottom", 22)
-	add_child(margin)
+	modal_panel.add_child(margin)
 
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 10)

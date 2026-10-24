@@ -201,8 +201,7 @@ func _test_roulette_3d_physics_and_payout() -> void:
 	root.add_child(session)
 
 	session.start_roulette_session(dummy_player, table, null, 100, "RED")
-	assert(session.session_camera != null, "Session cinematic camera must be created")
-	assert(session.session_camera.current == true, "Cinematic camera must be active")
+	assert(session.hud_overlay != null, "HUD overlay must be created")
 
 	# Step physics forward through phases
 	print("  Simulating real-life rotor clockwise spin & counter-clockwise ball launch...")

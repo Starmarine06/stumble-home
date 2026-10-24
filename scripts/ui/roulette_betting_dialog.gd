@@ -1,8 +1,9 @@
 class_name RouletteBettingDialog
-extends PanelContainer
+extends Control
 
 ## Enhanced 3D Roulette Betting Dialog
 ## Features:
+## - 100% Dead-Center Full-Screen Modal Overlay with Cinematic Dim Backdrop
 ## - Full wallet scaling ($50 min to full wallet max)
 ## - Stepper buttons [- $50], [- $10], Slider, [+ $10], [+ $50]
 ## - Percentage presets [Min ($50)], [25%], [50%], [75%], [🔥 ALL IN]
@@ -35,8 +36,8 @@ func _init(p_wallet: int = 1000) -> void:
 	if current_bet < 50:
 		current_bet = wallet_cash
 	
+	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	custom_minimum_size = Vector2(580, 560)
 	
 	tree_exited.connect(func():
 		var tree = Engine.get_main_loop() as SceneTree
@@ -47,25 +48,46 @@ func _init(p_wallet: int = 1000) -> void:
 	)
 
 func _ready() -> void:
-	# Center on screen
-	set_anchors_preset(Control.PRESET_CENTER)
-	grow_horizontal = Control.GROW_DIRECTION_BOTH
-	grow_vertical = Control.GROW_DIRECTION_BOTH
+	# Ensure full rect coverage
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+	# 1. Dim Backdrop Overlay (Focuses player attention on modal dialog)
+	var backdrop = ColorRect.new()
+	backdrop.name = "Backdrop"
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0.02, 0.03, 0.06, 0.70)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(backdrop)
+
+	# 2. Centering Container (Guarantees dead center placement on any screen resolution)
+	var center = CenterContainer.new()
+	center.name = "CenterContainer"
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(center)
+
+	# 3. Main Modal Panel
+	var modal_panel = PanelContainer.new()
+	modal_panel.name = "ModalPanel"
+	modal_panel.custom_minimum_size = Vector2(580, 560)
+	modal_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	center.add_child(modal_panel)
 	
 	# Rich Casino Gold & Dark Slate Box Style
 	var box = StyleBoxFlat.new()
-	box.bg_color = Color(0.06, 0.08, 0.12, 0.96)
+	box.bg_color = Color(0.06, 0.08, 0.12, 0.98)
 	box.border_color = Color(0.96, 0.78, 0.22) # Gold
 	box.set_border_width_all(3)
 	box.set_corner_radius_all(16)
-	box.shadow_size = 18
-	box.shadow_color = Color(0, 0, 0, 0.75)
-	add_theme_stylebox_override("panel", box)
+	box.shadow_size = 28
+	box.shadow_color = Color(0, 0, 0, 0.85)
+	modal_panel.add_theme_stylebox_override("panel", box)
 
 	var margin = MarginContainer.new()
 	for s in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + s, 22)
-	add_child(margin)
+	modal_panel.add_child(margin)
 
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 12)
