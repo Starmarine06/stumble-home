@@ -6,6 +6,8 @@ extends SceneTree
 const OLD := {
 	"trip_min": 6.0, "trip_max": 14.0, "trip_level_base": 1.6,
 	"trip_stun_base": 0.7, "trip_stun_per_level": 0.6,
+	"stumble_gain": 0.25, "stumble_drain": 0.5,
+	"stumble_threshold": 1.0, "stumble_warn_time": 1.2,
 	"grab_cooldown": 0.4, "pickup_strain": 0.1,
 	"loose_min": 10.0, "loose_max": 22.0, "loose_q_base": 0.4,
 	"passout_secs": 25.0, "fatigue_carry_base": 0.01, "fatigue_carry_per_kg": 0.003,
@@ -69,21 +71,25 @@ func _run() -> void:
 	_check(is_equal_approx(game.wanted, 42.0), "cop success lowers wanted by 8")
 	game.phase = game.Phase.MENU
 
-	# A level 0.9 Drunk trips inside an overridden window.
-	Tuning.apply({"trip_min": 2.0, "trip_max": 2.0})
+	# A fast-moving level 0.9 Drunk trips inside an overridden window; an idle one never does.
+	Tuning.apply({"stumble_gain": 2.0, "stumble_warn_time": 0.5})
 	var dr := Drunk.new(0.9)
-	var trips := [0]
+	var idle := Drunk.new(0.9)
+	var trips := [0, 0]
 	var first := [-1.0]
 	dr.tripped.connect(func(): trips[0] += 1)
+	idle.tripped.connect(func(): trips[1] += 1)
 	var t := 0.0
 	while t < 3.0:
-		dr.tick(1.0 / 60.0)
+		dr.tick(1.0 / 60.0, true, 1.0)
+		idle.tick(1.0 / 60.0, true, 0.0)
 		t += 1.0 / 60.0
 		if trips[0] > 0 and first[0] < 0.0:
 			first[0] = t
-	# interval = 2.0 * (1.6 - level) with level 0.9 = 1.4 s
-	_check(trips[0] >= 1, "drunk tripped under overridden interval")
+	# risk fills in ~0.36 s at gain 2, then 0.5 s warning
+	_check(trips[0] >= 1, "fast drunk tripped under overridden stumble tuning")
 	_check(first[0] > 0.0 and first[0] <= 1.5, "first trip inside override window (%.2fs)" % first[0])
+	_check(trips[1] == 0, "idle drunk never trips")
 
 	# defaults() restores everything.
 	Tuning.apply({"cop_repeat_min": 1.0, "trip_min": 2.0, "nav_wrong_rate": 0.9})
