@@ -31,6 +31,7 @@ HSessions="*res://addons/epic-online-services-godot/heos/hsessions.gd"
 Net="*res://scripts/autoload/net.gd"
 Game="*res://scripts/autoload/game.gd"
 Audio="*res://scripts/autoload/audio.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
@@ -46,7 +47,7 @@ project/assembly_name="Stumble Home"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/epic-online-services-godot/plugin.cfg")
+enabled=PackedStringArray("res://addons/epic-online-services-godot/plugin.cfg", "res://addons/godot_ai/plugin.cfg")
 
 [input]
 

@@ -55,6 +55,17 @@ func _host() -> void:
 		Input.action_press("right")
 		await physics_frame
 	Input.action_release("right")
+
+	# A delivery job: the client sees it, takes the pillion seat, and hops off again
+	_game.s_take_order(_game.orders[0].id)
+	_check(not _game.job.is_empty(), "host takes a delivery job")
+	_check(await _until(func(): return _game.seat_pillion != 0 and _game.seat_pillion != 1, 20.0), "host grants the client the pillion seat")
+	_check(await _until(func(): return _game.seat_pillion == 0, 20.0), "client hops off the scooter again")
+	_game.s_abandon_job()
+	_check(_game.job.is_empty(), "host bins the job")
+	_game.earn(PartsShop.total() + 77, "test")
+	for i in _game.parts.size():
+		_game.s_buy(i)
 	for i in _game.parts.size():
 		var guard := 0
 		_game.fatigue.clear()
@@ -106,6 +117,15 @@ func _client() -> void:
 	var spawn := Game_CAR + Vector3(cos(0.6) * 7.0, 1.0, sin(0.6) * 7.0)
 	var host_player := _world().players.get_node_or_null("1") as Node3D
 	_check(host_player != null and await _until(func(): return host_player.position.distance_to(spawn) > 1.5, 10.0), "host player's movement replicates to client")
+	_check(await _until(func(): return not _game.job.is_empty() and _game.orders.size() == Deliveries.BOARD_SIZE, 20.0), "client sees the host's delivery job")
+	_game.request_seat(2)
+	_check(await _until(func(): return _game.seat_pillion == _game.my_id(), 10.0), "the host seats the client behind the driver")
+	_check(await _until(func(): return _world().local_player().riding == 2, 5.0), "the client rides pillion")
+	await create_timer(1.0).timeout
+	_game.request_unseat()
+	_check(await _until(func(): return _game.seat_pillion == 0 and _world().local_player().riding == 0, 10.0), "the client hops off")
+	_check(await _until(func(): return _game.job.is_empty(), 10.0), "the binned job reaches the client")
+	_check(await _until(func(): return _game.money == 277, 20.0), "client sees the shared pool after the purchases")
 	_check(await _until(func(): return _game.all_installed(), 20.0), "client sees all parts installed")
 	_check(await _until(func(): return _world() != null and _world().drive != null, 10.0), "client drive built")
 	var d = _world().drive

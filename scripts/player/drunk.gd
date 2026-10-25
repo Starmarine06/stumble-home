@@ -31,6 +31,10 @@ func sober(amount: float) -> void:
 	level = maxf(0.25, level - amount)
 
 
+func add(amount: float) -> void:
+	level = minf(1.5, level + amount)
+
+
 func lag() -> float:
 	return 0.08 + 0.3 * level
 

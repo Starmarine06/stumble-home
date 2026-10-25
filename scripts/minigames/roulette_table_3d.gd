@@ -767,7 +767,7 @@ func _evaluate_payout() -> void:
 			active_player._on_minigame_won(3) # Award Spare Tyre!
 
 		if status_label_3d:
-			status_label_3d.text = "🎉 WINNER! NUMBER %d (%s)!\nPayout: +$%d  •  SPARE TYRE WON!" % [winning_number, winning_color, payout]
+			status_label_3d.text = "🎉 WINNER! NUMBER %d (%s)!\nPayout: +$%d" % [winning_number, winning_color, payout]
 			status_label_3d.modulate = Color(0.35, 1.0, 0.45)
 	else:
 		_play_sfx(&"part_fit_bad")

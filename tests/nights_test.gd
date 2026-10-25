@@ -22,9 +22,8 @@ func _tuning_is_default() -> bool:
 func _init() -> void:
 	_check(Nights.count() >= 2, "at least two nights")
 	var n1 := Nights.get_night(0)
-	_check(n1.legs == 7, "night 1 legs = 7")
-	_check(n1.leg_len == [70.0, 120.0], "night 1 leg length 70-120")
-	_check(n1.part_radius == [14.0, 34.0], "night 1 part radius 14-34")
+	_check(n1.home_blocks == [9, 14], "night 1 home is 9 to 14 blocks away")
+	_check(n1.start_money == 200, "night 1 starting money")
 	_check(not n1.kebab_shop, "night 1 no kebab shop")
 	_check(n1.tuning.is_empty(), "night 1 no overrides")
 	var h1: Dictionary = n1.hazards
@@ -37,7 +36,7 @@ func _init() -> void:
 	var h2: Dictionary = n2.hazards
 	_check(int(h2.traffic_count) + int(h2.dog_count) + int(h2.mugger_count) > 0, "night 2 hazards on")
 	_check(n2.kebab_shop, "night 2 kebab shop")
-	_check(int(n2.legs) > int(n1.legs), "night 2 more legs")
+	_check(int(n2.home_blocks[0]) > int(n1.home_blocks[0]), "night 2 home is further away")
 	Nights.apply_tuning(1)
 	var d := Tuning.defaults()
 	var changed := 0

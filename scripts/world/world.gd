@@ -1,12 +1,13 @@
 class_name World
 extends Node3D
-## One night: the junkyard where the crew finds and fits car parts, then the
-## drive home (see Drive). Visuals are built in code from the shared seed so
-## every peer sees the same layout.
+## One night: the crew earns money around the casino, buys the car parts and fits them,
+## then drives home across the city (see Drive). The city is built in code from the shared
+## seed (see CityLayout and CityBuilder) so every peer sees the same streets.
 
 const CarFxClass = preload("res://scripts/world/car_fx.gd")
 const CarModelClass = preload("res://scripts/world/car_model.gd")
-const YardPropsClass = preload("res://scripts/world/yard_props.gd")
+const TERMINAL_POS := Vector3(-8.0, 0.0, 0.0)
+const UI_LAYER := 11          # the drunk effect sits at 5, the HUD at 10
 
 var players: Node3D
 var spawner: MultiplayerSpawner
@@ -15,8 +16,17 @@ var cam: Camera3D
 var hud: Hud
 var drive: Drive
 var kebab_panel: KebabPanel
+var shop_panel: PartsShopPanel
+var terminal: Interactable
+var casino: Casino
+var city: CityBuilder
+var delivery: DeliverySite
+var shops: ShopSite
+var modal: Control
+## Layout space to world space: the car park sits on the world origin, whatever the seed.
+var city_offset := Vector3.ZERO
 
-var _yard: Node3D
+var _carpark: Node3D
 var _part_nodes: Array = []
 var car_fx: Node = null
 var _last_repair := -1.0
@@ -32,10 +42,26 @@ var _look := Vector2.ZERO  # cab view: x = yaw, y = pitch
 func _ready() -> void:
 	add_to_group("world")
 	_build_environment()
-	_yard = Node3D.new()
-	_yard.name = "Yard"
-	add_child(_yard)
-	_build_yard()
+	city_offset = -Game.city.carpark_center()
+	city = CityBuilder.new()
+	city.name = "City"
+	city.position = city_offset
+	add_child(city)
+	city.setup(Game.city)
+	delivery = DeliverySite.new()
+	delivery.name = "Delivery"
+	delivery.world = self
+	add_child(delivery)
+	shops = ShopSite.new()
+	shops.name = "Shops"
+	shops.world = self
+	add_child(shops)
+	city.special_hook = _on_special
+	city.build_around([Vector3.ZERO])
+	_carpark = Node3D.new()
+	_carpark.name = "CarPark"
+	add_child(_carpark)
+	_build_carpark_props()
 	car = _make_car()
 	car.position = Game.CAR_POS
 	add_child(car)
@@ -43,12 +69,12 @@ func _ready() -> void:
 	car_fx.name = "CarFx"
 	car.add_child(car_fx)
 	car_fx.setup(car)
-	var keep: Array = [Game.CAR_POS]
-	for p in Game.parts:
-		keep.append(p.pos)
-	for cp in Game.coolers:
-		keep.append(cp)
-	_yard.add_child(YardPropsClass.build(Game.world_seed, keep))
+	_build_terminal()
+	casino = Casino.new()
+	casino.name = "Casino"
+	casino.position = Game.city.casino_origin() + city_offset
+	add_child(casino)
+	delivery.setup()
 	for i in Game.parts.size():
 		var n := _make_part(i)
 		_part_nodes.append(n)
@@ -142,10 +168,10 @@ func _build_environment() -> void:
 	env.background_color = Color(0.03, 0.04, 0.09)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.35, 0.4, 0.6)
-	env.ambient_light_energy = 0.6
+	env.ambient_light_energy = 0.9
 	env.fog_enabled = true
 	env.fog_light_color = Color(0.08, 0.09, 0.16)
-	env.fog_density = 0.012
+	env.fog_density = 0.007
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
@@ -177,45 +203,28 @@ func _box(parent: Node, size: Vector3, pos: Vector3, color: Color, solid := true
 	return mi
 
 
-func _build_yard() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = Game.world_seed
-	_box(_yard, Vector3(110, 1, 110), Vector3(0, -0.5, 0), Color(0.16, 0.15, 0.13))
-	var half := 52.0
-	for side in [-1, 1]:
-		_box(_yard, Vector3(110, 4, 1), Vector3(0, 2, side * half), Color(0.25, 0.25, 0.28))
-		_box(_yard, Vector3(1, 4, 110), Vector3(side * half, 2, 0), Color(0.25, 0.25, 0.28))
-	for i in 40:
-		var pos := Vector3(rng.randf_range(-46, 46), 0, rng.randf_range(-46, 46))
-		if pos.length() < 9.0 or _near_special(pos):
-			continue
-		var h := rng.randf_range(1.0, 3.2)
-		var c := Color(rng.randf_range(0.2, 0.5), rng.randf_range(0.2, 0.4), rng.randf_range(0.2, 0.35))
-		_box(_yard, Vector3(rng.randf_range(1.5, 4.0), h, rng.randf_range(1.5, 4.0)), pos + Vector3(0, h * 0.5, 0), c)
+## The city builds each reserved lot's counter through here as its block streams in.
+func _on_special(lot: Dictionary, parent: Node3D, pos: Vector3, size: Vector3) -> void:
+	delivery.on_special(lot, parent, pos, size)
+	shops.on_special(lot, parent, pos, size)
+
+
+## Water coolers and the car park lamps: the little bit of set dressing the city does not own.
+func _build_carpark_props() -> void:
 	for pos in Game.coolers:
-		_box(_yard, Vector3(0.9, 1.4, 0.9), pos + Vector3(0, 0.7, 0), Color(0.3, 0.6, 0.95), false)
+		_box(_carpark, Vector3(0.9, 1.4, 0.9), pos + Vector3(0, 0.7, 0), Color(0.3, 0.6, 0.95), false)
 		var l := OmniLight3D.new()
 		l.light_color = Color(0.5, 0.8, 1.0)
 		l.omni_range = 7.0
 		l.position = pos + Vector3(0, 2.0, 0)
-		_yard.add_child(l)
+		_carpark.add_child(l)
 	for pos in [Vector3(-20, 5, -20), Vector3(20, 5, -20), Vector3(-20, 5, 20), Vector3(20, 5, 20)]:
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 1.4
 		lamp.omni_range = 26.0
 		lamp.position = pos
-		_yard.add_child(lamp)
-
-
-func _near_special(pos: Vector3) -> bool:
-	for p in Game.parts:
-		if pos.distance_to(p.pos) < 4.0:
-			return true
-	for c in Game.coolers:
-		if pos.distance_to(c) < 4.0:
-			return true
-	return false
+		_carpark.add_child(lamp)
 
 
 func _make_car() -> Node3D:
@@ -277,10 +286,80 @@ func _make_part(i: int) -> Node3D:
 	return n
 
 
+# --- Parts terminal -------------------------------------------------------------------
+
+func _build_terminal() -> void:
+	terminal = Interactable.new()
+	terminal.name = "PartsTerminal"
+	terminal.position = TERMINAL_POS
+	terminal.prompt = "[E] parts terminal: spend the crew's money"
+	terminal.range_m = 3.0
+	add_child(terminal)
+	_box(terminal, Vector3(1.2, 1.3, 0.7), Vector3(0, 0.65, 0), Color(0.15, 0.17, 0.22))
+	_box(terminal, Vector3(1.0, 0.6, 0.1), Vector3(0, 1.2, 0.3), Color(0.3, 0.9, 0.5), false)
+	var l := Label3D.new()
+	l.text = "PARTS"
+	l.font_size = 48
+	l.pixel_size = 0.01
+	l.position = Vector3(0, 2.0, 0)
+	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	terminal.add_child(l)
+	terminal.activated.connect(_open_shop)
+
+
+func _open_shop(player: Node3D) -> void:
+	if modal != null:
+		return
+	shop_panel = PartsShopPanel.new()
+	shop_panel.name = "PartsShopPanel"
+	shop_panel.closed.connect(_close_shop)
+	open_modal(shop_panel, player)
+
+
+func _close_shop() -> void:
+	close_modal()
+
+
+## One shop-style panel at a time: it freezes the player and frees the mouse until it closes.
+func open_modal(panel: Control, player: Node3D) -> void:
+	if modal != null:
+		panel.queue_free()
+		return
+	modal = panel
+	if panel.has_signal("closed") and not panel.closed.is_connected(close_modal):
+		panel.closed.connect(close_modal)
+	var layer := CanvasLayer.new()
+	layer.name = "ModalLayer"
+	layer.layer = UI_LAYER    # above the drunk effect: panels are never blurred
+	add_child(layer)
+	layer.add_child(panel)
+	var vp := get_viewport().get_visible_rect().size
+	panel.position = (vp - panel.size) * 0.5
+	if player is Player:
+		(player as Player).ui_lock = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func close_modal() -> void:
+	if modal == null:
+		return
+	var layer := modal.get_parent()
+	modal = null
+	shop_panel = null
+	# Not free(): this is usually called from the panel's own button press.
+	layer.queue_free()
+	var me := local_player()
+	if me:
+		me.ui_lock = false
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
 # --- Per-frame ---------------------------------------------------------------------
 
 func _process(delta: float) -> void:
 	_update_parts(delta)
+	var view := get_viewport().get_camera_3d()
+	city.view_points = [view.global_position] if view != null else [Vector3.ZERO]
 	var installed := 0
 	for p in Game.parts:
 		if p.state == Game.PS.INSTALLED:
@@ -379,17 +458,24 @@ func _update_camera(delta: float) -> void:
 # --- Drive ---------------------------------------------------------------------------
 
 func _start_drive(drive_seed: int) -> void:
+	_close_shop()
+	terminal.queue_free()
+	casino.queue_free()
 	players.process_mode = Node.PROCESS_MODE_DISABLED
 	players.visible = false
 	cam.fov = 75.0
 	cam.current = true
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	_yard.queue_free()
+	_carpark.queue_free()
 	car.position = Vector3.ZERO
 	drive = Drive.new()
 	drive.name = "Drive"
 	var nd := Nights.get_night(Game.night)
-	drive.setup(drive_seed, car, nd.hazards, Game.kebab_shop_enabled, int(nd.legs), nd.leg_len)
+	var route: Dictionary = Game.city.route_points()
+	var world_pts: Array[Vector3] = []
+	for p in route.pts:
+		world_pts.append(p + city_offset)
+	drive.setup(drive_seed, car, nd.hazards, Game.kebab_shop_enabled, Drive.LEGS, Drive.LEG_LEN, {"pts": world_pts, "turns": route.turns})
 	add_child(drive)
 
 
@@ -410,6 +496,7 @@ func _on_kebab_opened(order_seed: int, reader_peer: int) -> void:
 	kebab_panel.closed.connect(Game.request_kebab_close)
 	var layer := CanvasLayer.new()
 	layer.name = "KebabLayer"
+	layer.layer = UI_LAYER
 	add_child(layer)
 	layer.add_child(kebab_panel)
 	var vp := get_viewport().get_visible_rect().size
@@ -430,7 +517,7 @@ func _close_kebab() -> void:
 		return
 	var layer := kebab_panel.get_parent()
 	kebab_panel = null
-	layer.free()
+	layer.queue_free()
 	if drive:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 

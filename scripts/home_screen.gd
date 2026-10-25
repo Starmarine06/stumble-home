@@ -145,14 +145,14 @@ func _on_name_changed(new_name: String) -> void:
 		get_node("/root/Net").player_name = cleaned
 
 func _on_play_pressed() -> void:
-	print("▶ PLAY clicked! Dropping player into Stumble Home world...")
+	print("▶ PLAY clicked! Opening the Stumble Home menu (practice solo, host, join)...")
 	_play_sfx(&"win")
-	get_tree().change_scene_to_file("res://scenes/feature_main.tscn")
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_create_room_pressed() -> void:
-	print("👥 CREATE ROOM clicked (Multiplayer placeholder)")
+	print("👥 CREATE ROOM clicked: same menu, pick Host")
 	_play_sfx(&"horn")
-	_show_toast("⚡ MULTIPLAYER: Room codes & matchmaking are coming soon!")
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_quit_pressed() -> void:
 	print("✕ QUIT clicked. Exiting game.")

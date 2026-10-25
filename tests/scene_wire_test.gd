@@ -1,5 +1,5 @@
 extends SceneTree
-## Checks the new car model, car fx and yard props are wired into the world.
+## Checks the car model, car fx and the city are wired into the world.
 
 var _fails := 0
 
@@ -27,8 +27,9 @@ func _run() -> void:
 	_check(car != null and car.get_node_or_null("EngineBay") != null, "car has EngineBay")
 	_check(car.get_node_or_null("CarFx") != null, "car has CarFx child")
 	_check(car.get_node_or_null("Body") is StaticBody3D, "car has single Body collider")
-	var props: Node = world.get_node("Yard").get_node_or_null("YardProps")
-	_check(props != null and props.get_child_count() > 0, "yard has prop children")
+	var city: Node = world.get_node_or_null("City")
+	_check(city != null and city.get_child_count() > 20, "city has streets and built blocks")
+	_check(world.get_node_or_null("CarPark") != null, "car park props exist")
 	var lights := 0
 	for nm in ["HeadlightL", "HeadlightR"]:
 		for ch in car.get_node(nm).get_children():

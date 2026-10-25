@@ -37,6 +37,55 @@ func _run() -> void:
 	await _wait(0.5)
 	_check(world.local_player() != null, "player spawned")
 
+	# Economy: parts are bought, not found
+	_check(game.money == 200, "night 1 starts with the opening pool")
+	_check(game.parts[0].state == game.PS.SHELF, "parts start on the shelf")
+	game.s_pickup(0)
+	_check(game.parts[0].state == game.PS.SHELF, "an unbought part cannot be lifted")
+	game.s_buy(0)
+	_check(game.parts[0].state == game.PS.SHELF and game.money == 200, "cannot buy a part you cannot afford")
+	var stakes: Array = []
+	game.stake_result.connect(func(k, ok, bet): stakes.append([k, ok, bet]))
+	game.s_stake("roulette", 500)
+	_check(game.money == 200 and stakes.back() == ["roulette", false, 500], "cannot stake more than the pool")
+	game.s_stake("poker", 10)
+	_check(game.money == 200 and not stakes.back()[1], "unknown casino game is refused")
+	game.s_payout("roulette", 50)
+	_check(game.money == 200, "no payout without a stake")
+	game.s_stake("roulette", 100)
+	_check(game.money == 100 and stakes.back() == ["roulette", true, 100], "stake leaves the pool")
+	game.s_payout("roulette", 100 * 37)
+	_check(game.money == 100, "payout above the game's limit is refused")
+	game.s_payout("roulette", 3600)
+	_check(game.money == 3700, "winning payout is paid against the stake")
+	game.s_payout("roulette", 3600)
+	_check(game.money == 3700, "a stake pays out only once")
+	game.s_stake("darts", 700)
+	game.s_payout("darts", 0)
+	_check(game.money == 3000, "a lost round stays lost")
+	game.money = 200
+	game.earn(PartsShop.total(), "test")
+	game.s_buy(0)
+	_check(game.parts[0].state == game.PS.WORLD and game.money == 200 + PartsShop.total() - PartsShop.price(0), "buying takes the price and drops the part by the car")
+	game.s_buy(0)
+	_check(game.money == 200 + PartsShop.total() - PartsShop.price(0), "cannot buy the same part twice")
+	for bi in range(1, game.parts.size()):
+		game.s_buy(bi)
+	_check(game.money == 200, "all four parts bought at list price")
+	_check(world.terminal != null, "parts terminal in the world")
+	world.terminal.activate(world.local_player())
+	await _wait(0.1)
+	_check(world.shop_panel != null and world.local_player().ui_lock, "terminal opens the shop panel and locks the player")
+	var close_btn: Button = null
+	for b in world.shop_panel.find_children("*", "Button", true, false):
+		if b.text == "Close":
+			close_btn = b
+	_check(world.shop_panel.get_parent().layer > 10, "shop panels sit above the HUD and the drunk effect")
+	close_btn.pressed.emit()
+	await _wait(0.2)
+	_check(world.shop_panel == null and not world.local_player().ui_lock, "the Close button closes the panel and frees the player")
+	_check(world.get_node_or_null("ModalLayer") == null, "the panel layer is cleaned up")
+
 	var g0 := 0
 	while game.parts[0].state != game.PS.CARRIED and g0 < 60:
 		game.s_pickup(0)
@@ -76,8 +125,10 @@ func _run() -> void:
 	_check(world.drive != null, "drive built")
 	await _wait(0.5)
 	var d = world.drive
-	_check(d.pts.size() == d.LEGS + 1, "route has %d points" % d.pts.size())
-	_check(d.turns.size() == d.LEGS - 1, "route has %d turns" % d.turns.size())
+	_check(d.pts.size() >= 5 and d.turns.size() == d.pts.size() - 2, "route through the city has %d points and %d turns" % [d.pts.size(), d.turns.size()])
+	_check(d.pts[0].distance_to(game.CAR_POS) < 0.01, "the drive starts at the car park")
+	_check(d.pts[0].distance_to(d.pts[-1]) > 800.0, "home is a long way from the car park (%d m)" % d.pts[0].distance_to(d.pts[-1]))
+	_check(world.city.loaded_blocks().size() >= 9, "city blocks stream in around the car")
 	var nav = d.nav()
 	_check(nav.dist > 30.0 and nav.dir != 0, "navigator sees first corner (%dm, dir %d)" % [nav.dist, nav.dir])
 
@@ -92,7 +143,7 @@ func _run() -> void:
 	game.s_cop_result(false)
 	_check(game.wanted > wanted_before, "failed cop signal raises wanted")
 	# Hazards
-	_check(d.hazards != null and d.hazards.events.is_empty(), "night 1 drive has no hazard events")
+	_check(d.hazards != null and not d.hazards.events.is_empty() and d.hazards.events.all(func(e): return e.kind == "checkpoint"), "night 1 drive has police checkpoints and nothing else")
 	var hz_hits: Array = []
 	game.hazard_hit.connect(func(k): hz_hits.append(k))
 	var hp0: float = game.car_hp
@@ -100,7 +151,7 @@ func _run() -> void:
 	game.s_hazard("dog")
 	_check(game.car_hp < hp0 and game.wanted > w0, "dog hit lowers car hp and raises wanted")
 	_check(hz_hits == ["dog"], "hazard_hit signal fires")
-	await _wait(0.5)
+	await _wait(0.9)
 	hp0 = game.car_hp
 	w0 = game.wanted
 	game.s_hazard("unicorn")
@@ -187,9 +238,14 @@ func _run() -> void:
 	_check(world != null, "fresh world for night 2")
 	await _wait(0.5)
 	_check(game.parts.size() == 4, "night 2 parts laid out")
+	_check(game.money == 300, "night 2 starts with its own opening pool")
 	for p in game.parts:
-		var r := Vector2(p.pos.x, p.pos.z).length()
-		_check(r >= 14.0 - 0.01 and r <= 40.0 + 0.01, "night 2 part within its radius (%.1f)" % r)
+		_check(p.state == game.PS.SHELF, "night 2 part starts on the shelf")
+	game.earn(PartsShop.total(), "test")
+	for i in game.parts.size():
+		game.s_buy(i)
+		var br := Vector2(game.parts[i].pos.x, game.parts[i].pos.z).length()
+		_check(game.parts[i].state == game.PS.WORLD and absf(br - game.DELIVERY_R) < 0.01, "bought part %d lands beside the car" % i)
 	for i in game.parts.size():
 		var gd := 0
 		while game.parts[i].state != game.PS.CARRIED and gd < 60:
@@ -201,13 +257,9 @@ func _run() -> void:
 	await _wait(0.5)
 	d = world.drive
 	var n2: Dictionary = Nights.get_night(1)
-	_check(d.pts.size() == int(n2.legs) + 1, "night 2 route has %d points (legs %d)" % [d.pts.size(), int(n2.legs)])
-	var seg_ok := true
-	for i in d.pts.size() - 1:
-		var sl: float = d.pts[i].distance_to(d.pts[i + 1])
-		if sl < n2.leg_len[0] - 0.01 or sl > n2.leg_len[1] + 0.01:
-			seg_ok = false
-	_check(seg_ok, "night 2 legs honour the leg length range")
+	var hb: Array = n2.home_blocks
+	var blocks_away: int = CityLayout.grid_dist(game.city.home_block, game.city.casino_block)
+	_check(blocks_away >= int(hb[0]) and blocks_away <= int(hb[1]), "night 2 home is %d blocks from the casino" % blocks_away)
 	_check(d.hazards != null and not d.hazards.events.is_empty(), "night 2 drive has hazard events")
 	_check(d.shop != null, "night 2 drive has a kebab shop")
 

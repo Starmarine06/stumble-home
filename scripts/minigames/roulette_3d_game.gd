@@ -166,7 +166,7 @@ func _setup_hud() -> void:
 	var bet_desc = bet_type
 	if bet_type == "NUMBER":
 		bet_desc = "Single Number %s (36x Jackpot)" % str(bet_param)
-	sub_label.text = "Wager: $%d on %s  •  Prize: Payout + Camper Van Spare Tyre!" % [bet_amount, bet_desc]
+	sub_label.text = "Wager: $%d on %s  •  Prize: cash payout!" % [bet_amount, bet_desc]
 	sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub_label.add_theme_font_size_override("font_size", 13)
 	sub_label.add_theme_color_override("font_color", Color(0.85, 0.90, 0.98))
@@ -403,7 +403,7 @@ func _evaluate_bet_result() -> void:
 			banner_label.text = "🎉 NUMBER %d (%s)! WINNER!" % [winning_number, winning_color]
 			banner_label.add_theme_color_override("font_color", Color(0.35, 1.0, 0.45))
 		if sub_label:
-			sub_label.text = "🏆 WON $%d PAYOUT & CAR PART: SPARE TYRE!" % payout_amount
+			sub_label.text = "🏆 WON $%d PAYOUT!" % payout_amount
 	else:
 		payout_amount = 0
 		_play_sfx(&"part_fit_bad")

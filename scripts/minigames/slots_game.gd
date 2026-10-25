@@ -84,7 +84,7 @@ func _draw() -> void:
 	draw_style_box(bg, Rect2(Vector2.ZERO, size))
 	
 	var font = ThemeDB.fallback_font
-	draw_string(font, Vector2(24, 38), "🎰 LUCKY 7s SLOTS  •  WIN THE SPARK PLUGS!", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.98, 0.85, 0.35))
+	draw_string(font, Vector2(24, 38), "🎰 LUCKY 7s SLOTS  •  TRIPLES PAY 4x", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.98, 0.85, 0.35))
 	var prompt_txt = "Press [Click / Space] to Stop Reel %d!" % (stopped_count + 1) if stopped_count < 3 else "Reels Locked!"
 	draw_string(font, Vector2(24, 64), prompt_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color(0.85, 0.90, 0.95))
 	
@@ -135,7 +135,7 @@ func _draw() -> void:
 		var b_col = Color(0.12, 0.65, 0.25, 0.96) if won else Color(0.75, 0.18, 0.18, 0.96)
 		draw_rect(banner_rect, b_col, true)
 		draw_rect(banner_rect, Color.WHITE, false, 3.0)
-		var msg = "🎉 JACKPOT! WON SPARK PLUGS!" if won else "❌ NO MATCH! TRY AGAIN!"
+		var msg = ("🎰 TRIPLE! 4x YOUR STAKE!" if reel_states[0] == reel_states[1] and reel_states[1] == reel_states[2] else "🎉 PAIR! HALF YOUR STAKE BACK") if won else "❌ NO MATCH! STAKE GONE!"
 		draw_string(font, Vector2(size.x * 0.5 - 220, reel_y + 98), msg, HORIZONTAL_ALIGNMENT_CENTER, 440, 22, Color.WHITE)
 
 func _play_sfx(s: StringName) -> void:

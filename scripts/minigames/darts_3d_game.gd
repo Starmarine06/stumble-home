@@ -392,7 +392,7 @@ func _setup_hud() -> void:
 	vbox.add_child(score_label)
 
 	info_label = Label.new()
-	info_label.text = "Target: 50+ pts for 2.5x & CAR BATTERY!\n🖱️ Dark Parabola & Crosshair Active — Points ONLY for board hits!"
+	info_label.text = "Target: 35+ pts to win, 100+ for 7x!\n🖱️ Dark Parabola & Crosshair Active — Points ONLY for board hits!"
 	info_label.add_theme_font_size_override("font_size", 12)
 	info_label.add_theme_color_override("font_color", Color(0.8, 0.9, 1.0))
 	vbox.add_child(info_label)
@@ -610,19 +610,19 @@ func _update_hud() -> void:
 		score_label.text = "Darts Left: %d  |  Total Score: %d pts" % [darts_left, total_score]
 	if info_label:
 		if total_score >= 100:
-			info_label.text = "🔥 100+ PTS! 7.0x PAYOUT ($%d) + BATTERY!" % int(bet_amount * 7.0)
+			info_label.text = "🔥 100+ PTS! 7.0x PAYOUT ($%d)!" % int(bet_amount * 7.0)
 			info_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
 		elif total_score >= 75:
-			info_label.text = "🎯 75+ PTS! 4.0x PAYOUT ($%d) + BATTERY!" % int(bet_amount * 4.0)
+			info_label.text = "🎯 75+ PTS! 4.0x PAYOUT ($%d)!" % int(bet_amount * 4.0)
 			info_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.4))
 		elif total_score >= 50:
-			info_label.text = "✅ 50+ PTS REACHED! 2.5x PAYOUT ($%d) + BATTERY!" % int(bet_amount * 2.5)
+			info_label.text = "✅ 50+ PTS REACHED! 2.5x PAYOUT ($%d)!" % int(bet_amount * 2.5)
 			info_label.add_theme_color_override("font_color", Color(0.2, 0.9, 1.0))
 		elif total_score >= 35:
 			info_label.text = "★ 35+ PTS REACHED! 1.5x PAYOUT ($%d)" % int(bet_amount * 1.5)
 			info_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.3))
 		else:
-			info_label.text = "Need 35+ for Payout | 50+ for Car Battery!\n[Click / Space to Throw]"
+			info_label.text = "Need 35+ for a payout\n[Click / Space to Throw]"
 			info_label.add_theme_color_override("font_color", Color(0.8, 0.85, 0.95))
 
 func _complete_round() -> void:
@@ -654,7 +654,7 @@ func _complete_round() -> void:
 
 	if player and player.interact_prompt_lbl:
 		if won_battery:
-			player.interact_prompt_lbl.text = "🎉 WON $%d PAYOUT & CAR BATTERY! (Score: %d pts)" % [payout, total_score]
+			player.interact_prompt_lbl.text = "🎉 WON $%d PAYOUT! (Score: %d pts)" % [payout, total_score]
 		elif payout > 0:
 			player.interact_prompt_lbl.text = "★ WON $%d PAYOUT! (Score: %d pts)" % [payout, total_score]
 		else:

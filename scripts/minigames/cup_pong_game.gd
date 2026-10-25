@@ -136,7 +136,7 @@ func _draw() -> void:
 	draw_style_box(bg, Rect2(Vector2.ZERO, size))
 	
 	var font = ThemeDB.fallback_font
-	draw_string(font, Vector2(24, 38), "🏓 PUB CUP PONG  •  WIN THE FUEL PUMP!", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.98, 0.85, 0.35))
+	draw_string(font, Vector2(24, 38), "🏓 PUB CUP PONG  •  DOUBLE YOUR STAKE!", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(0.98, 0.85, 0.35))
 	draw_string(font, Vector2(24, 64), "Balls Left: %d  |  Cups Sunk: %d / %d needed  [Click / Space to Throw]" % [balls_left, cups_sunk, cups_needed], HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color(0.85, 0.90, 0.95))
 	
 	# Draw Wooden Ping Pong Table
@@ -190,7 +190,7 @@ func _draw() -> void:
 		var b_col = Color(0.12, 0.65, 0.25, 0.95) if cups_sunk >= cups_needed else Color(0.75, 0.18, 0.18, 0.95)
 		draw_rect(banner_rect, b_col, true)
 		draw_rect(banner_rect, Color.WHITE, false, 3.0)
-		var msg = "🎉 WON FUEL PUMP! (%d CUPS)" % cups_sunk if cups_sunk >= cups_needed else "❌ MISSED! ONLY %d/%d CUPS. TRY AGAIN!" % [cups_sunk, cups_needed]
+		var msg = "🎉 DOUBLED IT! (%d CUPS)" % cups_sunk if cups_sunk >= cups_needed else "❌ MISSED! ONLY %d/%d CUPS. TRY AGAIN!" % [cups_sunk, cups_needed]
 		draw_string(font, Vector2(size.x * 0.5 - 200, size.y * 0.5 + 8), msg, HORIZONTAL_ALIGNMENT_CENTER, 400, 22, Color.WHITE)
 
 func _play_sfx(s: StringName) -> void:

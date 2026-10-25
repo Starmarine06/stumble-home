@@ -108,7 +108,7 @@ func _ready() -> void:
 	vbox.add_child(title)
 
 	var subtitle = Label.new()
-	subtitle.text = "Place your bet with Antoine. Win your bet to claim the Camper Van Spare Tyre!"
+	subtitle.text = "Place your bet with Antoine. The crew's money is on the table."
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_size_override("font_size", 11)
 	subtitle.add_theme_color_override("font_color", Color(0.85, 0.88, 0.95))
@@ -459,7 +459,7 @@ func _update_summary() -> void:
 	var total_payout = current_bet * multiplier
 	var net_profit = total_payout - current_bet
 	if summary_lbl:
-		summary_lbl.text = "BET: %s  •  WAGER: $%d  •  WIN PAYOUT: $%d (+%d Net)\n🎁 PRIZE: Cash Payout + Camper Van SPARE TYRE!" % [label_name, current_bet, total_payout, net_profit]
+		summary_lbl.text = "BET: %s  •  WAGER: $%d  •  WIN PAYOUT: $%d (+%d Net)" % [label_name, current_bet, total_payout, net_profit]
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:

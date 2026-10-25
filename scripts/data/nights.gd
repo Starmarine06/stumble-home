@@ -1,18 +1,16 @@
 class_name Nights
 extends RefCounted
-## One entry per night of the campaign. Night 1 matches the original hard-coded junkyard
-## and drive values (drive.gd LEGS and leg length, game.gd part radius), so it plays as before.
+## One entry per night of the campaign. home_blocks is how many blocks from the casino the crew's home can be (min, max). start_money is the crew's pool before any casino or delivery income.
 ## hazards is passed to Hazards.plan; tuning holds Tuning overrides, applied by apply_tuning().
 
 const NIGHTS := [
 	{
 		"id": "night_1",
-		"title": "Night 1: The Junkyard Shuffle",
-		"flavour": "You are hammered, the car is a wreck, and the nearest bed is miles away. Find four parts, bolt them on, and try not to fall over the dog.",
-		"legs": 7,
-		"leg_len": [70.0, 120.0],
-		"part_radius": [14.0, 34.0],
-		"hazards": {"traffic_count": 0, "dog_count": 0, "mugger_count": 0},
+		"title": "Night 1: Skint, Sloshed And Stranded",
+		"flavour": "You are hammered, the car is a wreck, and the nearest bed is miles away. Earn the cash for four parts, bolt them on, and try not to fall over the dog.",
+		"home_blocks": [9, 14],
+		"start_money": 200,
+		"hazards": {"traffic_count": 0, "dog_count": 0, "mugger_count": 0, "checkpoint_count": 2},
 		"kebab_shop": false,
 		"tuning": {},
 	},
@@ -20,10 +18,9 @@ const NIGHTS := [
 		"id": "night_2",
 		"title": "Night 2: Kebab Or Die",
 		"flavour": "Round two. Hungrier, drunker, and the cops brought a friend. Someone needs a kebab, and someone else needs to stop pointing at the wrong turn.",
-		"legs": 9,
-		"leg_len": [80.0, 140.0],
-		"part_radius": [18.0, 40.0],
-		"hazards": {"traffic_count": 4, "dog_count": 5, "mugger_count": 2},
+		"home_blocks": [11, 15],
+		"start_money": 300,
+		"hazards": {"traffic_count": 4, "dog_count": 5, "mugger_count": 2, "checkpoint_count": 4},
 		"kebab_shop": true,
 		"tuning": {
 			"cop_first_min": 11.0, "cop_first_max": 16.0,

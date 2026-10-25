@@ -108,6 +108,32 @@ func _initialize() -> void:
 	check("build makes nodes", hb.get_child_count() == a.size())
 	hb.free()
 
+	# Police checkpoints
+	var cp_plan: Array = H.plan(11, pts, {"traffic_count": 0, "dog_count": 0, "mugger_count": 0, "checkpoint_count": 3})
+	check("checkpoints plan only checkpoints", cp_plan.size() > 0 and cp_plan.all(func(e): return e.kind == "checkpoint"))
+	check("checkpoints sit on the route", cp_plan.all(func(e): return dist_to_route(e.pos, pts) < 0.5))
+	check("checkpoints show from well ahead", cp_plan.all(func(e): return e.active - e.tele >= 6.0))
+	check("checkpoint plan is deterministic", H.plan(11, pts, {"traffic_count": 0, "dog_count": 0, "mugger_count": 0, "checkpoint_count": 3}) == cp_plan)
+	var cp: Dictionary = cp_plan[0]
+	var cph = H.new()
+	cph.load_plan([cp])
+	check("a car far from the checkpoint is left alone", cph.check(cp.pos + Vector3(60, 0, 0), 12.0, cp.active + 1.0).size() == 0)
+	var cph2 = H.new()
+	cph2.load_plan([cp])
+	var ran: Array = cph2.check(cp.pos + Vector3(4, 0, 0), 12.0, cp.active + 1.0)
+	check("running the checkpoint is a hit", ran.size() == 1 and ran[0].kind == "checkpoint" and ran[0].wanted > 0.0)
+	var cph3 = H.new()
+	cph3.load_plan([cp])
+	var stopped: Array = cph3.check(cp.pos + Vector3(4, 0, 0), 1.0, cp.active + 1.0)
+	check("stopping is waved through and cools the heat", stopped.size() == 1 and stopped[0].kind == "checkpoint_pass" and stopped[0].wanted < 0.0)
+	check("a checkpoint only resolves once", cph3.check(cp.pos, 12.0, 0.1).size() == 0)
+	var cph4 = H.new()
+	cph4.build(cp_plan)
+	cph4.check(Vector3.ZERO, 5.0, 1.0)
+	check("checkpoint nodes build with cones and a police car", cph4.get_child_count() == cp_plan.size() and cph4.get_child(0).get_child_count() > 6)
+	for n in [cph, cph2, cph3, cph4]:
+		n.free()
+
 	var src := FileAccess.get_file_as_string("res://scripts/world/hazards.gd")
 	check("no Game/Net references", not (src.contains("Game.") or src.contains("Net.")))
 

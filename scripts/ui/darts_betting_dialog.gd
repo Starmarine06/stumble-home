@@ -78,7 +78,7 @@ func _ready() -> void:
 	vbox.add_child(title)
 
 	var subtitle = Label.new()
-	subtitle.text = "Set your stake from the 4-patron shared wallet! Score 50+ points to win multiplied cash AND the Camper Van Battery!"
+	subtitle.text = "Set your stake from the 4-patron shared wallet! Score 35+ points to win multiplied cash!"
 	subtitle.add_theme_font_size_override("font_size", 12)
 	subtitle.add_theme_color_override("font_color", Color(0.82, 0.88, 0.96))
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -384,7 +384,7 @@ func _update_ui() -> void:
 		payout_label.text = (
 			"🏆 POTENTIAL PAYOUT MULTIPLIERS FOR $%d STAKE:\n" % current_bet
 			+ "  • 35 - 49 pts:  1.5x Payout  ➔  $%d\n" % p35
-			+ "  • 50 - 74 pts:  2.5x Payout  ➔  $%d  +  🔋 CAR BATTERY!\n" % p50
-			+ "  • 75 - 99 pts:  4.0x Payout  ➔  $%d  +  🔋 CAR BATTERY!\n" % p75
-			+ "  • 100+ pts:     7.0x Payout  ➔  $%d  +  🔋 CAR BATTERY! (JACKPOT)" % p100
+			+ "  • 50 - 74 pts:  2.5x Payout  ➔  $%d\n" % p50
+			+ "  • 75 - 99 pts:  4.0x Payout  ➔  $%d\n" % p75
+			+ "  • 100+ pts:     7.0x Payout  ➔  $%d (JACKPOT)" % p100
 		)

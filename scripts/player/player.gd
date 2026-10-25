@@ -21,6 +21,12 @@ const EYE_HEIGHT := 1.65
 const BOB_FREQ := 2.4
 const BOB_AMP := 0.05
 const BASE_FOV := 75.0
+const HEAD_YAW_LIMIT := 1.9      # how far round you can look from the scooter seat
+const TILT_GRAVITY := 0.35       # a leaning parcel keeps leaning
+const TILT_CORRECT := 1.9        # how hard A and D steady it
+const TILT_CURVE := 0.04         # corners push it outwards
+const TILT_WOBBLE := 0.5         # drunk hands
+const TILT_BUMP := 0.06          # a wall hit
 
 const GRAB_RANGE := 2.8
 const GRAB_CONE := 0.85          # cos of the aim cone for picking something up
@@ -32,6 +38,41 @@ var peer_id := 1
 var stunned := false
 var drunk: Drunk
 var stumble_warn := false
+var ui_lock := false             # a shop or game panel is open: no walking, no looking
+var riding := 0                  # 0 on foot, 1 driving the scooter, 2 riding pillion
+var parcel_tilt := 0.0           # -1..1, how far the pillion rider's parcel has leaned; at +-1 it falls
+
+# The casino games were written against the offline player and reach for these names.
+var head: Node3D:
+	get:
+		return _head
+var camera: Camera3D:
+	get:
+		return _cam
+var interact_prompt_lbl: Label          # casino banner, shown above the normal prompt
+var casino_kind := ""                   # which casino game is paying out into the shared pool
+var player_money: int:
+	get:
+		return Game.money
+	set(v):
+		# The games add their winnings with +=; the host pays it against the stake.
+		if v > Game.money and casino_kind != "":
+			Game.request_payout(casino_kind, v - Game.money)
+var is_mouse_unlocked: bool:
+	get:
+		return _mouse_free
+	set(v):
+		if is_local() and _cam != null:
+			_capture_mouse(not v)
+var minigame_active: bool:
+	get:
+		return ui_lock
+	set(v):
+		ui_lock = v
+
+
+func _on_minigame_won(_idx: int) -> void:
+	pass    # prizes are cash now; the games still call this
 
 # Read by the HUD.
 var strain := 0.0                # 0 fresh .. 1 arms give out
@@ -60,6 +101,8 @@ var _hrel := 0.0                 # part yaw relative to your body
 var _reach := 1.0
 var _pose_t := 0.0
 var _grab_cd := 0.0
+var _tilt_t := 0.0
+var _unseat_wait := 0.0
 
 
 func _enter_tree() -> void:
@@ -105,16 +148,16 @@ func _ready() -> void:
 	torso.material_override = mat
 	torso.position.y = 0.85
 	_body.add_child(torso)
-	var head := MeshInstance3D.new()
+	var head_mesh := MeshInstance3D.new()
 	var sm := SphereMesh.new()
 	sm.radius = 0.28
 	sm.height = 0.56
-	head.mesh = sm
+	head_mesh.mesh = sm
 	var skin := StandardMaterial3D.new()
 	skin.albedo_color = Color(0.95, 0.8, 0.65)
-	head.material_override = skin
-	head.position = Vector3(0, 1.8, 0)
-	_body.add_child(head)
+	head_mesh.material_override = skin
+	head_mesh.position = Vector3(0, 1.8, 0)
+	_body.add_child(head_mesh)
 	var nose := MeshInstance3D.new()
 	var nm := BoxMesh.new()
 	nm.size = Vector3(0.1, 0.1, 0.2)
@@ -152,6 +195,33 @@ func _ready() -> void:
 		_flash.spot_angle = 38.0
 		_cam.add_child(_flash)
 		_capture_mouse(true)
+		_build_casino_ui()
+		Game.item_bought.connect(_on_item)
+
+
+func _build_casino_ui() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "HUD"    # the casino games attach their own widgets to a child called HUD
+	layer.layer = 9
+	add_child(layer)
+	interact_prompt_lbl = Label.new()
+	interact_prompt_lbl.visible = false
+	interact_prompt_lbl.add_theme_font_size_override("font_size", 22)
+	interact_prompt_lbl.add_theme_color_override("font_outline_color", Color.BLACK)
+	interact_prompt_lbl.add_theme_constant_override("outline_size", 6)
+	interact_prompt_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	interact_prompt_lbl.position = Vector2(0, 540)
+	interact_prompt_lbl.size = Vector2(1280, 30)
+	layer.add_child(interact_prompt_lbl)
+
+
+## Something fast has hit this player (a car): thrown clear along `dir` and left on the floor for a bit.
+func knock(dir: Vector3, power: float) -> void:
+	if not is_local():
+		return
+	velocity = dir * clampf(power, 3.0, 14.0) + Vector3(0.0, 4.0, 0.0)
+	drunk.stun = maxf(drunk.stun, 2.5 + power * 0.1)
+	drunk.tripped.emit()
 
 
 func is_local() -> bool:
@@ -159,6 +229,8 @@ func is_local() -> bool:
 
 
 func _exit_tree() -> void:
+	if Game.item_bought.is_connected(_on_item):
+		Game.item_bought.disconnect(_on_item)
 	if is_local() and _cam:
 		_capture_mouse(false)
 
@@ -181,26 +253,39 @@ func _unhandled_input(event: InputEvent) -> void:
 			_reach = minf(1.5, _reach + 0.08)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_reach = maxf(0.6, _reach - 0.08)
-	elif event is InputEventMouseMotion and not _mouse_free:
-		rotate_y(-event.relative.x * MOUSE_SENS)
+	elif event is InputEventMouseMotion and not _mouse_free and not ui_lock:
+		if riding != 0:
+			_head.rotation.y = clampf(_head.rotation.y - event.relative.x * MOUSE_SENS, -HEAD_YAW_LIMIT, HEAD_YAW_LIMIT)
+		else:
+			rotate_y(-event.relative.x * MOUSE_SENS)
 		_head.rotation.x = clampf(_head.rotation.x - event.relative.y * MOUSE_SENS, deg_to_rad(-89.0), deg_to_rad(89.0))
 	elif event is InputEventKey and event.pressed and not event.echo and event.is_action("flashlight") and _flash:
 		_flash.visible = not _flash.visible
 
 
 func _physics_process(delta: float) -> void:
+	var ride := _ride_kind()
+	if ride != riding:
+		riding = ride
+		collision_layer = 0 if riding != 0 else 1    # riders do not shove their own scooter
+		if riding == 0:
+			_head.rotation.y = 0.0
+			parcel_tilt = 0.0
 	var tilt := 80.0 if stunned else 0.0
 	_body.rotation_degrees.x = lerpf(_body.rotation_degrees.x, -tilt, 10.0 * delta)
 	if not is_local():
 		return
 
 	var hud := _hud()
-	var busy: bool = hud != null and hud.minigame_active
+	var busy: bool = ui_lock or (hud != null and hud.minigame_active)
 	var spd01 := clampf(Vector2(velocity.x, velocity.z).length() / SPRINT_SPEED, 0.0, 1.0)
 	drunk.tick(delta, true, spd01)
 	stumble_warn = drunk.is_warning()
 	stunned = drunk.is_stunned() or Game.is_out(peer_id)
 
+	if riding != 0 or _unseat_wait > 0.0:
+		_ride(delta, hud)
+		return
 	_move(delta, busy)
 	_hands(delta, busy)
 	_drink(hud, busy, delta)
@@ -247,6 +332,8 @@ func _update_view(delta: float, walking: bool, sprinting: bool) -> void:
 		_bob = 0.0
 	if stunned:
 		y = 0.5
+	if riding != 0:
+		y = 1.2
 	_head.position.y = lerpf(_head.position.y, y, 10.0 * delta)
 	var roll := sin(Time.get_ticks_msec() * 0.0028) * 0.1 * drunk.level
 	if stumble_warn:
@@ -447,6 +534,12 @@ func _drink(hud: Node, busy: bool, delta: float) -> void:
 				drunk.sober(0.25)
 				Game.request_rest()
 				Game.toast_msg.emit("Glug. Slightly less drunk. For now.")
+	if prompt == "" and not busy and not stunned and not holding and _held_mass() == 0.0:
+		var it := _nearest_interactable()
+		if it != null:
+			prompt = it.prompt
+			if Input.is_action_just_pressed("act"):
+				it.activate(self)
 	if hud:
 		hud.set_prompt(prompt)
 
@@ -456,6 +549,95 @@ func _nearest_cooler() -> int:
 		if global_position.distance_to(Game.coolers[i]) < WATER_RANGE:
 			return i
 	return -1
+
+
+## A shop item that changes how drunk you are (the host has already taken the money).
+func _on_item(buyer: int, shop: String, id: String) -> void:
+	var it := ShopItems.find(shop, id)
+	if it.is_empty() or drunk == null:
+		return
+	var fx: Dictionary = it.effect
+	if buyer != peer_id and not fx.get("crew", false):
+		return
+	if fx.has("sober"):
+		drunk.sober(float(fx.sober))
+	if fx.has("drunk"):
+		drunk.add(float(fx.drunk))
+
+
+# --- The delivery scooter --------------------------------------------------------------------
+
+func _ride_kind() -> int:
+	if Game.seat_driver == peer_id:
+		return 1
+	if Game.seat_pillion == peer_id:
+		return 2
+	return 0
+
+
+func _scooter() -> Scooter:
+	return get_tree().get_first_node_in_group("scooter") as Scooter
+
+
+## Sitting on the scooter: you go where it goes, you can look round, and E hops you off.
+## Behind the driver, whoever holds the parcel has to keep it steady with A and D.
+func _ride(delta: float, hud: Node) -> void:
+	stunned = false
+	velocity = Vector3.ZERO
+	if _unseat_wait > 0.0:
+		_unseat_wait -= delta
+		return
+	var sc := _scooter()
+	if sc == null:
+		Game.request_unseat()
+		return
+	global_position = sc.seat_global(riding)
+	rotation.y = sc.rotation.y
+	_update_view(delta, false, false)
+	var holding_parcel := riding == 2 and Game.carried_job_by(peer_id)
+	if hud:
+		hud.set_prompt("[E] hop off" + ("    A / D: keep the parcel steady" if holding_parcel else ""))
+	if Input.is_action_just_pressed("act") and not ui_lock:
+		if riding == 1 and absf(sc.speed) > Scooter.STOP_SPEED:
+			Game.toast_msg.emit("Stop the scooter before you hop off, you maniac.")
+		else:
+			global_position = sc.global_position + sc.global_transform.basis.x * 1.4 + Vector3(0, 0.2, 0)
+			_unseat_wait = 0.4
+			Game.request_unseat()
+			return
+	if holding_parcel:
+		_balance_parcel(delta, sc)
+	else:
+		parcel_tilt = move_toward(parcel_tilt, 0.0, delta)
+
+
+func _balance_parcel(delta: float, sc: Scooter) -> void:
+	_tilt_t += delta
+	var wobble := (sin(_tilt_t * 2.3) + sin(_tilt_t * 3.7 + 1.0)) * 0.5 * TILT_WOBBLE * drunk.level
+	var gravity := TILT_GRAVITY * (0.55 if Game.bought.has("garage/rack") else 1.0)
+	parcel_tilt += (sc.yaw_rate * sc.speed * TILT_CURVE + wobble * 0.3 + parcel_tilt * gravity) * delta
+	parcel_tilt += Input.get_axis("left", "right") * TILT_CORRECT * delta
+	var jolt := sc.take_jolt()
+	if jolt > 1.5:
+		parcel_tilt += (1.0 if randf() < 0.5 else -1.0) * jolt * TILT_BUMP
+		if jolt > 4.0:
+			Game.request_parcel_bump(jolt)
+	if absf(parcel_tilt) >= 1.0:
+		parcel_tilt = 0.0
+		Game.request_parcel_drop(global_position)
+
+
+func _nearest_interactable() -> Interactable:
+	var best: Interactable = null
+	var best_d := INF
+	for n in get_tree().get_nodes_in_group("interactable"):
+		var it := n as Interactable
+		if it != null and it.in_range(global_position):
+			var d := global_position.distance_to(it.global_position)
+			if d < best_d:
+				best = it
+				best_d = d
+	return best
 
 
 func _hud() -> Node:

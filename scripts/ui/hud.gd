@@ -16,6 +16,9 @@ var _cross: PartCrosshair
 var _wanted_bar: ProgressBar
 var _hp_bar: ProgressBar
 var _prompt: Label
+var _money_label: Label
+var _job_label: Label
+var _parcel_bar: ParcelBar
 var _toast: Label
 var _toast_t := 0.0
 var _warn: Label
@@ -67,6 +70,16 @@ func _ready() -> void:
 	bars.add_child(hl)
 	_hp_bar = _bar(bars, Color(0.3, 0.85, 0.4))
 
+	_money_label = _label(root, Vector2(1280 - 260, 84), 24)
+	_money_label.add_theme_color_override("font_color", Color(0.5, 1.0, 0.6))
+	_job_label = _label(root, Vector2(0, 14), 20)
+	_job_label.size = Vector2(1280, 60)
+	_job_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_job_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.3))
+	_parcel_bar = ParcelBar.new()
+	_parcel_bar.position = Vector2(460, 520)
+	_parcel_bar.visible = false
+	root.add_child(_parcel_bar)
 	_prompt = _label(root, Vector2(0, 600), 22)
 	_prompt.size = Vector2(1280, 30)
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -210,14 +223,36 @@ func _process(delta: float) -> void:
 	_wanted_bar.value = Game.wanted
 	_hp_bar.value = Game.car_hp
 	_hp_bar.visible = Game.phase == Game.Phase.DRIVE
+	_money_label.text = "CREW POOL  $%d" % Game.money if Game.phase == Game.Phase.SCAVENGE else ""
 	_cop_left = maxf(0.0, _cop_left - delta)
 
 	_alert_label.text = ""
 	_nav_label.text = ""
+	_update_job(lp)
 	if Game.phase == Game.Phase.SCAVENGE:
 		_scavenge_hud(delta)
 	elif Game.phase == Game.Phase.DRIVE:
 		_drive_hud(delta)
+
+
+## The delivery line at the top: where the parcel is going, how far, how long, and who has it.
+func _update_job(me: Player) -> void:
+	_parcel_bar.visible = false
+	_job_label.text = ""
+	if Game.phase != Game.Phase.SCAVENGE or Game.job.is_empty() or me == null:
+		return
+	var j: Dictionary = Game.job
+	var lot := Game.city.lot_by_id(int(j.lot))
+	var to := Game.to_world(Game.city.front_point(lot))
+	var dist := int(Deliveries.trip_distance(me.global_position, to))
+	var who := "You have it" if Game.carried_job_by(Game.my_id()) else ("%s has it" % Game.names.get(int(j.carrier), "?") if j.state == "carried" else "LOOSE on the road: go and pick it up")
+	var late := " (LATE)" if float(j.time_left) < 0.0 else ""
+	_job_label.text = "DELIVER %s to %s   %d m %s   %s%s   parcel %d%%\n%s" % [j.item, j.addr, dist, Deliveries.compass(me.global_position, to), OrderBoardPanel.clock(float(j.time_left)), late, int(j.integrity), who]
+	if me.riding == 2 and Game.carried_job_by(Game.my_id()):
+		_parcel_bar.visible = true
+		_parcel_bar.tilt = me.parcel_tilt
+		_parcel_bar.integrity = float(j.integrity)
+		_parcel_bar.queue_redraw()
 
 
 func _scavenge_hud(_delta: float) -> void:

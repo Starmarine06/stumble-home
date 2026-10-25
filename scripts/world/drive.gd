@@ -9,7 +9,7 @@ const MAX_SPEED := 24.0
 const HOT_SPEED := 8.0
 const LEGS := 7                 # night 1; later nights pass their own legs to setup()
 const LEG_LEN := [70.0, 120.0]
-const NO_HAZARDS := {"traffic_count": 0, "dog_count": 0, "mugger_count": 0}   # night 1
+const NO_HAZARDS := {"traffic_count": 0, "dog_count": 0, "mugger_count": 0, "checkpoint_count": 0}
 # The hazard clock is slaved to route progress (see _tick_hazards). This leads the car by a
 # beat so a dog is already mid-road when the car reaches it.
 const HAZARD_LEAD := 1.0
@@ -45,15 +45,25 @@ var legs := LEGS
 var leg_len: Array = LEG_LEN
 var shop: Node3D                # the kebab shop, null when the night has none
 var _shop_asked := false
+var shop_side := ROAD_W * 0.5 + 5.0   # how far from the road centre the kebab shop stands
 
 
-func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS, kebab_shop := false, p_legs := LEGS, p_leg_len: Array = LEG_LEN) -> void:
+## Without a route the drive makes its own random one in open country (tests do this); with one,
+## pts/turns come from the city (see CityLayout.route_points) and the city supplies the scenery.
+func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARDS, kebab_shop := false, p_legs := LEGS, p_leg_len: Array = LEG_LEN, p_route: Dictionary = {}) -> void:
 	_seed = drive_seed
 	legs = p_legs
 	leg_len = p_leg_len
 	car = p_car
-	_generate()
-	_build_scenery()
+	if p_route.is_empty():
+		_generate()
+		_build_scenery()
+	else:
+		pts.assign(p_route.pts)
+		turns.assign(p_route.turns)
+		legs = pts.size() - 1
+		yaw = atan2(-(pts[1].x - pts[0].x), -(pts[1].z - pts[0].z))
+		shop_side = ROAD_W * 0.5 + 8.5
 	hazards = Hazards.new()
 	hazards.name = "Hazards"
 	add_child(hazards)
@@ -61,8 +71,9 @@ func setup(drive_seed: int, p_car: Node3D, hazard_params: Dictionary = NO_HAZARD
 	if kebab_shop:
 		_build_kebab_shop()
 	car.position = pts[0]
-	car.rotation = Vector3.ZERO
+	car.rotation = Vector3(0.0, yaw, 0.0)
 	_target_pos = car.position
+	_target_yaw = yaw
 	is_driver = Game.has_role(Roles.Id.DRIVER)
 	drunk = Drunk.new(Roles.role_drunk(Roles.Id.DRIVER))
 	_nod_in = randf_range(Tuning.nod_first_min, Tuning.nod_first_max)
@@ -208,7 +219,7 @@ func _build_kebab_shop() -> void:
 	shop = Node3D.new()
 	shop.name = "KebabShop"
 	add_child(shop)
-	shop.position = (a + b) * 0.5 + side * (ROAD_W * 0.5 + 5.0)
+	shop.position = (a + b) * 0.5 + side * shop_side
 	var body := _mesh_box(Vector3(8, 4, 6), Vector3(0, 2, 0), Color(0.9, 0.35, 0.15))
 	body.reparent(shop, false)
 	var glow := OmniLight3D.new()
@@ -269,7 +280,8 @@ func _tick_hazards() -> void:
 		if not e.get("warned", false) and hazards.time >= float(e.tele) and not e.used:
 			e.warned = true
 			if Game.has_role(Roles.Id.LOOKOUT) and e.kind != "traffic":
-				Game.toast_msg.emit("LOOKOUT: %s ahead!" % ("a dog about to bolt" if e.kind == "dog" else "a shifty mugger lurking"))
+				var what := "a dog about to bolt" if e.kind == "dog" else ("a police checkpoint: SLOW RIGHT DOWN" if e.kind == "checkpoint" else "a shifty mugger lurking")
+				Game.toast_msg.emit("LOOKOUT: %s ahead!" % what)
 	var hits := hazards.check(car.position, speed, 0.0)
 	if is_driver:
 		for h in hits:

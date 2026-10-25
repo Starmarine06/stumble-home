@@ -16,9 +16,17 @@ signal kebab_opened(order_seed: int, reader_peer: int)
 signal kebab_state(items: Array, time_left: float)
 signal kebab_closed
 signal kebab_reward(sober: float)
+signal money_changed
+signal stake_result(kind: String, ok: bool, bet: int)
+signal orders_changed
+signal item_bought(peer: int, shop: String, id: String)
+signal job_changed
+signal seats_changed
+signal scooter_state(pos: Vector3, yaw: float, speed: float)
 
 enum Phase { MENU, LOBBY, SCAVENGE, DRIVE, RESULT }
-enum PS { WORLD, CARRIED, INSTALLED }
+## SHELF: not bought yet. Bought parts are delivered next to the car (WORLD) for the Mechanic to fit.
+enum PS { WORLD, CARRIED, INSTALLED, SHELF }
 
 const PART_NAMES := ["Battery", "Fuel Pump", "Spark Plugs", "Spare Tyre"]
 ## Where each part belongs, in car-local space (the car faces -Z).
@@ -34,15 +42,20 @@ var PASSOUT_SECS: float:
 		return Tuning.passout_secs
 const WANTED_MAX := 100.0
 const KEBAB_PICK_GAP_MS := 60    # the host ignores kebab picks/undos closer together than this
-const HAZARD_KINDS := ["traffic", "dog", "mugger"]
+const HAZARD_KINDS := ["traffic", "dog", "mugger", "checkpoint", "checkpoint_pass"]
 const HAZARD_MIN_GAP_MS := 400   # the host ignores hazard hits closer together than this
 const CAR_POS := Vector3.ZERO
+const DELIVERY_R := 5.0      # bought parts land on a ring this far from the car
+## Casino bets: the host refuses a payout bigger than this many times the bet.
+const MAX_PAYOUT_MULT := {"roulette": 36, "slots": 4, "darts": 7, "cup_pong": 3}
 
 var phase: int = Phase.MENU
 var names: Dictionary = {}        # peer_id -> display name
 var role_owner: Dictionary = {}   # Roles.Id -> peer_id
 var world_seed := 0
 var drive_seed := 0
+var money := 0                    # the crew's shared pool; the host owns it
+var city: CityLayout              # the same city on every peer, rebuilt from world_seed each night
 var parts: Array = []             # [{name, state, holder, pos, yaw, q, loose_t, warned}]; pos is the part origin (ground level when resting)
 var fatigue: Dictionary = {}      # peer -> 0..1; only non-Mechanics tire from hauling parts
 var out_left: Dictionary = {}     # peer -> seconds left passed out
@@ -66,6 +79,15 @@ var _kebab_last_sync := 0.0
 var _hazard_last_ms := -100000
 var _fat_sync := 0.0
 var _ready_peers: Dictionary = {}
+var orders: Array = []            # the job board: open delivery orders
+var order_serial := 0             # how many orders have ever been put on the board
+var job: Dictionary = {}          # the one active delivery, empty when there is none
+var seat_driver := 0              # peer on the scooter's driving seat, 0 = free
+var seat_pillion := 0             # peer riding behind
+var _job_sync := 0.0
+var _job_event_in := 60.0
+var bought: Dictionary = {}       # "shop/item" -> true for the once-a-night things (garage upgrades, the pawned watch)
+var _stakes: Dictionary = {}      # host only: peer -> {casino game: amount staked this round}
 var _stat_timer := 0.0
 var _phase_timer := 0.0
 var _hot_timer := 0.0
@@ -185,28 +207,15 @@ func _layout(seed_value: int) -> void:
 	fatigue.clear()
 	out_left.clear()
 	build_damage = 0.0
-	var radius := Vector2(14.0, 34.0)
-	var pr: Array = Nights.get_night(night).part_radius
-	radius = Vector2(pr[0], pr[1])
-	var used: Array[Vector3] = []
+	money = int(Nights.get_night(night).start_money)
 	for i in PART_NAMES.size():
-		var pos := Vector3.ZERO
-		for _try in 40:
-			var ang := rng.randf() * TAU
-			var rad := rng.randf_range(radius.x, radius.y)
-			pos = Vector3(cos(ang) * rad, 0.0, sin(ang) * rad)
-			var ok := true
-			for u in used:
-				if u.distance_to(pos) < 10.0:
-					ok = false
-			if ok:
-				break
-		used.append(pos)
-		parts.append({"name": PART_NAMES[i], "state": PS.WORLD, "holder": 0, "pos": pos, "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false})
+		var ang := TAU * float(i) / PART_NAMES.size() + 0.4
+		var pos := CAR_POS + Vector3(cos(ang) * DELIVERY_R, 0.0, sin(ang) * DELIVERY_R)
+		parts.append({"name": PART_NAMES[i], "state": PS.SHELF, "holder": 0, "pos": pos, "yaw": 0.0, "q": 0.0, "loose_t": 0.0, "warned": false})
 	coolers.clear()
 	for i in 3:
 		var ang2 := rng.randf() * TAU
-		var rad2 := rng.randf_range(10.0, 30.0)
+		var rad2 := rng.randf_range(9.0, 18.0)
 		coolers.append(Vector3(cos(ang2) * rad2, 0.0, sin(ang2) * rad2))
 
 
@@ -290,6 +299,14 @@ func _on_peer_disconnected(id: int) -> void:
 		if parts[i].state == PS.CARRIED and parts[i].holder == id:
 			parts[i].state = PS.WORLD
 			parts[i].holder = 0
+	if id == seat_driver or id == seat_pillion:
+		seat_driver = 0 if id == seat_driver else seat_driver
+		seat_pillion = 0 if id == seat_pillion else seat_pillion
+		_send_seats()
+	if carried_job_by(id):
+		job.state = "loose"
+		job.carrier = 0
+		_send_job()
 	_send_parts()
 	_send_roster()
 
@@ -333,6 +350,7 @@ func start_game(p_night := -1) -> void:
 			role_owner[r] = peers[k % peers.size()]
 			k += 1
 	_ready_peers.clear()
+	_stakes.clear()
 	_bcast("c_begin_scavenge", [randi(), role_owner, p_night])
 
 
@@ -349,7 +367,11 @@ func c_begin_scavenge(seed_value: int, ro: Dictionary, p_night := 0) -> void:
 	won = false
 	_cop_open = false
 	_phase_timer = 0.0
+	var hb: Array = Nights.get_night(night).home_blocks
+	city = CityLayout.new(seed_value, CityLayout.BLOCKS, int(hb[0]), int(hb[1]))
 	_layout(seed_value)
+	_fresh_board()
+	money_changed.emit()
 	_set_phase(Phase.SCAVENGE)
 
 
@@ -378,6 +400,427 @@ func c_lobby() -> void:
 	_reset_campaign()
 	_set_phase(Phase.LOBBY)
 	roster_changed.emit()
+
+
+# --- Money -----------------------------------------------------------------------------
+# One shared pool. The host is the bank: every change goes through it and is broadcast.
+
+func request_buy(i: int) -> void:
+	_to_host("s_buy", [i])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_buy(i: int) -> void:
+	if not is_host() or phase != Phase.SCAVENGE or i < 0 or i >= parts.size():
+		return
+	if parts[i].state != PS.SHELF or money < PartsShop.price(i):
+		return
+	_set_money(money - PartsShop.price(i))
+	parts[i].state = PS.WORLD
+	_toast_all("%s bought for $%d. It is on the ground by the car." % [parts[i].name, PartsShop.price(i)])
+	_send_parts()
+
+
+## Casino rounds are two steps, so a payout can only follow a real bet: the stake leaves the
+## shared pool first (the host answers with stake_result), and the payout is paid against it.
+func request_stake(kind: String, bet: int) -> void:
+	_to_host("s_stake", [kind, bet])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_stake(kind: String, bet: int) -> void:
+	if not is_host():
+		return
+	var who := _sender()
+	var ok := phase == Phase.SCAVENGE and MAX_PAYOUT_MULT.has(kind) and bet > 0 and bet <= money and not is_out(who)
+	if ok:
+		var st: Dictionary = _stakes.get(who, {})
+		st[kind] = bet    # an abandoned earlier round at this game is simply forfeited
+		_stakes[who] = st
+		_set_money(money - bet)
+	if who == my_id():
+		stake_result.emit(kind, ok, bet)
+	else:
+		rpc_id(who, "c_stake_result", kind, ok, bet)
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_stake_result(kind: String, ok: bool, bet: int) -> void:
+	stake_result.emit(kind, ok, bet)
+
+
+## The round is over: paid against the stake, never above the game's limit. Zero is a loss.
+func request_payout(kind: String, payout: int) -> void:
+	_to_host("s_payout", [kind, payout])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_payout(kind: String, payout: int) -> void:
+	if not is_host() or phase != Phase.SCAVENGE or not MAX_PAYOUT_MULT.has(kind):
+		return
+	var who := _sender()
+	var st: Dictionary = _stakes.get(who, {})
+	var bet: int = int(st.get(kind, 0))
+	if bet <= 0 or payout < 0 or payout > bet * int(MAX_PAYOUT_MULT[kind]):
+		return
+	st.erase(kind)
+	_stakes[who] = st
+	var game_name: String = kind.replace("_", " ")
+	if payout > 0:
+		_set_money(money + payout)
+	if payout > bet:
+		_toast_all("%s won $%d at the %s!" % [names.get(who, "?"), payout - bet, game_name])
+	elif payout < bet:
+		_toast_all("%s lost $%d at the %s." % [names.get(who, "?"), bet - payout, game_name])
+
+
+## Host only: money earned outside the casino (delivery payouts).
+func earn(amount: int, why: String) -> void:
+	if not is_host() or amount <= 0:
+		return
+	_set_money(money + amount)
+	_toast_all("+$%d  %s" % [amount, why])
+
+
+func _set_money(v: int) -> void:
+	money = maxi(v, 0)
+	_bcast("c_money", [money])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_money(v: int) -> void:
+	money = v
+	money_changed.emit()
+
+
+func parts_total_unbought() -> int:
+	var t := 0
+	for i in parts.size():
+		if parts[i].state == PS.SHELF:
+			t += PartsShop.price(i)
+	return t
+
+
+# --- Corner shops ----------------------------------------------------------------------
+# Everything is paid for from the shared pool. The host does the money and the tiredness; the
+# buyer's own machine does the drunkenness (item_bought tells it what to apply).
+
+func request_buy_item(shop: String, id: String) -> void:
+	_to_host("s_buy_item", [shop, id])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_buy_item(shop: String, id: String) -> void:
+	if not is_host() or phase != Phase.SCAVENGE:
+		return
+	var it := ShopItems.find(shop, id)
+	var who := _sender()
+	if it.is_empty() or is_out(who):
+		return
+	var key := "%s/%s" % [shop, id]
+	var once: bool = it.get("once", false)
+	var price := int(it.price)
+	if (once and bought.has(key)) or (price > 0 and money < price):
+		return
+	_set_money(money - price)
+	if once:
+		bought[key] = true
+	var fx: Dictionary = it.effect
+	if fx.has("wanted"):
+		_add_wanted(float(fx.wanted))
+	var who_list: Array = names.keys() if fx.get("crew", false) else [who]
+	for p in who_list:
+		if fx.get("wake", false):
+			out_left[p] = 0.0
+			fatigue[p] = Tuning.fatigue_wake
+		if fx.has("rest"):
+			fatigue[p] = maxf(0.0, fatigue_of(p) - float(fx.rest))
+	if price < 0:
+		_toast_all("%s pawned something. +$%d, and a funny look from the owner." % [names.get(who, "?"), -price])
+	else:
+		_toast_all("%s bought: %s ($%d)" % [names.get(who, "?"), it.name, price])
+	_bcast("c_item_bought", [who, shop, id, bought])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_item_bought(peer: int, shop: String, id: String, b: Dictionary) -> void:
+	bought = b
+	item_bought.emit(peer, shop, id)
+
+
+# --- Deliveries ------------------------------------------------------------------------
+# The host keeps the board, the one active job and who is on the scooter. Everyone can read
+# them; changes are requests the host checks and then broadcasts. The parcel is either carried
+# (by whoever the host says) or loose at a spot on the ground.
+
+func _fresh_board() -> void:
+	bought = {}
+	orders = Deliveries.board(city, world_seed, 0, Deliveries.BOARD_SIZE)
+	order_serial = Deliveries.BOARD_SIZE
+	job = {}
+	seat_driver = 0
+	seat_pillion = 0
+
+
+## Layout space to world space: the car park is the world origin.
+func to_world(layout_pos: Vector3) -> Vector3:
+	return layout_pos - city.carpark_center()
+
+
+## The pavement outside the delivery shop, in world space.
+func shop_front() -> Vector3:
+	var shop: Dictionary = city.landmarks.get("delivery", {})
+	return to_world(city.front_point(shop)) if not shop.is_empty() else Vector3.ZERO
+
+
+func request_take_order(id: int) -> void:
+	_to_host("s_take_order", [id])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_take_order(id: int) -> void:
+	if not is_host() or phase != Phase.SCAVENGE or not job.is_empty():
+		return
+	var idx := -1
+	for i in orders.size():
+		if orders[i].id == id:
+			idx = i
+	if idx == -1:
+		return
+	var o: Dictionary = orders[idx]
+	orders.remove_at(idx)
+	orders.append(Deliveries.board(city, world_seed, order_serial, 1)[0])
+	order_serial += 1
+	job = {
+		"id": o.id, "item": o.item, "lot": o.lot, "addr": o.addr, "dist": o.dist, "pay": o.pay,
+		"time_left": float(o.time), "integrity": 100.0, "late": false,
+		"state": "carried" if seat_pillion != 0 else "loose",
+		"carrier": seat_pillion, "pos": shop_front(), "leak": 0.0,
+	}
+	_job_event_in = randf_range(45.0, 80.0)
+	_toast_all("Job taken: %s to %s. Do not drop it." % [o.item, o.addr])
+	_bcast("c_orders", [orders, order_serial])
+	_send_job()
+
+
+func request_abandon_job() -> void:
+	_to_host("s_abandon_job")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_abandon_job() -> void:
+	if not is_host() or job.is_empty():
+		return
+	job = {}
+	_toast_all("Order binned. The customer will leave a review.")
+	_send_job()
+
+
+func request_seat(seat: int) -> void:
+	_to_host("s_seat", [seat])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_seat(seat: int) -> void:
+	if not is_host() or phase != Phase.SCAVENGE:
+		return
+	var who := _sender()
+	if is_out(who) or who == seat_driver or who == seat_pillion:
+		return
+	if seat == 1 and seat_driver == 0:
+		seat_driver = who
+	elif seat == 2 and seat_pillion == 0:
+		seat_pillion = who
+	else:
+		return
+	_send_seats()
+
+
+func carried_job_by(peer: int) -> bool:
+	return not job.is_empty() and job.state == "carried" and job.carrier == peer
+
+
+func request_unseat() -> void:
+	_to_host("s_unseat")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_unseat() -> void:
+	if not is_host():
+		return
+	var who := _sender()
+	if who == seat_driver:
+		seat_driver = 0
+	elif who == seat_pillion:
+		seat_pillion = 0
+	else:
+		return
+	_send_seats()
+
+
+func _send_seats() -> void:
+	_bcast("c_seats", [seat_driver, seat_pillion])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_seats(driver: int, pillion: int) -> void:
+	seat_driver = driver
+	seat_pillion = pillion
+	seats_changed.emit()
+
+
+## The carrier lost their grip: the parcel lands at pos and takes a knock.
+func request_parcel_drop(pos: Vector3) -> void:
+	_to_host("s_parcel_drop", [pos])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_parcel_drop(pos: Vector3) -> void:
+	if not is_host() or not carried_job_by(_sender()):
+		return
+	job.state = "loose"
+	job.carrier = 0
+	job.pos = pos
+	job.integrity = maxf(0.0, float(job.integrity) - Deliveries.DROP_DAMAGE)
+	_toast_all("%s dropped the parcel! Somebody go and get it." % names.get(_sender(), "?"))
+	_send_job()
+
+
+func request_parcel_pickup() -> void:
+	_to_host("s_parcel_pickup")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_parcel_pickup() -> void:
+	if not is_host() or phase != Phase.SCAVENGE or job.is_empty() or job.state != "loose":
+		return
+	var who := _sender()
+	if is_out(who):
+		return
+	job.state = "carried"
+	job.carrier = who
+	_send_job()
+
+
+## A bump on the road shakes the parcel loose a little.
+func request_parcel_bump(amount: float) -> void:
+	_to_host("s_parcel_bump", [amount])
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_parcel_bump(amount: float) -> void:
+	if not is_host() or not carried_job_by(_sender()):
+		return
+	job.integrity = maxf(0.0, float(job.integrity) - clampf(amount, 0.0, Deliveries.MAX_BUMP))
+	_send_job()
+
+
+func request_deliver() -> void:
+	_to_host("s_deliver")
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func s_deliver() -> void:
+	if not is_host() or phase != Phase.SCAVENGE or not carried_job_by(_sender()):
+		return
+	var pay := Deliveries.payout(int(job.pay), float(job.integrity), float(job.time_left) < 0.0)
+	var tip := Deliveries.tip(int(job.id), world_seed, pay) if float(job.time_left) >= 0.0 else 0
+	var addr: String = job.addr
+	var line := Deliveries.reaction(int(job.id), world_seed)
+	job = {}
+	_send_job()
+	_toast_all(line)
+	earn(pay + tip, "delivered to %s%s" % [addr, " (tip $%d)" % tip if tip > 0 else ""])
+
+
+## Something goes wrong on the road. The customer rings, or the parcel starts to smell.
+func _job_event(kind: String) -> void:
+	if job.is_empty():
+		return
+	match kind:
+		"leak":
+			job.leak = Deliveries.LEAK_SECS
+			_toast_all("The parcel is leaking something. It smells of kebab and regret.")
+		"hurry":
+			job.time_left = float(job.time_left) - Deliveries.HURRY_TIME
+			_toast_all("Customer rang: \"Where ARE you?!\" You lose %d seconds of patience." % int(Deliveries.HURRY_TIME))
+		"reroute":
+			var rng := RandomNumberGenerator.new()
+			rng.seed = randi()
+			var o := Deliveries.make_order(city, rng, int(job.id))
+			for _try in 8:
+				if o.lot != job.lot:
+					break
+				o = Deliveries.make_order(city, rng, int(job.id))
+			if o.lot == job.lot:
+				return
+			job.lot = o.lot
+			job.addr = o.addr
+			job.pay = int(round(int(job.pay) * Deliveries.REROUTE_PAY_BONUS / 5.0)) * 5
+			job.time_left = float(job.time_left) + Deliveries.REROUTE_EXTRA_TIME
+			_toast_all("Customer rang: they have moved. New address: %s. Bit extra for the hassle." % o.addr)
+		_:
+			return
+	_send_job()
+
+
+func _send_job() -> void:
+	_bcast("c_job", [job])
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_job(j: Dictionary) -> void:
+	job = j
+	job_changed.emit()
+
+
+@rpc("authority", "call_remote", "reliable")
+func c_orders(o: Array, serial: int) -> void:
+	orders = o
+	order_serial = serial
+	orders_changed.emit()
+
+
+@rpc("authority", "call_remote", "unreliable")
+func c_job_time(t: float) -> void:
+	if not job.is_empty():
+		job.time_left = t
+		job_changed.emit()
+
+
+func _tick_job(delta: float) -> void:
+	if job.is_empty():
+		return
+	job.time_left = float(job.time_left) - delta
+	if float(job.leak) > 0.0:
+		job.leak = maxf(0.0, float(job.leak) - delta)
+		job.integrity = maxf(0.0, float(job.integrity) - Deliveries.LEAK_PER_S * delta)
+	if job.state == "carried":
+		_job_event_in -= delta
+		if _job_event_in <= 0.0:
+			_job_event_in = randf_range(50.0, 90.0)
+			_job_event(["leak", "reroute", "hurry"][randi() % 3])
+	if float(job.time_left) < 0.0 and not job.late:
+		job.late = true
+		_toast_all("The customer is getting restless. The fee just halved.")
+		_send_job()
+	_job_sync -= delta
+	if _job_sync <= 0.0:
+		_job_sync = 1.0
+		_bcast("c_job_time", [job.time_left])
+		job_changed.emit()
+
+
+## The driver streams the scooter so everyone sees it move; the others just follow.
+func send_scooter_state(pos: Vector3, yaw: float, speed: float) -> void:
+	if not multiplayer.get_peers().is_empty():
+		rpc("c_scooter_state", pos, yaw, speed)
+
+
+@rpc("any_peer", "call_remote", "unreliable")
+func c_scooter_state(pos: Vector3, yaw: float, speed: float) -> void:
+	if _sender() == seat_driver:
+		scooter_state.emit(pos, yaw, speed)
 
 
 # --- Scavenging: parts ----------------------------------------------------------
@@ -664,6 +1107,8 @@ func s_hazard(kind: String) -> void:
 		"traffic": "HEAD-ON! Wrong lane, mate! The other driver has words.",
 		"dog": "DOG! Poor lad. He will be fine. Probably.",
 		"mugger": "MUGGED! They took the snacks and the dignity.",
+		"checkpoint": "CHECKPOINT! You blew straight through it. The cops are VERY interested.",
+		"checkpoint_pass": "Checkpoint cleared. The officer waves you on, narrowing their eyes.",
 	}
 	_toast_all(lines[kind])
 	_bcast("c_hazard", [kind])
@@ -744,6 +1189,7 @@ func _process(delta: float) -> void:
 	match phase:
 		Phase.SCAVENGE:
 			wanted = maxf(0.0, wanted - Tuning.wanted_decay_scavenge * delta)
+			_tick_job(delta)
 			_tick_loose(delta)
 			_tick_fatigue(delta)
 			if _phase_timer > 0.0:
@@ -765,6 +1211,9 @@ func _process(delta: float) -> void:
 
 
 func _start_drive() -> void:
+	job = {}
+	seat_driver = 0
+	seat_pillion = 0
 	wanted = maxf(0.0, wanted * 0.5)
 	car_hp = maxf(40.0, 100.0 - build_damage)
 	engine_hot = false
