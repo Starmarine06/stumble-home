@@ -146,145 +146,145 @@ top_radius = 0.35
 bottom_radius = 0.45
 height = 0.8
 
-[node name="Main" type="Node3D" unique_id=1461556473]
+[node name="Main" type="Node3D" unique_id=1514116482]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2104181715]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=160783935]
 environment = SubResource("Environment_t5b73")
 
-[node name="Moon" type="MeshInstance3D" parent="." unique_id=39770939]
+[node name="Moon" type="MeshInstance3D" parent="." unique_id=222341656]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 95, -90)
 mesh = SubResource("SphereMesh_mhjrq")
 
-[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=1920106886]
+[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=66159905]
 transform = Transform3D(0.92718387, 0.21486554, -0.30685976, 0, 0.81915206, 0.57357645, 0.3746066, -0.5318108, 0.75950456, 0, 0, 0)
 light_color = Color(0.68, 0.76, 0.95, 1)
 light_energy = 0.45
 shadow_enabled = true
 shadow_bias = 0.08
 
-[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=1868974581 instance=ExtResource("2_pca0h")]
+[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=556075050 instance=ExtResource("2_pca0h")]
 
-[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=537492981 instance=ExtResource("3_626y1")]
+[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=1827210261 instance=ExtResource("3_626y1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -32)
 
-[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=2073718273 instance=ExtResource("4_48bov")]
+[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=9962998 instance=ExtResource("4_48bov")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15.5, 0, 2)
 
-[node name="ScavengeParts" type="Node3D" parent="." unique_id=107240910]
+[node name="ScavengeParts" type="Node3D" parent="." unique_id=1519755887]
 
-[node name="WorldPart_0" type="StaticBody3D" parent="ScavengeParts" unique_id=1018402648]
+[node name="WorldPart_0" type="StaticBody3D" parent="ScavengeParts" unique_id=1638220525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.2, 1.35, -43.2)
 visible = false
 metadata/part_idx = 0
 metadata/part_name = "Battery"
 metadata/part_mass = 12.0
 
-[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_0" unique_id=1075725937]
+[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_0" unique_id=803811650]
 shape = SubResource("SphereShape3D_hbx46")
 
-[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=589417897]
+[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=718627528]
 material_override = SubResource("StandardMaterial3D_fp20n")
 mesh = SubResource("BoxMesh_mpopf")
 
-[node name="@MeshInstance3D@381" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=2059933091]
+[node name="@MeshInstance3D@381" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=399387006]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, 0.22, 0)
 material_override = ExtResource("5_88hky")
 mesh = SubResource("CylinderMesh_0qgwq")
 
-[node name="@MeshInstance3D@382" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=1624443406]
+[node name="@MeshInstance3D@382" type="MeshInstance3D" parent="ScavengeParts/WorldPart_0" unique_id=1669453851]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, 0.22, 0)
 material_override = ExtResource("5_88hky")
 mesh = SubResource("CylinderMesh_rngi2")
 
-[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_0" unique_id=1888676811]
+[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_0" unique_id=708459160]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.92, 0.22, 0.22, 1)
 light_energy = 1.2
 omni_range = 4.5
 
-[node name="WorldPart_1" type="StaticBody3D" parent="ScavengeParts" unique_id=1834267590]
+[node name="WorldPart_1" type="StaticBody3D" parent="ScavengeParts" unique_id=1925983416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.35, -26)
 visible = false
 metadata/part_idx = 1
 metadata/part_name = "Fuel Pump"
 metadata/part_mass = 5.0
 
-[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_1" unique_id=1142960538]
+[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_1" unique_id=1969991388]
 shape = SubResource("SphereShape3D_0ujqb")
 
-[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_1" unique_id=86242542]
+[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_1" unique_id=1150008704]
 material_override = SubResource("StandardMaterial3D_isl76")
 mesh = SubResource("CylinderMesh_biumd")
 
-[node name="@MeshInstance3D@383" type="MeshInstance3D" parent="ScavengeParts/WorldPart_1" unique_id=39532519]
+[node name="@MeshInstance3D@383" type="MeshInstance3D" parent="ScavengeParts/WorldPart_1" unique_id=594390252]
 transform = Transform3D(0.42261824, -0.9063078, 0, 0.9063078, 0.42261824, 0, 0, 0, 1, 0.18, 0.15, 0)
 material_override = ExtResource("6_p18nk")
 mesh = SubResource("CylinderMesh_41j32")
 
-[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_1" unique_id=512387335]
+[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_1" unique_id=154847018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.95, 0.75, 0.2, 1)
 light_energy = 1.2
 omni_range = 4.5
 
-[node name="WorldPart_2" type="StaticBody3D" parent="ScavengeParts" unique_id=938026496]
+[node name="WorldPart_2" type="StaticBody3D" parent="ScavengeParts" unique_id=252344146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1.35, -32)
 visible = false
 metadata/part_idx = 2
 metadata/part_name = "Spark Plugs"
 metadata/part_mass = 0.4
 
-[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_2" unique_id=252576593]
+[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_2" unique_id=535724630]
 shape = SubResource("SphereShape3D_0o88u")
 
-[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_2" unique_id=2058322031]
+[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_2" unique_id=592968940]
 material_override = SubResource("StandardMaterial3D_8a5xq")
 mesh = SubResource("CylinderMesh_1hsqa")
 
-[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_2" unique_id=1970015248]
+[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_2" unique_id=2117905963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.3, 0.9, 0.9, 1)
 light_energy = 1.2
 omni_range = 4.5
 
-[node name="WorldPart_3" type="StaticBody3D" parent="ScavengeParts" unique_id=1837721476]
+[node name="WorldPart_3" type="StaticBody3D" parent="ScavengeParts" unique_id=1802707358]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.95, -34)
 visible = false
 metadata/part_idx = 3
 metadata/part_name = "Spare Tyre"
 metadata/part_mass = 9.0
 
-[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_3" unique_id=1905617101]
+[node name="Collision" type="CollisionShape3D" parent="ScavengeParts/WorldPart_3" unique_id=2026622566]
 shape = SubResource("SphereShape3D_ru6tx")
 
-[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_3" unique_id=1810649153]
+[node name="Mesh" type="MeshInstance3D" parent="ScavengeParts/WorldPart_3" unique_id=806110069]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 material_override = ExtResource("6_p18nk")
 mesh = SubResource("TorusMesh_da1yu")
 
-[node name="@MeshInstance3D@384" type="MeshInstance3D" parent="ScavengeParts/WorldPart_3" unique_id=577477122]
+[node name="@MeshInstance3D@384" type="MeshInstance3D" parent="ScavengeParts/WorldPart_3" unique_id=895025009]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 material_override = ExtResource("5_88hky")
 mesh = SubResource("CylinderMesh_v1tgo")
 
-[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_3" unique_id=1385306756]
+[node name="BeaconGlow" type="OmniLight3D" parent="ScavengeParts/WorldPart_3" unique_id=2021420053]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.18, 0.18, 0.22, 1)
 light_energy = 1.2
 omni_range = 4.5
 
-[node name="MinigameStations" type="Node3D" parent="." unique_id=74766821]
+[node name="MinigameStations" type="Node3D" parent="." unique_id=167313633]
 
-[node name="Station_0_Darts" type="Area3D" parent="MinigameStations" unique_id=2145609595]
+[node name="Station_0_Darts" type="Area3D" parent="MinigameStations" unique_id=549140011]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.8, 0.8, -42.8)
 metadata/station_idx = 0
 metadata/game_name = "Darts"
 metadata/label_text = "🎯 PLAY DARTS WITH BARNEY (BET & WIN BATTERY)"
 
-[node name="@CollisionShape3D@385" type="CollisionShape3D" parent="MinigameStations/Station_0_Darts" unique_id=178475409]
+[node name="@CollisionShape3D@385" type="CollisionShape3D" parent="MinigameStations/Station_0_Darts" unique_id=1211125184]
 shape = SubResource("SphereShape3D_56mur")
 
-[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_0_Darts" unique_id=1488688935]
+[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_0_Darts" unique_id=726379293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 billboard = 1
 modulate = Color(0.95, 0.25, 0.25, 1)
@@ -293,27 +293,27 @@ text = "🎯 PLAY DARTS WITH BARNEY (BET & WIN BATTERY)
 font_size = 28
 outline_size = 6
 
-[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_0_Darts" unique_id=99011992]
+[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_0_Darts" unique_id=1094818662]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.95, 0.25, 0.25, 1)
 light_energy = 1.6
 omni_range = 3.5
 
-[node name="@MeshInstance3D@386" type="MeshInstance3D" parent="MinigameStations/Station_0_Darts" unique_id=1652078439]
+[node name="@MeshInstance3D@386" type="MeshInstance3D" parent="MinigameStations/Station_0_Darts" unique_id=2130307019]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_3g6qa")
 mesh = SubResource("CylinderMesh_jj8n0")
 
-[node name="Station_1_Cup Pong" type="Area3D" parent="MinigameStations" unique_id=1830230621]
+[node name="Station_1_Cup Pong" type="Area3D" parent="MinigameStations" unique_id=2111009608]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.8, -26)
 metadata/station_idx = 1
 metadata/game_name = "Cup Pong"
 metadata/label_text = "🏓 PLAY CUP PONG (WIN FUEL PUMP)"
 
-[node name="@CollisionShape3D@387" type="CollisionShape3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1299250887]
+[node name="@CollisionShape3D@387" type="CollisionShape3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1088910220]
 shape = SubResource("SphereShape3D_a5iap")
 
-[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1318561613]
+[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=633234570]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 billboard = 1
 modulate = Color(0.95, 0.75, 0.2, 1)
@@ -322,27 +322,27 @@ text = "🏓 PLAY CUP PONG (WIN FUEL PUMP)
 font_size = 28
 outline_size = 6
 
-[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1152374164]
+[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1036089492]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.95, 0.75, 0.2, 1)
 light_energy = 1.6
 omni_range = 3.5
 
-[node name="@MeshInstance3D@388" type="MeshInstance3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=129704014]
+[node name="@MeshInstance3D@388" type="MeshInstance3D" parent="MinigameStations/Station_1_Cup Pong" unique_id=1826447074]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_v2e3k")
 mesh = SubResource("CylinderMesh_r0s3f")
 
-[node name="Station_2_Slots" type="Area3D" parent="MinigameStations" unique_id=1384278058]
+[node name="Station_2_Slots" type="Area3D" parent="MinigameStations" unique_id=88214564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.8, -32)
 metadata/station_idx = 2
 metadata/game_name = "Slots"
 metadata/label_text = "🎰 PLAY SLOTS (WIN SPARK PLUGS)"
 
-[node name="@CollisionShape3D@389" type="CollisionShape3D" parent="MinigameStations/Station_2_Slots" unique_id=492430118]
+[node name="@CollisionShape3D@389" type="CollisionShape3D" parent="MinigameStations/Station_2_Slots" unique_id=105705265]
 shape = SubResource("SphereShape3D_1crp1")
 
-[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_2_Slots" unique_id=1570838165]
+[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_2_Slots" unique_id=1052984122]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 billboard = 1
 modulate = Color(0.3, 0.85, 0.95, 1)
@@ -351,27 +351,27 @@ text = "🎰 PLAY SLOTS (WIN SPARK PLUGS)
 font_size = 28
 outline_size = 6
 
-[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_2_Slots" unique_id=1905826913]
+[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_2_Slots" unique_id=136692668]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.3, 0.85, 0.95, 1)
 light_energy = 1.6
 omni_range = 3.5
 
-[node name="@MeshInstance3D@390" type="MeshInstance3D" parent="MinigameStations/Station_2_Slots" unique_id=1440749266]
+[node name="@MeshInstance3D@390" type="MeshInstance3D" parent="MinigameStations/Station_2_Slots" unique_id=1373602218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_pj5m4")
 mesh = SubResource("CylinderMesh_ivnop")
 
-[node name="Station_3_Roulette" type="Area3D" parent="MinigameStations" unique_id=861390739]
+[node name="Station_3_Roulette" type="Area3D" parent="MinigameStations" unique_id=1163618785]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.8, -34)
 metadata/station_idx = 3
 metadata/game_name = "Roulette"
 metadata/label_text = "🎲 PLAY 3D ROULETTE WITH ANTOINE (BET & WIN SPARE TYRE)"
 
-[node name="@CollisionShape3D@391" type="CollisionShape3D" parent="MinigameStations/Station_3_Roulette" unique_id=1325042841]
+[node name="@CollisionShape3D@391" type="CollisionShape3D" parent="MinigameStations/Station_3_Roulette" unique_id=1330724420]
 shape = SubResource("SphereShape3D_h1aja")
 
-[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_3_Roulette" unique_id=106417738]
+[node name="FloatingLabel" type="Label3D" parent="MinigameStations/Station_3_Roulette" unique_id=1776989290]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 billboard = 1
 modulate = Color(0.85, 0.2, 0.25, 1)
@@ -380,17 +380,17 @@ text = "🎲 PLAY 3D ROULETTE WITH ANTOINE (BET & WIN SPARE TYRE)
 font_size = 28
 outline_size = 6
 
-[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_3_Roulette" unique_id=87135621]
+[node name="StationGlow" type="OmniLight3D" parent="MinigameStations/Station_3_Roulette" unique_id=40445821]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_color = Color(0.85, 0.2, 0.25, 1)
 light_energy = 1.6
 omni_range = 3.5
 
-[node name="@MeshInstance3D@392" type="MeshInstance3D" parent="MinigameStations/Station_3_Roulette" unique_id=1400252130]
+[node name="@MeshInstance3D@392" type="MeshInstance3D" parent="MinigameStations/Station_3_Roulette" unique_id=1881071260]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_bqn5i")
 mesh = SubResource("CylinderMesh_2jpis")
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=122211700 instance=ExtResource("7_y0mpe")]
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1979415273 instance=ExtResource("7_y0mpe")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 24)
 script = ExtResource("8_aov26")

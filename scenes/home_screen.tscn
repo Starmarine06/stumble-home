@@ -87,53 +87,53 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
-[node name="HomeScreen" type="Node3D" unique_id=284823248]
+[node name="HomeScreen" type="Node3D" unique_id=1849093950]
 script = ExtResource("1_r26cg")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1430541106]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=884397893]
 environment = SubResource("Environment_xoohm")
 
-[node name="Moon" type="MeshInstance3D" parent="." unique_id=415356690]
+[node name="Moon" type="MeshInstance3D" parent="." unique_id=1472954477]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 95, -90)
 mesh = SubResource("SphereMesh_renrx")
 
-[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=787552700]
+[node name="MoonLight" type="DirectionalLight3D" parent="." unique_id=1231403516]
 transform = Transform3D(0.92718387, 0.21486554, -0.30685976, 0, 0.81915206, 0.57357645, 0.3746066, -0.5318108, 0.75950456, 0, 0, 0)
 light_color = Color(0.68, 0.76, 0.95, 1)
 light_energy = 0.45
 shadow_enabled = true
 shadow_bias = 0.08
 
-[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=1868974581 instance=ExtResource("3_siet5")]
+[node name="ParkingLot" type="StaticBody3D" parent="." unique_id=556075050 instance=ExtResource("3_siet5")]
 
-[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=537492981 instance=ExtResource("4_p8i1v")]
+[node name="PubCasinoBuilding" type="StaticBody3D" parent="." unique_id=1827210261 instance=ExtResource("4_p8i1v")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -32)
 
-[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=2073718273 instance=ExtResource("5_y6vhh")]
+[node name="ParkedVan" type="StaticBody3D" parent="." unique_id=9962998 instance=ExtResource("5_y6vhh")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -15.5, 0, 2)
 
-[node name="MenuCamera" type="Camera3D" parent="." unique_id=2143286075]
+[node name="MenuCamera" type="Camera3D" parent="." unique_id=1173998933]
 transform = Transform3D(0.9848077, -0.009088044, 0.17341019, 0, 0.9986295, 0.05233596, -0.17364818, -0.051540855, 0.98345804, -4, 2.6, 14.5)
 fov = 65.0
 
-[node name="MenuUI" type="CanvasLayer" parent="." unique_id=1126399494]
+[node name="MenuUI" type="CanvasLayer" parent="." unique_id=951133349]
 layer = 10
 
-[node name="RootControl" type="Control" parent="MenuUI" unique_id=1526439924]
+[node name="RootControl" type="Control" parent="MenuUI" unique_id=1921746517]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Vignette" type="ColorRect" parent="MenuUI/RootControl" unique_id=1952409661]
+[node name="Vignette" type="ColorRect" parent="MenuUI/RootControl" unique_id=87179661]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.02, 0.03, 0.06, 0.38)
 
-[node name="NameBox" type="PanelContainer" parent="MenuUI/RootControl" unique_id=102821960]
+[node name="NameBox" type="PanelContainer" parent="MenuUI/RootControl" unique_id=1189558540]
 custom_minimum_size = Vector2(360, 52)
 layout_mode = 0
 offset_left = 880.0
@@ -142,24 +142,24 @@ offset_right = 880.0
 offset_bottom = 24.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_aqqai")
 
-[node name="@HBoxContainer@2" type="HBoxContainer" parent="MenuUI/RootControl/NameBox" unique_id=620521229]
+[node name="@HBoxContainer@2" type="HBoxContainer" parent="MenuUI/RootControl/NameBox" unique_id=2034609496]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@3" type="Label" parent="MenuUI/RootControl/NameBox/@HBoxContainer@2" unique_id=1467589841]
+[node name="@Label@3" type="Label" parent="MenuUI/RootControl/NameBox/@HBoxContainer@2" unique_id=1387719446]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
 text = "🍺 MONIKER:"
 
-[node name="NameInput" type="LineEdit" parent="MenuUI/RootControl/NameBox/@HBoxContainer@2" unique_id=507637535]
+[node name="NameInput" type="LineEdit" parent="MenuUI/RootControl/NameBox/@HBoxContainer@2" unique_id=1160852138]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Drunkard"
 placeholder_text = "Enter your drunk name"
 max_length = 16
 
-[node name="LogoTexture" type="TextureRect" parent="MenuUI/RootControl" unique_id=1609742653]
+[node name="LogoTexture" type="TextureRect" parent="MenuUI/RootControl" unique_id=579804877]
 custom_minimum_size = Vector2(900, 320)
 layout_mode = 0
 offset_left = 190.0
@@ -170,7 +170,7 @@ pivot_offset = Vector2(450, 160)
 mouse_filter = 2
 texture = ExtResource("6_gfroc")
 
-[node name="MainLayout" type="HBoxContainer" parent="MenuUI/RootControl" unique_id=544548315]
+[node name="MainLayout" type="HBoxContainer" parent="MenuUI/RootControl" unique_id=1024299628]
 custom_minimum_size = Vector2(1120, 300)
 layout_mode = 0
 offset_left = 80.0
@@ -179,74 +179,74 @@ offset_right = 80.0
 offset_bottom = 350.0
 theme_override_constants/separation = 40
 
-[node name="ButtonColumn" type="VBoxContainer" parent="MenuUI/RootControl/MainLayout" unique_id=232221804]
+[node name="ButtonColumn" type="VBoxContainer" parent="MenuUI/RootControl/MainLayout" unique_id=635884158]
 custom_minimum_size = Vector2(380, 260)
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PlayButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=33024250]
+[node name="PlayButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=2021551205]
 custom_minimum_size = Vector2(380, 80)
 layout_mode = 2
 texture_normal = ExtResource("7_aeotl")
 texture_pressed = ExtResource("8_6nfj5")
 texture_hover = ExtResource("9_db6kr")
 
-[node name="CreateRoomButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=374433354]
+[node name="CreateRoomButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=502822235]
 custom_minimum_size = Vector2(380, 80)
 layout_mode = 2
 texture_normal = ExtResource("10_hfyks")
 texture_pressed = ExtResource("11_kytt3")
 texture_hover = ExtResource("12_218ma")
 
-[node name="QuitButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=1135638761]
+[node name="QuitButton" type="TextureButton" parent="MenuUI/RootControl/MainLayout/ButtonColumn" unique_id=1284270299]
 custom_minimum_size = Vector2(380, 80)
 layout_mode = 2
 texture_normal = ExtResource("13_nnhu4")
 texture_pressed = ExtResource("14_ijmmk")
 texture_hover = ExtResource("15_o5fsg")
 
-[node name="RosterColumn" type="VBoxContainer" parent="MenuUI/RootControl/MainLayout" unique_id=169777784]
+[node name="RosterColumn" type="VBoxContainer" parent="MenuUI/RootControl/MainLayout" unique_id=1730443422]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="@Label@4" type="Label" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=751174933]
+[node name="@Label@4" type="Label" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=1408553539]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 0.88, 0.4, 1)
 text = "★ THE FOUR DRUNKARDS (HOVER OR CLICK TO INSPECT) ★"
 horizontal_alignment = 1
 
-[node name="CardsRow" type="HBoxContainer" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=787163270]
+[node name="CardsRow" type="HBoxContainer" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=1887562194]
 layout_mode = 2
 theme_override_constants/separation = 14
 alignment = 1
 
-[node name="CardDriver" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=178759646]
+[node name="CardDriver" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=1118589285]
 custom_minimum_size = Vector2(160, 210)
 layout_mode = 2
 texture = ExtResource("16_fjd61")
 
-[node name="CardNavigator" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=948791705]
+[node name="CardNavigator" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=1144257787]
 custom_minimum_size = Vector2(160, 210)
 layout_mode = 2
 texture = ExtResource("17_v1fj8")
 
-[node name="CardMechanic" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=1393461483]
+[node name="CardMechanic" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=2065874043]
 custom_minimum_size = Vector2(160, 210)
 layout_mode = 2
 texture = ExtResource("18_x7pad")
 
-[node name="CardLookout" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=1660077429]
+[node name="CardLookout" type="TextureRect" parent="MenuUI/RootControl/MainLayout/RosterColumn/CardsRow" unique_id=1333427747]
 custom_minimum_size = Vector2(160, 210)
 layout_mode = 2
 texture = ExtResource("19_t2kqi")
 
-[node name="DescPanel" type="PanelContainer" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=1231147450]
+[node name="DescPanel" type="PanelContainer" parent="MenuUI/RootControl/MainLayout/RosterColumn" unique_id=385728365]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_s47yi")
 
-[node name="RoleDescriptionLabel" type="Label" parent="MenuUI/RootControl/MainLayout/RosterColumn/DescPanel" unique_id=1823351702]
+[node name="RoleDescriptionLabel" type="Label" parent="MenuUI/RootControl/MainLayout/RosterColumn/DescPanel" unique_id=1797037831]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.85, 0.92, 1, 1)
@@ -254,7 +254,7 @@ text = "Hover over or click a drunk crew member to inspect their special perks, 
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="StatusToast" type="PanelContainer" parent="MenuUI/RootControl" unique_id=1670694774]
+[node name="StatusToast" type="PanelContainer" parent="MenuUI/RootControl" unique_id=1335920571]
 visible = false
 custom_minimum_size = Vector2(560, 60)
 layout_mode = 0
@@ -265,14 +265,14 @@ offset_bottom = 270.0
 pivot_offset = Vector2(280, 30)
 theme_override_styles/panel = SubResource("StyleBoxFlat_4yfgg")
 
-[node name="StatusLabel" type="Label" parent="MenuUI/RootControl/StatusToast" unique_id=1506719337]
+[node name="StatusLabel" type="Label" parent="MenuUI/RootControl/StatusToast" unique_id=896653051]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(1, 0.92, 0.4, 1)
 text = "⚡ MULTIPLAYER: Room codes & matchmaking are coming soon!"
 horizontal_alignment = 1
 
-[node name="FooterLabel" type="Label" parent="MenuUI/RootControl" unique_id=288462015]
+[node name="FooterLabel" type="Label" parent="MenuUI/RootControl" unique_id=1411891268]
 custom_minimum_size = Vector2(1280, 24)
 layout_mode = 0
 offset_top = 686.0

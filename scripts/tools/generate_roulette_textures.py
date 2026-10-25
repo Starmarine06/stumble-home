@@ -30,123 +30,91 @@ def generate_wheel_texture(out_path):
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     cx, cy = size // 2, size // 2
-    
-    # Radii (in pixels)
-    r_outer_wood = 510
-    r_ball_track = 480
-    r_pocket_outer = 430
-    r_pocket_inner = 310
-    r_cone_outer = 300
-    r_center_turret = 110
 
-    # 1. Outer Mahogany Rim with subtle concentric gradient
-    for r in range(r_outer_wood, r_ball_track, -1):
-        t = (r - r_ball_track) / (r_outer_wood - r_ball_track)
-        # Rich deep mahogany
-        col = (int(50 + 25 * t), int(22 + 12 * t), int(12 + 6 * t), 255)
+    # Radii for full-bleed rotor face (large, ultra-vibrant pockets)
+    r_outer_fret_ring = 508
+    r_pocket_outer = 498
+    r_pocket_inner = 290
+    r_inner_gold_ring = 286
+    r_cone_outer = 284
+    r_turret = 115
+
+    # 1. Outer Brass Rim of Rotor
+    for r in range(r_outer_fret_ring, r_pocket_outer, -1):
+        t = (r - r_pocket_outer) / float(r_outer_fret_ring - r_pocket_outer)
+        shade = math.sin(t * math.pi) * 30
+        col = (int(220 + shade), int(185 + shade * 0.8), int(80 + shade * 0.4), 255)
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col)
 
-    # 2. Polished Brass Ball Track
-    for r in range(r_ball_track, r_pocket_outer, -1):
-        t = (r - r_pocket_outer) / (r_ball_track - r_pocket_outer)
-        # Polished metallic brass groove gradient
-        shade = math.sin(t * math.pi) * 45
-        col = (int(180 + shade), int(145 + shade * 0.8), int(60 + shade * 0.4), 255)
-        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col)
-
-    # Outer pocket gold border
-    draw.ellipse([cx - r_pocket_outer, cy - r_pocket_outer, cx + r_pocket_outer, cy + r_pocket_outer], outline=(230, 190, 80, 255), width=3)
-
-    # 3. Numbered Pockets Ring (37 sectors)
+    # 2. Numbered Pockets Ring (37 sectors)
     num_pockets = len(WHEEL_NUMBERS)
-    sector_deg = 360.0 / num_pockets
-    font = get_font(26)
+    sector_deg = 360.0 / float(num_pockets)
+    font = get_font(34)
+
+    gold_fret = (245, 215, 80, 255)
 
     for i, num in enumerate(WHEEL_NUMBERS):
-        # In European roulette, 0 is at top (-90 degrees)
+        # 0 is at top (-90 degrees)
         start_deg = -90.0 + i * sector_deg - sector_deg / 2.0
         end_deg = start_deg + sector_deg
-        
-        # Color: 0 is Emerald Green, others alternating Red and Black
+
         if num == 0:
-            fill_col = (18, 120, 52, 255) # Rich casino emerald green
+            fill_col = (12, 145, 55, 255)  # Radiant emerald green
         elif num in RED_NUMBERS:
-            fill_col = (195, 28, 28, 255) # Deep vibrant crimson red
+            fill_col = (215, 24, 24, 255)  # Vibrant casino red
         else:
-            fill_col = (20, 20, 22, 255)  # Obsidian black
+            fill_col = (18, 18, 22, 255)   # Obsidian black
 
-        # Draw sector slice
         draw.pieslice([cx - r_pocket_outer, cy - r_pocket_outer, cx + r_pocket_outer, cy + r_pocket_outer],
-                      start=start_deg, end=end_deg, fill=fill_col, outline=(210, 175, 60, 255), width=2)
+                      start=start_deg, end=end_deg, fill=fill_col, outline=gold_fret, width=3)
 
-    # Inner pocket border & cone transition
-    draw.ellipse([cx - r_pocket_inner, cy - r_pocket_inner, cx + r_pocket_inner, cy + r_pocket_inner], fill=(15, 15, 18, 255), outline=(230, 190, 80, 255), width=4)
+    # 3. Inner Pocket Dividing Ring
+    draw.ellipse([cx - r_pocket_inner, cy - r_pocket_inner, cx + r_pocket_inner, cy + r_pocket_inner],
+                 fill=(22, 22, 26, 255), outline=gold_fret, width=4)
 
-    # 4. Render Numbers onto each sector (oriented radially)
-    text_r = (r_pocket_outer + r_pocket_inner) / 2.0 - 2
+    # 4. Render Numbers onto each sector (oriented radially, facing inwards)
+    text_r = (r_pocket_outer + r_pocket_inner) / 2.0
     for i, num in enumerate(WHEEL_NUMBERS):
         mid_angle_deg = -90.0 + i * sector_deg
         rad = math.radians(mid_angle_deg)
         tx = cx + text_r * math.cos(rad)
         ty = cy + text_r * math.sin(rad)
-        
-        # Create rotated text snippet
+
         txt = str(num)
-        txt_img = Image.new("RGBA", (80, 50), (0, 0, 0, 0))
+        txt_img = Image.new("RGBA", (100, 60), (0, 0, 0, 0))
         t_draw = ImageDraw.Draw(txt_img)
         bbox = font.getbbox(txt)
         w = bbox[2] - bbox[0]
         h = bbox[3] - bbox[1]
-        
-        # Draw with dark drop shadow and bright white text
-        t_draw.text(((80 - w) // 2 + 1, (50 - h) // 2 + 1), txt, font=font, fill=(0, 0, 0, 220))
-        t_draw.text(((80 - w) // 2, (50 - h) // 2), txt, font=font, fill=(255, 255, 255, 255))
-        
-        # Rotate text snippet: point inwards towards center
+
+        # Bold drop shadow
+        t_draw.text(((100 - w) // 2 + 2, (60 - h) // 2 + 2), txt, font=font, fill=(0, 0, 0, 240))
+        t_draw.text(((100 - w) // 2, (60 - h) // 2), txt, font=font, fill=(255, 255, 255, 255))
+
+        # Rotate text pointing inwards towards center
         rot_deg = -(mid_angle_deg + 90.0)
         rotated_txt = txt_img.rotate(rot_deg, expand=True, resample=Image.BICUBIC)
         rw, rh = rotated_txt.size
         img.paste(rotated_txt, (int(tx - rw // 2), int(ty - rh // 2)), rotated_txt)
 
-    # 5. Inner Cone (Sloping metallic brass/wood)
-    for r in range(r_cone_outer, r_center_turret, -1):
-        t = (r - r_center_turret) / (r_cone_outer - r_center_turret)
-        # Metallic champagne brass radial cone gradient
-        shade = math.sin(t * math.pi * 1.5) * 35
-        col = (int(165 + shade), int(135 + shade * 0.8), int(55 + shade * 0.4), 255)
+    # 5. Inner Cone (Polished metallic brass radial gradient)
+    for r in range(r_cone_outer, r_turret, -1):
+        t = (r - r_turret) / float(r_cone_outer - r_turret)
+        shade = math.sin(t * math.pi * 1.5) * 40
+        col = (int(190 + shade), int(155 + shade * 0.8), int(70 + shade * 0.4), 255)
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col)
 
-    # Draw 8 deflector diamond pins along the cone
-    for d_idx in range(8):
-        d_angle = math.radians(d_idx * 45.0 + 22.5)
-        dr = 365.0
-        dx = cx + dr * math.cos(d_angle)
-        dy = cy + dr * math.sin(d_angle)
-        # Small diamond pin
-        diamond = [
-            (dx, dy - 7),
-            (dx + 5, dy),
-            (dx, dy + 7),
-            (dx - 5, dy)
-        ]
-        draw.polygon(diamond, fill=(255, 235, 150, 255), outline=(120, 95, 30, 255))
+    draw.ellipse([cx - r_cone_outer, cy - r_cone_outer, cx + r_cone_outer, cy + r_cone_outer], outline=gold_fret, width=3)
 
-    # 6. Central Brass Spindle / Turret
-    for r in range(r_center_turret, 0, -1):
-        t = r / float(r_center_turret)
-        highlight = math.sin(t * math.pi) * 60
-        col = (int(210 + highlight * 0.7), int(175 + highlight * 0.6), int(75 + highlight * 0.3), 255)
+    # 6. Central Brass Spindle Turret Base
+    for r in range(r_turret, 0, -1):
+        t = r / float(r_turret)
+        highlight = math.sin(t * math.pi) * 55
+        col = (int(225 + highlight * 0.5), int(190 + highlight * 0.5), int(85 + highlight * 0.3), 255)
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col)
 
-    draw.ellipse([cx - r_center_turret, cy - r_center_turret, cx + r_center_turret, cy + r_center_turret], outline=(255, 240, 160, 255), width=3)
-    draw.ellipse([cx - 25, cy - 25, cx + 25, cy + 25], fill=(255, 235, 140, 255), outline=(140, 110, 40, 255), width=2)
-
-    # 4 Cross handles on turret
-    for h_angle in [0, 90, 180, 270]:
-        h_rad = math.radians(h_angle)
-        hx = cx + 55 * math.cos(h_rad)
-        hy = cy + 55 * math.sin(h_rad)
-        draw.circle((hx, hy), 12, fill=(245, 215, 110, 255), outline=(130, 100, 30, 255), width=2)
+    draw.ellipse([cx - r_turret, cy - r_turret, cx + r_turret, cy + r_turret], outline=(255, 240, 160, 255), width=3)
+    draw.ellipse([cx - 30, cy - 30, cx + 30, cy + 30], fill=(255, 238, 150, 255), outline=(150, 120, 45, 255), width=2)
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     img.save(out_path, "PNG")

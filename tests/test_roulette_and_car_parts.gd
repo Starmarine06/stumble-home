@@ -204,9 +204,13 @@ func _test_roulette_table_inworld_spin() -> void:
 	# Start spin with bet
 	table.start_spin(dummy_player, 100, "RED")
 	assert(table.is_spinning == true, "Table should be spinning after start_spin")
-	assert(table.phase == table.SpinPhase.RIM_ORBIT, "Initial phase must be RIM_ORBIT")
+	assert(table.phase == table.SpinPhase.BALL_DROP, "Initial phase must be BALL_DROP")
 	assert(table.ball_speed < -15.0, "Ball speed must be counter-clockwise (< -15)")
 	assert(table.rotor_speed > 4.0, "Rotor speed must be clockwise (> 4)")
+
+	# Advance ball drop animation
+	table._process(0.4)
+	assert(table.phase == table.SpinPhase.RIM_ORBIT, "Phase must be RIM_ORBIT after ball drop")
 
 	# Player movement remains unhindered
 	assert(dummy_player.minigame_active == false, "Player minigame_active must remain FALSE for free movement!")
@@ -214,10 +218,10 @@ func _test_roulette_table_inworld_spin() -> void:
 
 	# Simulate physics process steps
 	print("  Simulating physical table in-world spin steps...")
-	table._process(2.5) # Rim orbit -> Spiral drop
+	table._process(2.9) # Rim orbit -> Spiral drop
 	assert(table.phase == table.SpinPhase.SPIRAL_DROP, "Should transition to SPIRAL_DROP")
 
-	table._process(1.7) # Spiral drop -> Deflector bounce
+	table._process(1.9) # Spiral drop -> Deflector bounce
 	assert(table.phase == table.SpinPhase.DEFLECTOR_BOUNCE, "Should transition to DEFLECTOR_BOUNCE")
 
 	table._process(1.5) # Deflector bounce -> Fret hopping
