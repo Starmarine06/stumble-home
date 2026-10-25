@@ -4,6 +4,10 @@ extends Node3D
 ## drive home (see Drive). Visuals are built in code from the shared seed so
 ## every peer sees the same layout.
 
+const CarFxClass = preload("res://scripts/world/car_fx.gd")
+const CarModelClass = preload("res://scripts/world/car_model.gd")
+const YardPropsClass = preload("res://scripts/world/yard_props.gd")
+
 var players: Node3D
 var spawner: MultiplayerSpawner
 var car: Node3D
@@ -14,7 +18,7 @@ var kebab_panel: KebabPanel
 
 var _yard: Node3D
 var _part_nodes: Array = []
-var car_fx: CarFx
+var car_fx: Node = null
 var _last_repair := -1.0
 var _was_installed := {}
 var _engine_started := false
@@ -35,7 +39,7 @@ func _ready() -> void:
 	car = _make_car()
 	car.position = Game.CAR_POS
 	add_child(car)
-	car_fx = CarFx.new()
+	car_fx = CarFxClass.new()
 	car_fx.name = "CarFx"
 	car.add_child(car_fx)
 	car_fx.setup(car)
@@ -44,7 +48,7 @@ func _ready() -> void:
 		keep.append(p.pos)
 	for cp in Game.coolers:
 		keep.append(cp)
-	_yard.add_child(YardProps.build(Game.world_seed, keep))
+	_yard.add_child(YardPropsClass.build(Game.world_seed, keep))
 	for i in Game.parts.size():
 		var n := _make_part(i)
 		_part_nodes.append(n)
@@ -215,7 +219,7 @@ func _near_special(pos: Vector3) -> bool:
 
 
 func _make_car() -> Node3D:
-	var c := CarModel.build()
+	var c: Node3D = CarModelClass.build()
 	for nm in ["HeadlightL", "HeadlightR"]:
 		var s := SpotLight3D.new()
 		s.spot_range = 40.0
@@ -284,7 +288,7 @@ func _process(delta: float) -> void:
 	var t := float(installed) / maxf(Game.parts.size(), 1.0)
 	if not is_equal_approx(t, _last_repair):
 		_last_repair = t
-		CarModel.set_repair(car, t)
+		CarModelClass.set_repair(car, t)
 		car_fx.set_repair(t)
 	for i in Game.parts.size():
 		var inst: bool = Game.parts[i].state == Game.PS.INSTALLED
